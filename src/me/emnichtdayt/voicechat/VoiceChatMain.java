@@ -8,12 +8,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class VoiceChatMain extends JavaPlugin{
 	private static List<PlayerVoiceStateChangeEvent> voiceStateChangeListeners = new ArrayList<>();
 	
-	public static void main(String[] args) {
-		VoiceChatMain main = new VoiceChatMain(); //PL LOAD
+	private static DiscordBot dcbot = null;
+	
+	private static VoiceChatSQL sql = null;
+	
+	public void onEnable() {
 		
-		VoiceChatMain.addVoiceChatListener(new TestListener());
-		
-		main.fireVoiceStateChange(new VoicePlayer(),VoiceState.LINKED, false);
 	}
 	
 	protected void fireVoiceStateChange(VoicePlayer player, VoiceState newVoiceState, boolean getsKicked) {
