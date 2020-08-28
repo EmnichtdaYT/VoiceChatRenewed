@@ -1,0 +1,9 @@
+main: me.emnichtdayt.voicechat.VoiceChatMain
+name: VoiceChat
+api-version: 1.14
+version: 1.0
+description: VoiceChat
+author: EmnichtdaYT
+website: emnichtdayt.lima-city.de
+
+commands:
