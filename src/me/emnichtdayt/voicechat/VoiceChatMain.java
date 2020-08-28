@@ -28,7 +28,7 @@ public class VoiceChatMain extends JavaPlugin{
 	
 	private static VoiceChatMCEvents mcEvents = null;
 	
-	private static HashMap<VoicePlayer, Player> players = new HashMap<VoicePlayer, Player>();
+	private static HashMap<Player, VoicePlayer> players = new HashMap<Player, VoicePlayer>();
 	private static ArrayList<DCChannel> channels =new ArrayList<DCChannel>();
 	
 	private static ArrayList<String> disabledWorlds = new ArrayList<String>();
@@ -118,7 +118,7 @@ public class VoiceChatMain extends JavaPlugin{
 		return sql;
 	}
 
-	public static HashMap<VoicePlayer, Player> getPlayers() {
+	public static HashMap<Player, VoicePlayer> getPlayers() {
 		return players;
 	}
 
