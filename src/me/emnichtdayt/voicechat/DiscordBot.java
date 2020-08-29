@@ -2,6 +2,7 @@ package me.emnichtdayt.voicechat;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -87,12 +88,18 @@ public class DiscordBot {
 		
 		CompletableFuture<ServerVoiceChannel> futureChann = nChan.create();
 		
-		DCChannel dcchann;
-		
-		futureChann.whenCompleteAsync( (result, throwable) -> {
-			dcchann = new DCChannel(result.getId());
+		DCChannel dcchann = null;
+
+		try {
+			dcchann = new DCChannel(futureChann.get().getId());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		if(dcchann!=null) {
 			VoiceChatMain.getChannels().add(dcchann);
-		});
+		}
 		
 		return dcchann;
 	}

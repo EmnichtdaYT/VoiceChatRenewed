@@ -68,6 +68,8 @@ public class VoiceChatMain extends JavaPlugin{
 		this.getConfig().addDefault("DCbot.token", "token");
 		this.getConfig().addDefault("DCbot.status", "roleplay.emnichtda.de");
 		this.getConfig().addDefault("DCbot.statusType", "PLAYING");
+		this.getConfig().addDefault("DCbot.serverID", "server");
+		this.getConfig().addDefault("DCbot.categoryID", "category");
 		
 		this.getConfig().addDefault("VoiceChat.disabledWorlds", new ArrayList<String>());
 		this.getConfig().addDefault("VoiceChat.disabledRegions", new ArrayList<String>());
@@ -86,7 +88,7 @@ public class VoiceChatMain extends JavaPlugin{
 		mcEvents = new VoiceChatMCEvents();
 		this.getServer().getPluginManager().registerEvents(mcEvents, this);
 		
-		dcbot = new DiscordBot(this.getConfig().getString("DCbot.token"), ActivityType.valueOf(this.getConfig().getString("DCbot.statusType")), this.getConfig().getString("DCbot.status"));		
+		dcbot = new DiscordBot(this.getConfig().getString("DCbot.token"), this.getConfig().getString("DCbot.serverID"), this.getConfig().getString("DCbot.categoryID"), ActivityType.valueOf(this.getConfig().getString("DCbot.statusType")), this.getConfig().getString("DCbot.status"));		
 		//INSTANCES END
 		
 	}

@@ -41,9 +41,9 @@ public class VoiceChatLogic {
 									}
 								}
 								if(regionName != null) {
-									DCChannel regionChannel = VoiceChatMain.getDcbot().getChannelByName("VoiceChat-" + regionName);
+									DCChannel regionChannel = dc.getChannelByName("VoiceChat-" + regionName);
 									if(regionChannel==null){
-										
+										dc.createCustomChannel(regionName);
 									}
 								}
 							} else {
