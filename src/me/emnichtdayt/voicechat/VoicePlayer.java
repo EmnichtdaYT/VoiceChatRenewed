@@ -53,4 +53,8 @@ public class VoicePlayer {
 	public void setAutomaticControlled(boolean isAutomaticControlled) {
 		this.isAutomaticControlled = isAutomaticControlled;
 	}
+
+	public void moveTo(DCChannel channel) {
+				
+	}
 }

@@ -45,11 +45,14 @@ public class VoiceChatLogic {
 									if(regionChannel==null){
 										dc.createCustomChannel(regionName);
 									}
+									targetVoice.moveTo(regionChannel);
 								}
 							} else {
 
 							}
 						}
+					}else {
+						
 					}
 				}
 			}

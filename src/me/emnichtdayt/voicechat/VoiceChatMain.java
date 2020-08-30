@@ -16,6 +16,7 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 
 public class VoiceChatMain extends JavaPlugin{
 	private static List<PlayerVoiceStateChangeEvent> voiceStateChangeListeners = new ArrayList<>();
+	private static List<PlayerMoveChannelEvent> moveChannelListeners = new ArrayList<>();
 	
 	private static DiscordBot dcbot = null;	
 	private static VoiceChatSQL sql = null;
@@ -102,14 +103,24 @@ public class VoiceChatMain extends JavaPlugin{
 		//TODO sql reload
 	}
 
-	protected void fireVoiceStateChange(VoicePlayer player, VoiceState newVoiceState, boolean getsKicked) {
+	protected void fireVoiceStateChange(VoicePlayer player, VoiceState oldVoiceState, VoiceState newVoiceState, boolean getsKicked) {
 		for(PlayerVoiceStateChangeEvent listener : voiceStateChangeListeners) {
-			listener.onPlayerVoiceStateChange(player, newVoiceState, getsKicked);
+			listener.onPlayerVoiceStateChange(player, oldVoiceState, newVoiceState, getsKicked);
 		}
 	}
 	
-	public static void addVoiceChatListener(PlayerVoiceStateChangeEvent listener) {
+	protected void firePlayerMoveChannel(VoicePlayer player, DCChannel oldChannel, DCChannel newChannel) {
+		for(PlayerMoveChannelEvent listener : moveChannelListeners) {
+			listener.onPlayerMoveChannel(player, oldChannel, newChannel);
+		}
+	}
+	
+	public static void addPlayerVoiceStateChangeListener(PlayerVoiceStateChangeEvent listener) {
 		voiceStateChangeListeners.add(listener);
+	}
+	
+	public static void addPlayerMoveChannelListener(PlayerMoveChannelEvent listener) {
+		moveChannelListeners.add(listener);
 	}
 
 	protected static DiscordBot getDcbot() {
