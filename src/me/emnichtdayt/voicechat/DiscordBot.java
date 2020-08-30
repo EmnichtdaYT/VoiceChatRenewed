@@ -35,6 +35,8 @@ public class DiscordBot {
 				this.category = api.getChannelCategoryById(category).get();
 			}
 		}
+		
+		
 	}
 	
 	public ChannelCategory getCategory() {
@@ -102,5 +104,23 @@ public class DiscordBot {
 		}
 		
 		return dcchann;
+	}
+	
+	protected void movePlayer(VoicePlayer target, DCChannel channel) {
+		try {
+			api.getUserById(target.getDiscordID()).get().move(api.getServerVoiceChannelById(channel.getId()).get());
+		} catch (Exception e) {
+			try {
+				server.kickUserFromVoiceChannel(api.getUserById(target.getDiscordID()).get());
+			} catch (Exception ex) {}
+			VoiceChatMain pl = VoiceChatMain.getInstance();
+			pl.reloadConfig();
+			boolean getsKicked = pl.getConfig().getBoolean("VoiceChat.isRequired");
+			if(getsKicked) {				
+				target.getPlayer().kickPlayer("[VoiceChat] Ein Fehler ist aufgetreten daher wurde dein VoiceChat deaktiviert.");
+			}
+			VoiceChatMain.fireVoiceStateChange(target, target.getState(), VoiceState.DISCONNECTED, getsKicked);
+			target.disconnect();
+		}
 	}
 }

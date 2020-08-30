@@ -55,6 +55,7 @@ public class VoicePlayer {
 	}
 
 	public void moveTo(DCChannel channel) {
-		
+		VoiceChatMain.firePlayerMoveChannel(this, currentChannel, channel);
+		this.currentChannel = channel;
 	}
 }

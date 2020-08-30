@@ -24,6 +24,8 @@ public class VoiceChatMain extends JavaPlugin{
 	public static StateFlag isOwnVoiceRegion;
 	public static StateFlag isDisabledRegion;
 	
+	private static VoiceChatMain instance = null;
+	
 	@SuppressWarnings("unused")
 	private BukkitTask timer = null;
 	
@@ -89,9 +91,10 @@ public class VoiceChatMain extends JavaPlugin{
 		mcEvents = new VoiceChatMCEvents();
 		this.getServer().getPluginManager().registerEvents(mcEvents, this);
 		
-		dcbot = new DiscordBot(this.getConfig().getString("DCbot.token"), this.getConfig().getString("DCbot.serverID"), this.getConfig().getString("DCbot.categoryID"), ActivityType.valueOf(this.getConfig().getString("DCbot.statusType")), this.getConfig().getString("DCbot.status"));		
-		//INSTANCES END
+		dcbot = new DiscordBot(this.getConfig().getString("DCbot.token"), this.getConfig().getString("DCbot.serverID"), this.getConfig().getString("DCbot.categoryID"), ActivityType.valueOf(this.getConfig().getString("DCbot.statusType")), this.getConfig().getString("DCbot.status"));
 		
+		instance = this;
+		//INSTANCES END
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -103,13 +106,13 @@ public class VoiceChatMain extends JavaPlugin{
 		//TODO sql reload
 	}
 
-	protected void fireVoiceStateChange(VoicePlayer player, VoiceState oldVoiceState, VoiceState newVoiceState, boolean getsKicked) {
+	protected static void fireVoiceStateChange(VoicePlayer player, VoiceState oldVoiceState, VoiceState newVoiceState, boolean getsKicked) {
 		for(PlayerVoiceStateChangeEvent listener : voiceStateChangeListeners) {
 			listener.onPlayerVoiceStateChange(player, oldVoiceState, newVoiceState, getsKicked);
 		}
 	}
 	
-	protected void firePlayerMoveChannel(VoicePlayer player, DCChannel oldChannel, DCChannel newChannel) {
+	protected static void firePlayerMoveChannel(VoicePlayer player, DCChannel oldChannel, DCChannel newChannel) {
 		for(PlayerMoveChannelEvent listener : moveChannelListeners) {
 			listener.onPlayerMoveChannel(player, oldChannel, newChannel);
 		}
@@ -141,5 +144,9 @@ public class VoiceChatMain extends JavaPlugin{
 
 	public static ArrayList<String> getDisabledWorlds() {
 		return disabledWorlds;
+	}
+
+	public static VoiceChatMain getInstance() {
+		return instance;
 	}
 }
