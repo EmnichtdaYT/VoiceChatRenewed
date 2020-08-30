@@ -55,6 +55,6 @@ public class VoicePlayer {
 	}
 
 	public void moveTo(DCChannel channel) {
-				
+		
 	}
 }
