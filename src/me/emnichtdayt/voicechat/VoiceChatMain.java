@@ -56,7 +56,7 @@ public class VoiceChatMain extends JavaPlugin{
 	    //WORLDGUARD END
 	}
 	
-	public void onEnable() {	    
+	public void onEnable() {
 		//CONFIG
 		this.reloadConfig();
 		
@@ -98,6 +98,9 @@ public class VoiceChatMain extends JavaPlugin{
 	}
 	
 	@SuppressWarnings("unchecked")
+	/**
+	 * rloadConfig() reloads the VoiceChat config
+	 */
 	public void rloadConfig() {
 		this.reloadConfig();
 		
@@ -118,10 +121,16 @@ public class VoiceChatMain extends JavaPlugin{
 		}
 	}
 	
+	/**
+	 * addPlayerVoieStateChangeListener(PlayerVoiceStateChangeEvent listener) registeres a new PlayerVoiceStateChangeEvent listener
+	 */
 	public static void addPlayerVoiceStateChangeListener(PlayerVoiceStateChangeEvent listener) {
 		voiceStateChangeListeners.add(listener);
 	}
 	
+	/**
+	 * addPlayerMoveChannelListener(PlayerMoveChannelEvent listener) registeres a new PlayerMoveChannelEvent listener
+	 */
 	public static void addPlayerMoveChannelListener(PlayerMoveChannelEvent listener) {
 		moveChannelListeners.add(listener);
 	}
@@ -133,19 +142,31 @@ public class VoiceChatMain extends JavaPlugin{
 	protected static VoiceChatSQL getSql() {
 		return sql;
 	}
-
+	
+	/**
+	 * getPlayers() returns a HashMap<Player, VoicePlayer> with all the currently registered Players
+	 */
 	public static HashMap<Player, VoicePlayer> getPlayers() {
 		return players;
 	}
-
+	
+	/**
+	 * getChannels() returns an ArrayList<DCChannel> with all the channels VoiceChat has currently registered
+	 */
 	public static ArrayList<DCChannel> getChannels() {
 		return channels;
 	}
-
+	
+	/**
+	 * getDisabledWorlds returns an ArrayList<String> with the names of the worlds where VoiceChat is not going to operate
+	 */
 	public static ArrayList<String> getDisabledWorlds() {
 		return disabledWorlds;
 	}
 
+	/**
+	 * getInstance() returns the Minecraft plugin instance from the VoiceChat plugin. NOTE: Only use if you really have to. Nearly everything you need is static.
+	 */
 	public static VoiceChatMain getInstance() {
 		return instance;
 	}

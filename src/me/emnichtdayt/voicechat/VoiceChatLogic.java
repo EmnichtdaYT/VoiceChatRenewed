@@ -44,18 +44,31 @@ public class VoiceChatLogic {
 									DCChannel regionChannel = dc.getChannelByName("VoiceChat-" + regionName);
 									if(regionChannel==null){
 										dc.createCustomChannel(regionName);
+									}else if(!targetVoice.getCurrentChannel().equals(regionChannel)) {
+										targetVoice.moveTo(regionChannel);
 									}
-									targetVoice.moveTo(regionChannel);
 								}
 							} else {
-
+								DCChannel oldPlayerChannel = targetVoice.getCurrentChannel();
+								DCChannel newChannel = null;
+								
+							    if(oldPlayerChannel != null) { //Player is in a channel
+							    	VoicePlayer oldChannelHost = oldPlayerChannel.getHost();
+							    	if(oldChannelHost!=null&&oldChannelHost==targetVoice) { //Player is Channelhost
+							    		
+							    	}else { //Player is no Channel Host
+							    		
+							    	}
+							    }
 							}
+						}else { //Player is in a disabled region
+							
 						}
-					}else {
+					}else { //Player is in disabled world
 						
 					}
 				}
-			}else {
+			}else { //Player is not registered
 				
 			}
 		}

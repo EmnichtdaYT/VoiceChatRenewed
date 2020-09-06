@@ -34,37 +34,56 @@ public class DiscordBot {
 			if(api.getChannelCategoryById(category).isPresent()) {
 				this.category = api.getChannelCategoryById(category).get();
 			}
-		}
-		
-		
+		}		
 	}
 	
+	/**
+	 * getCategory() returns the ChannelCategoty where all the channels will be created	
+	 */
 	public ChannelCategory getCategory() {
 		return category;
 	}
 	
+	/**
+	 * getServer() returns the Discord server the bot is set to operate at
+	 */
 	public Server getServer() {
 		return server;
 	}
-
+	
+	/**
+	 * getStatus() returns the status displayed in Discord for the Discord Bot
+	 */
 	public String getStatus() {
 		return status;
 	}
-
+	
+	/**
+	 * setStatus(String status) sets the status displayed in Discord for the Discord Bot
+	 */
 	public void setStatus(String status) {
 		this.status = status;
 		api.updateActivity(statusType, status);
 	}
 
+	/**
+	 * getStatusType() returns the ActivityType the Discord bot is currently set to. For example: Playing, Watching, Streaming
+	 */
 	public ActivityType getStatusType() {
 		return statusType;
 	}
-
+	
+	/**
+	 * setStatusType(ActivityType statusType) sets the Activity for the Discord bot. For example: Playing, Watching, Streaming
+	 */
 	public void setStatusType(ActivityType statusType) {
 		this.statusType = statusType;
 		api.updateActivity(statusType, status);
 	}
-
+	
+	/**
+	 * getChannelByName(String name) returns the first registered DCChannel with the given name. If no Channel was found it returns null 
+	 */
 	public DCChannel getChannelByName(String name) {
 		
 		for(Iterator<? extends ServerVoiceChannel> channels = api.getServerVoiceChannelsByName(name).iterator(); channels.hasNext();) {
@@ -78,6 +97,10 @@ public class DiscordBot {
 		}
 		return null;
 	}
+	
+	/**
+	 * createCustomChannel(String name) creates a new Discord Channel and returns the DCChannel object
+	 */
 	public DCChannel createCustomChannel(String name) {
 		ServerVoiceChannelBuilder nChan = new ServerVoiceChannelBuilder(getServer());
 		nChan.setAuditLogReason("VoiceChat-customChannel");
