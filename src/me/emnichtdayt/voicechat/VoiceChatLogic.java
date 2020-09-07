@@ -38,7 +38,7 @@ public class VoiceChatLogic {
 								String regionName = null;
 								int maxPriority = -1;
 								for (ProtectedRegion region : set) {
-									if (region.getPriority() > maxPriority) {
+									if (region.getPriority() > maxPriority) { //t
 										regionName = region.getId();
 									}
 								}
