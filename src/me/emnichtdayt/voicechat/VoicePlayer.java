@@ -77,6 +77,7 @@ public class VoicePlayer {
 	 */
 	public void moveTo(DCChannel channel) {
 		VoiceChatMain.firePlayerMoveChannel(this, currentChannel, channel);
+		currentChannel.getUsers().remove(this);
 		this.currentChannel = channel;
 	}
 }

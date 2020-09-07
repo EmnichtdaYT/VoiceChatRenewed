@@ -36,6 +36,10 @@ public class VoiceChatMain extends JavaPlugin{
 	
 	private static ArrayList<String> disabledWorlds = new ArrayList<String>();
 	
+	private static int rangeX = 4;
+	private static int rangeY = 4;
+	private static int rangeZ = 4;
+	
 	public void onLoad() {
 		//WORLDGUARD
 	    FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
@@ -77,6 +81,10 @@ public class VoiceChatMain extends JavaPlugin{
 		this.getConfig().addDefault("VoiceChat.disabledWorlds", new ArrayList<String>());
 		this.getConfig().addDefault("VoiceChat.disabledRegions", new ArrayList<String>());
 		
+		this.getConfig().addDefault("VoiceChat.range.x", 4);
+		this.getConfig().addDefault("VoiceChat.range.y", 4);
+		this.getConfig().addDefault("VoiceChat.range.z", 4);
+		
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
 		this.saveDefaultConfig();
@@ -105,6 +113,10 @@ public class VoiceChatMain extends JavaPlugin{
 		this.reloadConfig();
 		
 		disabledWorlds = (ArrayList<String>) this.getConfig().getList("VoiceChat.disabledWorlds");
+		
+		setVoiceRangeX(this.getConfig().getInt("VoieChat.range.x"));
+		setVoiceRangeY(this.getConfig().getInt("VoieChat.range.y"));
+		setVoiceRangeZ(this.getConfig().getInt("VoieChat.range.z"));
 		
 		//TODO sql reload
 	}
@@ -169,5 +181,38 @@ public class VoiceChatMain extends JavaPlugin{
 	 */
 	public static VoiceChatMain getInstance() {
 		return instance;
+	}
+
+	/**
+	 *getVoiceRangeX() returns the x distance arround the host within the players can hear each other. (Doesnt affect non automatic controlled players)
+	 */
+	public static int getVoiceRangeX() {
+		return rangeX;
+	}
+
+	private static void setVoiceRangeX(int rangeX) {
+		VoiceChatMain.rangeX = rangeX;
+	}
+	
+	/**
+	 *getVoiceRangeY() returns the y distance arround the host within the players can hear each other. (Doesnt affect non automatic controlled players)
+	 */
+	public static int getVoiceRangeY() {
+		return rangeY;
+	}
+
+	private static void setVoiceRangeY(int rangeY) {
+		VoiceChatMain.rangeY = rangeY;
+	}
+
+	/**
+	 *getVoiceRangeZ() returns the z distance arround the host within the players can hear each other. (Doesnt affect non automatic controlled players)
+	 */
+	public static int getVoiceRangeZ() {
+		return rangeZ;
+	}
+
+	private static void setVoiceRangeZ(int rangeZ) {
+		VoiceChatMain.rangeZ = rangeZ;
 	}
 }

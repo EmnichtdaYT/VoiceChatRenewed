@@ -146,4 +146,12 @@ public class DiscordBot {
 			target.disconnect();
 		}
 	}
+
+	/*
+	 * Löscht den Kanal final. Löscht ihn auch aus channels arrL !!!kümmert sich aber nicht darum dass alle user raus geschoben werden!!!
+	 */
+	protected void deleteChannelFromDC(DCChannel dcChannel) {
+		VoiceChatMain.getChannels().remove(dcChannel);
+		api.getServerVoiceChannelById(dcChannel.getId()).get().delete();
+	}
 }

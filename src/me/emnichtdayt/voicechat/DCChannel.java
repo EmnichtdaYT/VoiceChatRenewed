@@ -4,8 +4,9 @@ import java.util.ArrayList;
 
 public class DCChannel {
 	private long id;
-	ArrayList<VoicePlayer> users = new ArrayList<VoicePlayer>();
+	private ArrayList<VoicePlayer> users = new ArrayList<VoicePlayer>();
 	private VoicePlayer host = null;
+	private DiscordBot dc = VoiceChatMain.getDcbot();
 	
 	protected DCChannel(long id) {
 		this.id = id;
@@ -30,5 +31,18 @@ public class DCChannel {
 	 */
 	public void setHost(VoicePlayer host) {
 		this.host = host;
+	}
+	
+	public ArrayList<VoicePlayer> getUsers(){
+		return users;
+	}
+	
+	public void remove() {
+		for(VoicePlayer target : getUsers()) {
+			target.moveTo(null);
+		}
+		host = null;
+		dc.deleteChannelFromDC(this);
+		id = -1;
 	}
 }

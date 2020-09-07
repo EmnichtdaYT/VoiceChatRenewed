@@ -2,7 +2,9 @@ package me.emnichtdayt.voicechat;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -50,12 +52,33 @@ public class VoiceChatLogic {
 								}
 							} else {
 								DCChannel oldPlayerChannel = targetVoice.getCurrentChannel();
-								DCChannel newChannel = null;
 								
 							    if(oldPlayerChannel != null) { //Player is in a channel
 							    	VoicePlayer oldChannelHost = oldPlayerChannel.getHost();
 							    	if(oldChannelHost!=null&&oldChannelHost==targetVoice) { //Player is Channelhost
-							    		
+							    		List<Entity> nearby = target.getNearbyEntities(VoiceChatMain.getVoiceRangeX(), VoiceChatMain.getVoiceRangeY(), VoiceChatMain.getVoiceRangeZ());
+							    		if(nearby.stream().anyMatch(ent -> ent instanceof Player)) { //host hat leute um sich
+							    			DCChannel newHostChannel = null;
+							    			for(Entity targetNearby : nearby) {
+							    				if(targetNearby instanceof Player) {
+							    					VoicePlayer targetNearbyVoice = VoiceChatMain.getPlayers().get((Player) targetNearby); 
+							    					if(targetNearbyVoice.getCurrentChannel() == null) {
+							    						targetNearbyVoice.moveTo(oldPlayerChannel);
+							    					}else if(targetNearbyVoice.getCurrentChannel().getHost().equals(targetNearbyVoice)){
+							    						newHostChannel = targetNearbyVoice.getCurrentChannel();
+							    					}
+							    				}
+							    				if(newHostChannel != null) { //neuer host in der nähe gefunden, wird zusammen gelegt
+							    					for(VoicePlayer targetToMove : oldPlayerChannel.getUsers()) {
+							    						targetToMove.moveTo(newHostChannel);
+							    					}
+							    					oldPlayerChannel.remove();
+							    					oldPlayerChannel = null;
+							    				}							    					
+							    			}
+							    		}else { //Host hat keinen um sich kanal löschen
+							    			oldPlayerChannel.remove();
+							    		}
 							    	}else { //Player is no Channel Host
 							    		
 							    	}
