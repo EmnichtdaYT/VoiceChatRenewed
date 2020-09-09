@@ -38,7 +38,7 @@ public class VoiceChatLogic {
 								String regionName = null;
 								int maxPriority = -1;
 								for (ProtectedRegion region : set) {
-									if (region.getPriority() > maxPriority) { //t
+									if (region.getPriority() > maxPriority) {
 										regionName = region.getId();
 									}
 								}
@@ -85,10 +85,10 @@ public class VoiceChatLogic {
 							    }
 							}
 						}else { //Player is in a disabled region
-							
+							targetVoice.moveTo(null);
 						}
 					}else { //Player is in disabled world
-						
+						targetVoice.moveTo(null);
 					}
 				}
 			}else { //Player is not registered
