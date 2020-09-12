@@ -21,13 +21,17 @@ public class DiscordBot {
 	private ChannelCategory category;
 	private Server server;
 	
+	private String waitingChannelID;
+	
 	DiscordApi api = null;
 	
-	protected DiscordBot(String token, String server, String category, ActivityType statusType, String status) {		
+	protected DiscordBot(String token, String server, String category, String waitingChannelID, ActivityType statusType, String status) {		
 		api = new DiscordApiBuilder().setToken(token).login().join();
 		
 		this.setStatus(status);
 		this.setStatusType(statusType);
+		
+		this.setWaitingChannelID(waitingChannelID);
 		
 		if(api.getServerById(server).isPresent()) {
 			this.server = api.getServerById(server).get();
@@ -147,11 +151,23 @@ public class DiscordBot {
 		}
 	}
 
-	/*
+	/**
 	 * Löscht den Kanal final. Löscht ihn auch aus channels arrL !!!kümmert sich aber nicht darum dass alle user raus geschoben werden!!!
 	 */
 	protected void deleteChannelFromDC(DCChannel dcChannel) {
 		VoiceChatMain.getChannels().remove(dcChannel);
 		api.getServerVoiceChannelById(dcChannel.getId()).get().delete();
+	}
+	
+	public boolean isInWaitingChannel(VoicePlayer player) {
+		return api.getServerVoiceChannelById(getWaitingChannelID()).get().getConnectedUserIds().contains(player.getDiscordID());
+	}
+
+	public String getWaitingChannelID() {
+		return waitingChannelID;
+	}
+
+	private void setWaitingChannelID(String waitingChannelID) {
+		this.waitingChannelID = waitingChannelID;
 	}
 }

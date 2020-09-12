@@ -6,7 +6,7 @@ public class VoicePlayer {
 	private Player player;
 	private VoiceState state;
 	private long discordID;
-	private DCChannel currentChannel;
+	private DCChannel currentChannel = null;
 	private boolean isAutomaticControlled = true;
 	
 	protected VoicePlayer(Player player, VoiceState state, long discordID) {

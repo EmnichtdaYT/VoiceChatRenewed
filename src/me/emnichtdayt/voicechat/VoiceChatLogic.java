@@ -116,8 +116,6 @@ public class VoiceChatLogic {
 						targetVoice.moveTo(null);
 					}
 				}
-			} else { // Player is not registered
-				
 			}
 		}
 	}
