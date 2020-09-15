@@ -36,7 +36,7 @@ public class VoiceChatSQL {
 	
 	public long getID(Player player) {
 		try {
-
+			
 			String sqlQuery = "SELECT "+ dcIdColumn +" FROM " + table + " WHERE "+ uuidColumn +" ='" + player.getUniqueId().toString() +"'";
 				
 			Class.forName("com.mysql.jdbc.Driver");
@@ -59,6 +59,7 @@ public class VoiceChatSQL {
 		
 		
 		}catch(Exception e) {
+			e.printStackTrace();
 			return -1;
 		}
 	}

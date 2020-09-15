@@ -23,24 +23,33 @@ public class VoiceChatLogic {
 		disabledWorlds = VoiceChatMain.getDisabledWorlds();
 
 		DiscordBot dc = VoiceChatMain.getDcbot();
-
+		
 		for (Iterator<? extends Player> iterator = pl.getServer().getOnlinePlayers().iterator(); iterator.hasNext();) {
 			Player target = iterator.next();
+			target.sendMessage("Du bist dran");
 			if (VoiceChatMain.getPlayers().containsKey(target)) {
+				target.sendMessage("System hat dich drin");
 				VoicePlayer targetVoice = VoiceChatMain.getPlayers().get(target);
 				if (targetVoice.isAutomaticControlled()) {
 					if (!disabledWorlds.contains(target.getWorld().getName())) {
+						target.sendMessage("Nicht disabled world");
+						
 						RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
 						RegionQuery query = container.createQuery();
 						ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(target.getLocation()));
 						if (!set.testState(WorldGuardPlugin.inst().wrapPlayer(target),
 								VoiceChatMain.isDisabledRegion)) {
+							target.sendMessage("nicht disabled region");
 							if (set.testState(WorldGuardPlugin.inst().wrapPlayer(target),
 									VoiceChatMain.isOwnVoiceRegion)) {
+								
+								target.sendMessage("in eigener voiceregion");
+								
 								String regionName = null;
 								int maxPriority = -1;
 								for (ProtectedRegion region : set) {
 									if (region.getPriority() > maxPriority) {
+										maxPriority = region.getPriority();
 										regionName = region.getId();
 									}
 								}
@@ -48,7 +57,7 @@ public class VoiceChatLogic {
 									DCChannel regionChannel = dc.getChannelByName("VoiceChat-" + regionName);
 									if (regionChannel == null) {
 										targetVoice.moveTo(dc.createCustomChannel(regionName));
-									} else if (!targetVoice.getCurrentChannel().equals(regionChannel)) {
+									} else if (targetVoice.getCurrentChannel() != null && !targetVoice.getCurrentChannel().equals(regionChannel)) {
 										targetVoice.moveTo(regionChannel);
 									}
 								}

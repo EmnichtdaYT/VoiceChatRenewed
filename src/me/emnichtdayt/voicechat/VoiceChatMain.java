@@ -71,6 +71,9 @@ public class VoiceChatMain extends JavaPlugin{
 		
 		this.getConfig().addDefault("MySQL.ip", "ip");
 		this.getConfig().addDefault("MySQL.database", "data");
+		this.getConfig().addDefault("MySQL.table", "table");
+		this.getConfig().addDefault("MySQL.idColumn", "discordID");
+		this.getConfig().addDefault("MySQL.uuidColumn", "uuid");
 		this.getConfig().addDefault("MySQL.user", "user");
 		this.getConfig().addDefault("MySQL.password", "pass");
 		
@@ -103,6 +106,14 @@ public class VoiceChatMain extends JavaPlugin{
 		
 		mcEvents = new VoiceChatMCEvents();
 		this.getServer().getPluginManager().registerEvents(mcEvents, this);
+		
+		sql = new VoiceChatSQL(this.getConfig().getString("MySQL.ip"),
+				this.getConfig().getString("MySQL.database"),
+				this.getConfig().getString("MySQL.table"),
+				this.getConfig().getString("MySQL.idColumn"),
+				this.getConfig().getString("MySQL.uuidColumn"),
+				this.getConfig().getString("MySQL.user"),
+				this.getConfig().getString("MySQL.password"));
 		
 		dcbot = new DiscordBot(this.getConfig().getString("DCbot.token"), this.getConfig().getString("DCbot.serverID"), this.getConfig().getString("DCbot.categoryID"), this.getConfig().getString("DCbot.waitinChannelID"), ActivityType.valueOf(this.getConfig().getString("DCbot.statusType")), this.getConfig().getString("DCbot.status"));
 		

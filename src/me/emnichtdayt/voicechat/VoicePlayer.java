@@ -76,7 +76,7 @@ public class VoicePlayer {
 	 * moveTo(DCChannel channel) moves a player to another channel. NOTE: You have to disable automaticControlled first, otherwise VoiceChat might move the Player back to the Channel where it thinks it belongs to 
 	 */
 	public void moveTo(DCChannel channel) {
-		if(getCurrentChannel().getHost().equals(this)) {
+		if(getCurrentChannel() != null && getCurrentChannel().getHost() != null && getCurrentChannel().getHost().equals(this)) {
 			for(VoicePlayer newHost : getCurrentChannel().getUsers()) {
 				if(!newHost.equals(this)) {
 					getCurrentChannel().setHost(newHost);
@@ -84,7 +84,14 @@ public class VoicePlayer {
 			}
 		}
 		VoiceChatMain.firePlayerMoveChannel(this, currentChannel, channel);
-		currentChannel.getUsers().remove(this);
+		if(currentChannel != null) {
+			currentChannel.getUsers().remove(this);
+		}
 		this.currentChannel = channel;
+		if(channel != null) {
+			currentChannel.getUsers().add(this);
+		}
+		
+		VoiceChatMain.getDcbot().movePlayer(this, channel);
 	}
 }
