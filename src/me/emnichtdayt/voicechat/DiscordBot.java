@@ -15,6 +15,9 @@ import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.server.Server;
 
 public class DiscordBot {
+	
+	private int nextChannel = 0;
+	
 	private String status = ".";
 	private ActivityType statusType = ActivityType.PLAYING;
 	
@@ -101,6 +104,36 @@ public class DiscordBot {
 		return null;
 	}
 	
+	protected DCChannel createNewUserVoiceChat() {
+		ServerVoiceChannelBuilder nChan = new ServerVoiceChannelBuilder(getServer());
+		nChan.setAuditLogReason("VoiceChat-customChannel");
+		nChan.setName("VoiceChat-"+nextChannel);
+		PermissionsBuilder nPerm = new PermissionsBuilder();
+		nPerm.setDenied(PermissionType.READ_MESSAGES);
+		nPerm.setDenied(PermissionType.CONNECT);
+		nChan.addPermissionOverwrite(getServer().getEveryoneRole(), nPerm.build());		
+		nChan.setCategory(category);
+		
+		CompletableFuture<ServerVoiceChannel> futureChann = nChan.create();
+		
+		nextChannel++;
+		
+		DCChannel dcchann = null;
+
+		try {
+			dcchann = new DCChannel(futureChann.get().getId());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		if(dcchann!=null) {
+			VoiceChatMain.getChannels().add(dcchann);
+		}
+		
+		return dcchann;
+	}
+	
 	/**
 	 * createCustomChannel(String name) creates a new Discord Channel and returns the DCChannel object
 	 */
@@ -159,7 +192,8 @@ public class DiscordBot {
 	 */
 	protected void deleteChannelFromDC(DCChannel dcChannel) {
 		VoiceChatMain.getChannels().remove(dcChannel);
-		api.getServerVoiceChannelById(dcChannel.getId()).get().delete();
+		ServerVoiceChannel channel = api.getServerVoiceChannelById(dcChannel.getId()).get();
+		channel.delete();
 	}
 	
 	public boolean isInWaitingChannel(VoicePlayer player) {
