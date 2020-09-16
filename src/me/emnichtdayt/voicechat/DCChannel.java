@@ -30,7 +30,11 @@ public class DCChannel {
 	 * setHost(VoicePlayer host) defines a new Host, every person around that Player will be in the same VoiceChat. Can also be null if there is no such Player, for a phone call for example.
 	 */
 	public void setHost(VoicePlayer host) {
-		this.host = host;
+		if(getUsers().contains(host)) {
+			this.host = host;
+		}else {
+			throw new IllegalStateException("The specified host has to be in the Channel");
+		}
 	}
 	
 	public ArrayList<VoicePlayer> getUsers(){
@@ -45,4 +49,10 @@ public class DCChannel {
 		dc.deleteChannelFromDC(this);
 		id = -1;
 	}
+
+	@Override
+	public String toString() {
+		return "DCChannel [id=" + id + ", users=" + users + ", host=" + host + ", dc=" + dc + "]";
+	}
+	
 }

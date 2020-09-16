@@ -7,3 +7,5 @@ author: EmnichtdaYT
 website: emnichtdayt.lima-city.de
 
 commands:
+    voicechatinfo:
+         description: info

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -254,5 +255,16 @@ public class VoiceChatMain extends JavaPlugin {
 
 	private void setVoiceChatRequired(boolean voiceChatRequired) {
 		VoiceChatMain.voiceChatRequired = voiceChatRequired;
+	}
+
+	public boolean onCommand(org.bukkit.command.CommandSender sender, Command cmd, String cmdlabel, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("voicechatinfo")) {
+
+			for (DCChannel channel : channels) {
+				sender.sendMessage(channel.toString());
+			}
+
+		}
+		return true;
 	}
 }

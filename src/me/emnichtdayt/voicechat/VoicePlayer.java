@@ -3,6 +3,12 @@ package me.emnichtdayt.voicechat;
 import org.bukkit.entity.Player;
 
 public class VoicePlayer {
+	@Override
+	public String toString() {
+		return "VoicePlayer [player=" + player + ", state=" + state + ", discordID=" + discordID + ", currentChannel="
+				+ currentChannel + ", isAutomaticControlled=" + isAutomaticControlled + "]";
+	}
+
 	private Player player;
 	private VoiceState state;
 	private long discordID;
