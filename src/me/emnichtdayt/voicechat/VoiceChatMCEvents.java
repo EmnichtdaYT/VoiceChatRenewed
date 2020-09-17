@@ -1,10 +1,12 @@
 package me.emnichtdayt.voicechat;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class VoiceChatMCEvents implements Listener {
+	@EventHandler
 	public void onPlayerJoinEvent(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 

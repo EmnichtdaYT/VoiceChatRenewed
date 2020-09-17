@@ -15,6 +15,9 @@ import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.server.Server;
 
 public class DiscordBot {
+	
+	private int nextChannel = 0;
+	
 	private String status = ".";
 	private ActivityType statusType = ActivityType.PLAYING;
 	
@@ -92,14 +95,43 @@ public class DiscordBot {
 		
 		for(Iterator<? extends ServerVoiceChannel> channels = api.getServerVoiceChannelsByName(name).iterator(); channels.hasNext();) {
 			ServerVoiceChannel channel = channels.next();
-			long id  = channel.getId();
-			for(int i = 0; VoiceChatMain.getChannels().size()<i ; i++) {
-				if(VoiceChatMain.getChannels().get(i).getId() == id) {
-					return VoiceChatMain.getChannels().get(i);
+			for(DCChannel channelVC : VoiceChatMain.getChannels()) {
+				if(channelVC.getId() == channel.getId()) {
+					return channelVC;
 				}
 			}
 		}
 		return null;
+	}
+	
+	protected DCChannel createNewUserVoiceChat() {
+		ServerVoiceChannelBuilder nChan = new ServerVoiceChannelBuilder(getServer());
+		nChan.setAuditLogReason("VoiceChat-customChannel");
+		nChan.setName("VoiceChat-"+nextChannel);
+		PermissionsBuilder nPerm = new PermissionsBuilder();
+		nPerm.setDenied(PermissionType.READ_MESSAGES);
+		nPerm.setDenied(PermissionType.CONNECT);
+		nChan.addPermissionOverwrite(getServer().getEveryoneRole(), nPerm.build());		
+		nChan.setCategory(category);
+		
+		CompletableFuture<ServerVoiceChannel> futureChann = nChan.create();
+		
+		nextChannel++;
+		
+		DCChannel dcchann = null;
+
+		try {
+			dcchann = new DCChannel(futureChann.get().getId());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		if(dcchann!=null) {
+			VoiceChatMain.getChannels().add(dcchann);
+		}
+		
+		return dcchann;
 	}
 	
 	/**
@@ -135,7 +167,11 @@ public class DiscordBot {
 	
 	protected void movePlayer(VoicePlayer target, DCChannel channel) {
 		try {
-			api.getUserById(target.getDiscordID()).get().move(api.getServerVoiceChannelById(channel.getId()).get());
+			if(channel != null) {
+				api.getUserById(target.getDiscordID()).get().move(api.getServerVoiceChannelById(channel.getId()).get());
+			}else {
+				api.getUserById(target.getDiscordID()).get().move(api.getServerVoiceChannelById(getWaitingChannelID()).get());
+			}
 		} catch (Exception e) {
 			try {
 				server.kickUserFromVoiceChannel(api.getUserById(target.getDiscordID()).get());
@@ -156,7 +192,8 @@ public class DiscordBot {
 	 */
 	protected void deleteChannelFromDC(DCChannel dcChannel) {
 		VoiceChatMain.getChannels().remove(dcChannel);
-		api.getServerVoiceChannelById(dcChannel.getId()).get().delete();
+		ServerVoiceChannel channel = api.getServerVoiceChannelById(dcChannel.getId()).get();
+		channel.delete();
 	}
 	
 	public boolean isInWaitingChannel(VoicePlayer player) {
