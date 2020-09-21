@@ -5,8 +5,13 @@ import org.bukkit.entity.Player;
 public class VoicePlayer {
 	@Override
 	public String toString() {
-		return "VoicePlayer [player=" + player + ", state=" + state + ", discordID=" + discordID + ", currentChannel="
-				+ currentChannel + ", isAutomaticControlled=" + isAutomaticControlled + "]";
+		return "VoicePlayer ["+ 
+	"state=" + 
+	state + 
+	", discordID=" +
+	discordID  
+	+ ", isAutomaticControlled=" + 
+	isAutomaticControlled + "]";
 	}
 
 	private Player player;
@@ -14,6 +19,7 @@ public class VoicePlayer {
 	private long discordID;
 	private DCChannel currentChannel = null;
 	private boolean isAutomaticControlled = true;
+	protected boolean isInVoiceRegion = false;
 
 	protected VoicePlayer(Player player, VoiceState state, long discordID) {
 		this.player = player;

@@ -1,6 +1,7 @@
 package me.emnichtdayt.voicechat;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 public class DCChannel {
 	private long id;
@@ -42,8 +43,12 @@ public class DCChannel {
 	}
 	
 	public void remove() {
+		try {
 		for(VoicePlayer target : getUsers()) {
 			target.moveTo(null);
+		}
+		}catch(ConcurrentModificationException exc) {
+			
 		}
 		host = null;
 		dc.deleteChannelFromDC(this);
@@ -52,7 +57,7 @@ public class DCChannel {
 
 	@Override
 	public String toString() {
-		return "DCChannel [id=" + id + ", users=" + users + ", host=" + host + ", dc=" + dc + "]";
+		return "DCChannel [id=" + id + ", host=" + host + ", dc=" + dc + "]";
 	}
 	
 }

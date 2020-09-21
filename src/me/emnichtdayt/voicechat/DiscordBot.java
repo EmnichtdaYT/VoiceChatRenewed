@@ -1,6 +1,7 @@
 package me.emnichtdayt.voicechat;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -192,8 +193,16 @@ public class DiscordBot {
 	 */
 	protected void deleteChannelFromDC(DCChannel dcChannel) {
 		VoiceChatMain.getChannels().remove(dcChannel);
-		ServerVoiceChannel channel = api.getServerVoiceChannelById(dcChannel.getId()).get();
-		channel.delete();
+		Optional<ServerVoiceChannel> channel = api.getServerVoiceChannelById(dcChannel.getId());
+		VoiceChatMain.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(VoiceChatMain.getInstance(), new Runnable() {
+
+			public void run() {
+				if(channel.isPresent()) {
+					channel.get().delete();
+				}
+			}
+		}, 20L);		
+		
 	}
 	
 	public boolean isInWaitingChannel(VoicePlayer player) {

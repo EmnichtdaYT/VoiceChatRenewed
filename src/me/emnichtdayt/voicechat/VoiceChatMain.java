@@ -15,6 +15,8 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class VoiceChatMain extends JavaPlugin {
 	private static List<PlayerVoiceStateChangeEvent> voiceStateChangeListeners = new ArrayList<>();
 	private static List<PlayerMoveChannelEvent> moveChannelListeners = new ArrayList<>();
@@ -42,6 +44,7 @@ public class VoiceChatMain extends JavaPlugin {
 	private static int rangeZ = 4;
 
 	private static boolean voiceChatRequired = true;
+	private static boolean registerInternalMode = true;
 
 	public void onLoad() {
 		// WORLDGUARD
@@ -93,7 +96,12 @@ public class VoiceChatMain extends JavaPlugin {
 		this.getConfig().addDefault("VoiceChat.range.z", 4);
 
 		this.getConfig().addDefault("VoiceChat.isRequired", true);
-
+		
+		this.getConfig().addDefault("VoiceChat.register.internalMode", true);
+		this.getConfig().addDefault("VoiceChat.message.register.internalMode", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Please register in oder to use VoiceChat. Send the following code per direct message to the VoiceChat bot: ");
+		this.getConfig().addDefault("VoiceChat.message.register.externalMode", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Please register! I dont have your Discord ID in my database.");
+		this.getConfig().addDefault("VoiceChat.message.notInWaitingChannel", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Please join the VoiceChat waiting channel!");
+		
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
 		this.saveDefaultConfig();
@@ -132,10 +140,14 @@ public class VoiceChatMain extends JavaPlugin {
 		disabledWorlds = (ArrayList<String>) this.getConfig().getList("VoiceChat.disabledWorlds");
 
 		setVoiceRangeX(this.getConfig().getInt("VoiceChat.range.x"));
-		setVoiceRangeY(this.getConfig().getInt("VoiceChat.range.x"));
-		setVoiceRangeZ(this.getConfig().getInt("VoiceChat.range.x"));
+		setVoiceRangeY(this.getConfig().getInt("VoiceChat.range.y"));
+		setVoiceRangeZ(this.getConfig().getInt("VoiceChat.range.z"));
 
 		setVoiceChatRequired(this.getConfig().getBoolean("VoiceChat.isRequired"));
+		
+		setRegisterInternalMode(this.getConfig().getBoolean("VoiceChat.register.internalMode"));
+		
+		VoiceChatMCEvents.rloadConfig(this.getConfig().getString("VoiceChat.message.register.internalMode"), this.getConfig().getString("VoiceChat.message.register.externalMode"), this.getConfig().getString("VoiceChat.message.notInWaitingChannel"));
 
 		// TODO sql reload
 	}
@@ -266,5 +278,13 @@ public class VoiceChatMain extends JavaPlugin {
 
 		}
 		return true;
+	}
+
+	public static boolean isRegisterInternalMode() {
+		return registerInternalMode;
+	}
+
+	private static void setRegisterInternalMode(boolean registerInternalMode) {
+		VoiceChatMain.registerInternalMode = registerInternalMode;
 	}
 }
