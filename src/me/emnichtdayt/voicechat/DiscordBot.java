@@ -27,9 +27,11 @@ public class DiscordBot {
 	
 	private String waitingChannelID;
 	
-	DiscordApi api = null;
+	private DiscordApi api = null;
 	
-	protected DiscordBot(String token, String server, String category, String waitingChannelID, ActivityType statusType, String status) {		
+	private DCmessageCreateEvent messageListener;
+	
+	protected DiscordBot(String token, String server, String category, String waitingChannelID, ActivityType statusType, String status, String voiceDisconnectMessage) {		
 		api = new DiscordApiBuilder().setToken(token).login().join();
 		
 		this.setStatus(status);
@@ -42,7 +44,14 @@ public class DiscordBot {
 			if(api.getChannelCategoryById(category).isPresent()) {
 				this.category = api.getChannelCategoryById(category).get();
 			}
-		}		
+		}
+		
+		messageListener = new DCmessageCreateEvent(voiceDisconnectMessage);
+		api.addListener(messageListener);
+	}
+	
+	protected void rloadVoiceDisconnectMessafe(String voiceDisconnectMessage) {
+		messageListener.rload(voiceDisconnectMessage);
 	}
 	
 	/**

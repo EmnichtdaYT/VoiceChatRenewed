@@ -63,4 +63,26 @@ public class VoiceChatSQL {
 			return -1;
 		}
 	}
+
+	public void setID(Player target, long id) {
+		try {
+			
+			String sqlQuery = "DO THE FKIN QUERY"; //TODO QUERY
+				
+			Class.forName("com.mysql.jdbc.Driver");
+			
+			connect = DriverManager.getConnection("jdbc:mysql://"+ ip +"/"+database+"?useSSL=false&user="+ user +"&password=" + pass);	
+			
+			statement = connect.createStatement();
+			statement.executeUpdate(sqlQuery);
+
+			statement.close();
+			connect.close();
+
+		
+		
+		}catch(Exception e) {
+			e.printStackTrace();
+		}		
+	}
 }

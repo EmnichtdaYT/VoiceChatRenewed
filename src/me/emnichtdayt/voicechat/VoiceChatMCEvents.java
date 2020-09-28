@@ -18,6 +18,7 @@ public class VoiceChatMCEvents implements Listener {
 		VoiceChatMCEvents.notInWaitingChannelMessage = notInWaitingChannelMessage;
 	}
 	
+	
 	@EventHandler
 	public void onPlayerJoinEvent(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
@@ -34,7 +35,7 @@ public class VoiceChatMCEvents implements Listener {
 			if (VoiceChatMain.getVoiceChatRequired()) {
 				VoiceChatMain.fireVoiceStateChange(playerVoice, null, VoiceState.UNLINKED, true);
 				if(VoiceChatMain.isRegisterInternalMode()) {
-					player.kickPlayer(voicechatInternalRegisterMessage); //TODO: CODE
+					player.kickPlayer(voicechatInternalRegisterMessage + " " + VoiceChatMain.getNewRegisterCodeFor(player));
 				}else {
 					player.kickPlayer(voicechatExternalRegisterMessage);
 				}
@@ -49,7 +50,7 @@ public class VoiceChatMCEvents implements Listener {
 			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, false);
 		} else if (VoiceChatMain.getVoiceChatRequired()) {
 			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, true);
-			player.kickPlayer(notInWaitingChannelMessage); // TODO nachricht
+			player.kickPlayer(notInWaitingChannelMessage);
 		} else {
 			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, false);
 		}

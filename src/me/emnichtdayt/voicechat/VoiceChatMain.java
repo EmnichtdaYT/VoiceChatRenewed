@@ -3,6 +3,7 @@ package me.emnichtdayt.voicechat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -42,6 +43,8 @@ public class VoiceChatMain extends JavaPlugin {
 	private static int rangeX = 4;
 	private static int rangeY = 4;
 	private static int rangeZ = 4;
+	
+	protected static HashMap<Integer, Player> registerKeys = new HashMap<Integer, Player>();
 
 	private static boolean voiceChatRequired = true;
 	private static boolean registerInternalMode = true;
@@ -101,6 +104,7 @@ public class VoiceChatMain extends JavaPlugin {
 		this.getConfig().addDefault("VoiceChat.message.register.internalMode", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Please register in oder to use VoiceChat. Send the following code per direct message to the VoiceChat bot: ");
 		this.getConfig().addDefault("VoiceChat.message.register.externalMode", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Please register! I dont have your Discord ID in my database.");
 		this.getConfig().addDefault("VoiceChat.message.notInWaitingChannel", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Please join the VoiceChat waiting channel!");
+		this.getConfig().addDefault("VoiceChat.message.leftDCChannel", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "You left the waiting channel!");
 		
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
@@ -124,7 +128,7 @@ public class VoiceChatMain extends JavaPlugin {
 		dcbot = new DiscordBot(this.getConfig().getString("DCbot.token"), this.getConfig().getString("DCbot.serverID"),
 				this.getConfig().getString("DCbot.categoryID"), this.getConfig().getString("DCbot.waitinChannelID"),
 				ActivityType.valueOf(this.getConfig().getString("DCbot.statusType")),
-				this.getConfig().getString("DCbot.status"));
+				this.getConfig().getString("DCbot.status"), this.getConfig().getString("VoiceChat.message.leftDCChannel"));
 
 		instance = this;
 		// INSTANCES END
@@ -148,6 +152,10 @@ public class VoiceChatMain extends JavaPlugin {
 		setRegisterInternalMode(this.getConfig().getBoolean("VoiceChat.register.internalMode"));
 		
 		VoiceChatMCEvents.rloadConfig(this.getConfig().getString("VoiceChat.message.register.internalMode"), this.getConfig().getString("VoiceChat.message.register.externalMode"), this.getConfig().getString("VoiceChat.message.notInWaitingChannel"));
+		
+		if(dcbot!=null) {
+			dcbot.rloadVoiceDisconnectMessafe(this.getConfig().getString("VoiceChat.message.leftDCChannel"));
+		}
 
 		// TODO sql reload
 	}
@@ -286,5 +294,15 @@ public class VoiceChatMain extends JavaPlugin {
 
 	private static void setRegisterInternalMode(boolean registerInternalMode) {
 		VoiceChatMain.registerInternalMode = registerInternalMode;
+	}
+
+	public static int getNewRegisterCodeFor(Player player) {
+		Random random = new Random();
+		int code = random.nextInt(10000);
+		while(String.valueOf(code).length()!=4) {
+			code = random.nextInt(10000);
+		}
+		registerKeys.put(code, player);
+		return code;
 	}
 }
