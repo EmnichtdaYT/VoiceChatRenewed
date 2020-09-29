@@ -22,8 +22,8 @@ public class VoiceChatMCEvents implements Listener {
 	@EventHandler
 	public void onPlayerJoinEvent(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-
-		long dcId = VoiceChatMain.getSql().getID(player);
+		long dcId = -1;
+		dcId = VoiceChatMain.getSql().getID(player);
 
 		VoicePlayer playerVoice = null;
 
@@ -35,7 +35,7 @@ public class VoiceChatMCEvents implements Listener {
 			if (VoiceChatMain.getVoiceChatRequired()) {
 				VoiceChatMain.fireVoiceStateChange(playerVoice, null, VoiceState.UNLINKED, true);
 				if(VoiceChatMain.isRegisterInternalMode()) {
-					player.kickPlayer(voicechatInternalRegisterMessage + " " + VoiceChatMain.getNewRegisterCodeFor(player));
+					player.kickPlayer(voicechatInternalRegisterMessage + VoiceChatMain.getNewRegisterCodeFor(player));
 				}else {
 					player.kickPlayer(voicechatExternalRegisterMessage);
 				}
@@ -54,6 +54,12 @@ public class VoiceChatMCEvents implements Listener {
 		} else {
 			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, false);
 		}
+		
+		if (!VoiceChatMain.getSql().isSet(player)) {
+			VoiceChatMain.getSql().createUser(player);
+		}
+		
+		
 	}
 
 	@EventHandler

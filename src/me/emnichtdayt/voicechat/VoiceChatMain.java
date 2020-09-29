@@ -57,7 +57,7 @@ public class VoiceChatMain extends JavaPlugin {
 			registry.register(flag);
 			VoiceChatMain.isOwnVoiceRegion = flag;
 		} catch (FlagConflictException e) {
-
+			
 		}
 		try {
 			StateFlag flag = new StateFlag("isDisabledVoiceChatRegion", false);
@@ -279,9 +279,21 @@ public class VoiceChatMain extends JavaPlugin {
 
 	public boolean onCommand(org.bukkit.command.CommandSender sender, Command cmd, String cmdlabel, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("voicechatinfo")) {
-
-			for (DCChannel channel : channels) {
-				sender.sendMessage(channel.toString());
+			if(args.length==1) {
+				Player target = this.getServer().getPlayer(args[0]);
+				if(target!=null&&target.isOnline()) {
+					if(getPlayers().containsKey(target)) {
+						sender.sendMessage(getPlayers().get(target).toString());
+					}else {
+						sender.sendMessage("[VoiceChat] That player is not in the System.");
+					}
+				}else {
+					sender.sendMessage("[VoiceChat] That player is not online!");
+				}
+			}else {
+				for (DCChannel channel : channels) {
+					sender.sendMessage(channel.toString());
+				}
 			}
 
 		}
