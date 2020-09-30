@@ -12,3 +12,5 @@ loadbefore: [WorldGuard]
 commands:
     voicechatinfo:
          description: info
+    voicechat:
+         description: VoiceChat main command

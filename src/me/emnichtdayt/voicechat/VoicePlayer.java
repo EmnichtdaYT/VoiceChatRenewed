@@ -17,7 +17,7 @@ public class VoicePlayer {
 	private Player player;
 	private VoiceState state;
 	private long discordID;
-	private DCChannel currentChannel = null;
+	protected DCChannel currentChannel = null;
 	private boolean isAutomaticControlled = true;
 	protected boolean isInVoiceRegion = false;
 
@@ -91,6 +91,7 @@ public class VoicePlayer {
 	 * to disable automaticControlled first, otherwise VoiceChat might move the
 	 * Player back to the Channel where it thinks it belongs to
 	 */
+	@SuppressWarnings("deprecation")
 	public void moveTo(DCChannel channel) {
 		if (getCurrentChannel() != null && getCurrentChannel().getHost() != null
 				&& getCurrentChannel().getHost().equals(this)) {
@@ -112,7 +113,9 @@ public class VoicePlayer {
 
 		VoiceChatMain.getDcbot().movePlayer(this, channel);
 
-		VoiceChatMain.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(VoiceChatMain.getInstance(),
+		
+		
+		VoiceChatMain.getInstance().getServer().getScheduler().scheduleAsyncDelayedTask(VoiceChatMain.getInstance(),
 				new Runnable() {
 					public void run() {
 						if (oldChannel != null && oldChannel.getUsers().isEmpty()) {

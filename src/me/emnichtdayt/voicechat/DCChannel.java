@@ -44,9 +44,9 @@ public class DCChannel {
 	
 	public void remove() {
 		try {
-		for(VoicePlayer target : getUsers()) {
-			target.moveTo(null);
-		}
+			while(!getUsers().isEmpty()){
+				getUsers().get(0).moveTo(null);
+			}
 		}catch(ConcurrentModificationException exc) {
 			
 		}

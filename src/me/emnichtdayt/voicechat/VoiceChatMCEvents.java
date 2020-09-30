@@ -44,6 +44,8 @@ public class VoiceChatMCEvents implements Listener {
 				VoiceChatMain.getPlayers().put(player, playerVoice);
 			}
 		}
+		
+		playerVoice.setAutomaticControlled(true);
 
 		if (VoiceChatMain.getDcbot().isInWaitingChannel(playerVoice)) {
 			playerVoice.setState(VoiceState.CONNECTED);

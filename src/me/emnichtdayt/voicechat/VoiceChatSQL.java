@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.UUID;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class VoiceChatSQL {
@@ -64,6 +66,34 @@ public class VoiceChatSQL {
 			return -1;
 		}
 	}
+	
+	public boolean isSet(OfflinePlayer target) {
+		try {
+			Connection connect = null;
+			Statement statement = null;
+			ResultSet result = null;
+
+			String sqlQuery = "SELECT * FROM " + table + " WHERE " + uuidColumn + " = '" + target.getUniqueId().toString() + "'";
+
+			Class.forName("com.mysql.jdbc.Driver");
+
+			connect = DriverManager.getConnection(
+					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+
+			statement = connect.createStatement();
+			result = statement.executeQuery(sqlQuery);
+			
+			result.next();
+			
+			result.getString(1);			
+			
+			statement.close();
+			connect.close();
+			return true;
+		} catch (Exception exc) {
+			return false;
+		}
+	}
 
 	public boolean isSet(Player target) {
 		try {
@@ -83,17 +113,11 @@ public class VoiceChatSQL {
 			
 			result.next();
 			
-			boolean ret;
-			
-			if(result != null && result.getString(1) != null) {
-				ret = true;
-			}else {
-				ret = false;
-			}
+			result.getString(1);			
 			
 			statement.close();
 			connect.close();
-			return ret;
+			return true;
 		} catch (Exception exc) {
 			return false;
 		}
@@ -122,6 +146,30 @@ public class VoiceChatSQL {
 		}
 	}
 
+	public void setID(OfflinePlayer target, long id) {
+		try {
+
+			Connection connect = null;
+			Statement statement = null;
+
+			String sqlQuery = "UPDATE " + table + " SET " + dcIdColumn + " = '" + id + "' WHERE " + uuidColumn + " = '"+ target.getUniqueId().toString() + "'";
+
+			Class.forName("com.mysql.jdbc.Driver");
+
+			connect = DriverManager.getConnection(
+					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+
+			statement = connect.createStatement();
+			statement.executeUpdate(sqlQuery);
+
+			statement.close();
+			connect.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void setID(Player target, long id) {
 		try {
 
@@ -143,6 +191,39 @@ public class VoiceChatSQL {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public UUID getUUIDbyDCID(long dcID) {
+		try {
+			Connection connect = null;
+			Statement statement = null;
+			ResultSet resultSet = null;
+
+			String sqlQuery = "SELECT " + uuidColumn + " FROM " + table + " WHERE " + dcIdColumn + " = '"
+					+ dcID + "'";
+
+			Class.forName("com.mysql.jdbc.Driver");
+
+			connect = DriverManager.getConnection(
+					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+
+			statement = connect.createStatement();
+
+			resultSet = statement.executeQuery(sqlQuery);
+
+			resultSet.next();
+
+			UUID ret = UUID.fromString(resultSet.getString(1));
+
+			resultSet.close();
+			statement.close();
+			connect.close();
+
+			return ret;
+
+		}catch(Exception e) {
+			return null;
 		}
 	}
 }

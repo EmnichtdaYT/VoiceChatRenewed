@@ -19,6 +19,11 @@ public class VoiceChatLogic {
 	private static ArrayList<String> disabledWorlds = null;
 
 	protected static void doLogic(VoiceChatMain pl) {
+		
+		while(!VoiceChatMain.kickList.isEmpty()) {
+			VoiceChatMain.kickList.get(0).kickPlayer(DCServerVoiceChannelMemberLeaveListener.voiceDisconnectMessage);
+			VoiceChatMain.kickList.remove(0);
+		}
 
 		disabledWorlds = VoiceChatMain.getDisabledWorlds();
 
@@ -93,9 +98,6 @@ public class VoiceChatLogic {
 											}
 										} else { // Host hat keinen um sich kanal löschen
 											if (targetVoice.getCurrentChannel() != null) {
-												for (VoicePlayer moveme : targetVoice.getCurrentChannel().getUsers()) {
-													moveme.moveTo(null);
-												}
 												oldPlayerChannel.remove();
 											}											
 										}
