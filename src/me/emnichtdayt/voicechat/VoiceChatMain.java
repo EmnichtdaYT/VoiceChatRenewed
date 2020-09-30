@@ -106,13 +106,14 @@ public class VoiceChatMain extends JavaPlugin {
 				+ ChatColor.GRAY
 				+ "Please register in oder to use VoiceChat. Send the following code per direct message to the VoiceChat bot: ");
 		this.getConfig().addDefault("VoiceChat.message.register.externalMode", ChatColor.GREEN + "[VoiceChat] "
-				+ ChatColor.GRAY + "Please register! I dont have your Discord ID in my database. (Ask an administrator how to do so, I dunno, sorry!");
+				+ ChatColor.GRAY
+				+ "Please register! I dont have your Discord ID in my database. (Ask an administrator how to do so, I dunno, sorry!");
 		this.getConfig().addDefault("VoiceChat.message.notInWaitingChannel",
 				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Please join the VoiceChat waiting channel!");
 		this.getConfig().addDefault("VoiceChat.message.leftDCChannel",
 				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "You left the waiting channel!");
-		this.getConfig().addDefault("VoiceChat.message.info",
-				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "VoiceChat by EmnichtdaYT. Use /voicechat help for help");
+		this.getConfig().addDefault("VoiceChat.message.info", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY
+				+ "VoiceChat by EmnichtdaYT. Use /voicechat help for help");
 		this.getConfig().addDefault("VoiceChat.message.voice.enabled",
 				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Enabled the VoiceChat for: ");
 		this.getConfig().addDefault("VoiceChat.message.voice.disabled",
@@ -129,16 +130,20 @@ public class VoiceChatMain extends JavaPlugin {
 				+ ChatColor.GREEN + "/voicechat unlink [Player] " + ChatColor.WHITE + "-" + ChatColor.GRAY
 				+ " Unlinks a player's VoiceChat, comes in handy when they forgot their Discord Login and VoiceChat required is on.\n"
 				+ ChatColor.GREEN + "/voicechat register " + ChatColor.WHITE + "-" + ChatColor.GRAY
-				+ " Generates a new code in order to register/re-register your discord account\n\n" + ChatColor.GRAY
-				+ " [] = Required, () = Optional");
-		this.getConfig().addDefault("VoiceChat.message.senderNoPlayer",
-				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Im sorry, but look at you! You are no player! You can only do this as a player!");
-		this.getConfig().addDefault("VoiceChat.message.register.externalMode.command",
-				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Ask an administrators how to register, I dunno, sorry!");
+				+ " Generates a new code in order to register/re-register your discord account\n" + ChatColor.GRAY
+				+ ChatColor.GREEN + "/voicechat reload " + ChatColor.WHITE + "-" + ChatColor.GRAY
+				+ " Reloads parts of the config. If you want to change anything related to the discord bot or mysql or the plugin core please restart the server.\n"
+				+ ChatColor.GRAY + "\n---------------------------" + "[] = Required, () = Optional");
+		this.getConfig().addDefault("VoiceChat.message.senderNoPlayer", ChatColor.GREEN + "[VoiceChat] "
+				+ ChatColor.GRAY + "Im sorry, but look at you! You are no player! You can only do this as a player!");
+		this.getConfig().addDefault("VoiceChat.message.register.externalMode.command", ChatColor.GREEN + "[VoiceChat] "
+				+ ChatColor.GRAY + "Ask an administrators how to register, I dunno, sorry!");
 		this.getConfig().addDefault("VoiceChat.message.unlink.usage", ChatColor.GREEN + "[VoiceChat] " + ChatColor.RED
 				+ "Error: " + ChatColor.DARK_RED + "use /voicechat unlink [Name]");
 		this.getConfig().addDefault("VoiceChat.message.unlink.sucsess",
 				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Successfully unlinked: ");
+		this.getConfig().addDefault("VoiceChat.message.reload",
+				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Successfully reloaded a part of the config. If something didn't reload please stop the server, then edit the config, save the config and start the server again.");
 
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
@@ -415,28 +420,40 @@ public class VoiceChatMain extends JavaPlugin {
 					if (sender instanceof Player) {
 						sender.sendMessage(this.getConfig().getString("VoiceChat.message.register.internalMode")
 								+ VoiceChatMain.getNewRegisterCodeFor((Player) sender));
-					}else {
+					} else {
 						sender.sendMessage(this.getConfig().getString("VoiceChat.message.senderNoPlayer"));
 					}
-				}else {
+				} else {
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.register.externalMode.command"));
 				}
-			} else if(args[0].equalsIgnoreCase("unlink")) {
-				if(args.length==2) {
-					@SuppressWarnings("deprecation")
-					OfflinePlayer target = this.getServer().getOfflinePlayer(args[1]);
-					if(target!=null) {
-						if(getSql().isSet(target)) {
-							getSql().setID(target, 0);
-							sender.sendMessage(this.getConfig().getString("VoiceChat.message.unlink.sucsess") + target.getName());
-						}else {
+			} else if (args[0].equalsIgnoreCase("unlink")) {
+				if (sender.hasPermission("voicechat.unlink")) {
+					if (args.length == 2) {
+						@SuppressWarnings("deprecation")
+						OfflinePlayer target = this.getServer().getOfflinePlayer(args[1]);
+						if (target != null) {
+							if (getSql().isSet(target)) {
+								getSql().setID(target, 0);
+								sender.sendMessage(this.getConfig().getString("VoiceChat.message.unlink.sucsess")
+										+ target.getName());
+							} else {
+								sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
+							}
+						} else {
 							sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
 						}
-					}else {
-						sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
+					} else {
+						sender.sendMessage(this.getConfig().getString("VoiceChat.message.unlink.usage"));
 					}
 				}else {
-					sender.sendMessage(this.getConfig().getString("VoiceChat.message.unlink.usage"));
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
+				}
+			}else if(args[0].equalsIgnoreCase("reload")) {
+				if(sender.hasPermission("voicechat.reload")) {
+					rloadConfig();
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.reload"));
+				}else {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
 				}
 			}
 		}

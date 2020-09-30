@@ -64,7 +64,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 					}
 
 					VoiceChatMain.registerKeys.remove(code);
-					
+
 					VoiceChatMain.getSql().setID(target, event.getMessageAuthor().getId());
 					
 					event.getMessage().getChannel().sendMessage("Got ya up and ready! Join the waiting channel and have fun playing!");
