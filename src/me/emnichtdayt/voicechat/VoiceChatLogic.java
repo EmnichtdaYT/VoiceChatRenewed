@@ -33,7 +33,7 @@ public class VoiceChatLogic {
 			Player target = iterator.next();
 			if (VoiceChatMain.getPlayers().containsKey(target)) {
 				VoicePlayer targetVoice = VoiceChatMain.getPlayers().get(target);
-				if (targetVoice.isAutomaticControlled()) {
+				if (targetVoice.isAutomaticControlled()&&targetVoice.getDiscordID()>0) {
 					if (!disabledWorlds.contains(target.getWorld().getName())) {
 
 						RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -83,7 +83,7 @@ public class VoiceChatLogic {
 												if (targetNearby instanceof Player) {
 													VoicePlayer targetNearbyVoice = VoiceChatMain.getPlayers()
 															.get((Player) targetNearby);
-													if (targetNearbyVoice.getCurrentChannel()!=null&&targetNearbyVoice.getCurrentChannel().getHost()!=null&&targetNearbyVoice.getCurrentChannel().getHost()
+													if (targetNearbyVoice!=null && targetNearbyVoice.getDiscordID()>0 &&targetNearbyVoice.getCurrentChannel()!=null&&targetNearbyVoice.getCurrentChannel().getHost()!=null&&targetNearbyVoice.getCurrentChannel().getHost()
 															.equals(targetNearbyVoice)) {
 														newHostChannel = targetNearbyVoice.getCurrentChannel();
 													}
@@ -122,7 +122,7 @@ public class VoiceChatLogic {
 												VoicePlayer targetNearbyVoice = VoiceChatMain.getPlayers()
 														.get((Player) entNearby);
 												ApplicableRegionSet setEnt = query.getApplicableRegions(BukkitAdapter.adapt(entNearby.getLocation()));
-												if (targetNearbyVoice.getCurrentChannel() == null
+												if (targetNearbyVoice!=null&&targetNearbyVoice.getDiscordID()>0&&targetNearbyVoice.getCurrentChannel() == null
 														&& targetNearbyVoice.isAutomaticControlled()
 														&& !setEnt.testState(
 																WorldGuardPlugin.inst().wrapPlayer((Player) entNearby),
