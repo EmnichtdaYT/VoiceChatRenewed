@@ -84,7 +84,7 @@ public class VoiceChatLogic {
 													VoicePlayer targetNearbyVoice = VoiceChatMain.getPlayers()
 															.get((Player) targetNearby);
 													if (targetNearbyVoice!=null && targetNearbyVoice.getDiscordID()>0 &&targetNearbyVoice.getCurrentChannel()!=null&&targetNearbyVoice.getCurrentChannel().getHost()!=null&&targetNearbyVoice.getCurrentChannel().getHost()
-															.equals(targetNearbyVoice)) {
+															.equals(targetNearbyVoice)&&targetNearbyVoice.getCurrentChannel().getUsers().size()<=targetVoice.getCurrentChannel().getUsers().size()) {
 														newHostChannel = targetNearbyVoice.getCurrentChannel();
 													}
 												}
