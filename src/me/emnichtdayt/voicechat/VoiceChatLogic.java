@@ -19,8 +19,8 @@ public class VoiceChatLogic {
 	private static ArrayList<String> disabledWorlds = null;
 
 	protected static void doLogic(VoiceChatMain pl) {
-		
-		while(!VoiceChatMain.kickList.isEmpty()) {
+
+		while (!VoiceChatMain.kickList.isEmpty()) {
 			VoiceChatMain.kickList.get(0).kickPlayer(DCServerVoiceChannelMemberLeaveListener.voiceDisconnectMessage);
 			VoiceChatMain.kickList.remove(0);
 		}
@@ -33,7 +33,7 @@ public class VoiceChatLogic {
 			Player target = iterator.next();
 			if (VoiceChatMain.getPlayers().containsKey(target)) {
 				VoicePlayer targetVoice = VoiceChatMain.getPlayers().get(target);
-				if (targetVoice.isAutomaticControlled()&&targetVoice.getDiscordID()>0) {
+				if (targetVoice.isAutomaticControlled() && targetVoice.getDiscordID() > 0) {
 					if (!disabledWorlds.contains(target.getWorld().getName())) {
 
 						RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -64,10 +64,10 @@ public class VoiceChatLogic {
 									}
 									targetVoice.isInVoiceRegion = true;
 								}
-							} else if(targetVoice.isInVoiceRegion){
+							} else if (targetVoice.isInVoiceRegion) {
 								targetVoice.isInVoiceRegion = false;
 								targetVoice.moveTo(null);
-							}else {
+							} else {
 								DCChannel oldPlayerChannel = targetVoice.getCurrentChannel();
 
 								if (oldPlayerChannel != null) { // Player is in a channel
@@ -83,8 +83,15 @@ public class VoiceChatLogic {
 												if (targetNearby instanceof Player) {
 													VoicePlayer targetNearbyVoice = VoiceChatMain.getPlayers()
 															.get((Player) targetNearby);
-													if (targetNearbyVoice!=null && targetNearbyVoice.getDiscordID()>0 &&targetNearbyVoice.getCurrentChannel()!=null&&targetNearbyVoice.getCurrentChannel().getHost()!=null&&targetNearbyVoice.getCurrentChannel().getHost()
-															.equals(targetNearbyVoice)&&targetNearbyVoice.getCurrentChannel().getUsers().size()<=targetVoice.getCurrentChannel().getUsers().size()) {
+													if (targetNearbyVoice != null
+															&& targetNearbyVoice.getDiscordID() > 0
+															&& targetNearbyVoice.getCurrentChannel() != null
+															&& targetNearbyVoice.getCurrentChannel().getHost() != null
+															&& targetNearbyVoice.getCurrentChannel().getHost()
+																	.equals(targetNearbyVoice)
+															&& targetNearbyVoice.getCurrentChannel().getUsers()
+																	.size() <= targetVoice.getCurrentChannel()
+																			.getUsers().size()) {
 														newHostChannel = targetNearbyVoice.getCurrentChannel();
 													}
 												}
@@ -99,7 +106,7 @@ public class VoiceChatLogic {
 										} else { // Host hat keinen um sich kanal löschen
 											if (targetVoice.getCurrentChannel() != null) {
 												oldPlayerChannel.remove();
-											}											
+											}
 										}
 									} else { // Player is no Channel Host but in Channel
 										if (targetVoice.getCurrentChannel().getHost() != null) {
@@ -107,9 +114,25 @@ public class VoiceChatLogic {
 											List<Entity> nearby = target.getNearbyEntities(
 													VoiceChatMain.getVoiceRangeX(), VoiceChatMain.getVoiceRangeY(),
 													VoiceChatMain.getVoiceRangeZ());
-											if(!nearby.contains(targetVoice.getCurrentChannel().getHost().getPlayer())) {
+											
+											boolean foundPlayer = false;
+											
+											for(Entity targetNearby : nearby) {
+												if(targetNearby instanceof Player) {
+													for(VoicePlayer targetInChannelVoice : targetVoice.getCurrentChannel().getUsers()) {
+														Player targetInChannel = targetInChannelVoice.getPlayer();
+														if(targetNearby.equals(targetInChannel)) {
+															foundPlayer = true;
+															break;
+														}
+													}
+												}
+											}
+											
+											if(!foundPlayer) {
 												targetVoice.moveTo(null);
 											}
+											
 										}
 									}
 								} else { // Player not in channel
@@ -121,19 +144,25 @@ public class VoiceChatLogic {
 											if (entNearby instanceof Player) {
 												VoicePlayer targetNearbyVoice = VoiceChatMain.getPlayers()
 														.get((Player) entNearby);
-												ApplicableRegionSet setEnt = query.getApplicableRegions(BukkitAdapter.adapt(entNearby.getLocation()));
-												if (targetNearbyVoice!=null&&targetNearbyVoice.getDiscordID()>0&&targetNearbyVoice.getCurrentChannel() == null
+												ApplicableRegionSet setEnt = query.getApplicableRegions(
+														BukkitAdapter.adapt(entNearby.getLocation()));
+												if (targetNearbyVoice != null && targetNearbyVoice.getDiscordID() > 0
 														&& targetNearbyVoice.isAutomaticControlled()
 														&& !setEnt.testState(
 																WorldGuardPlugin.inst().wrapPlayer((Player) entNearby),
 																VoiceChatMain.isDisabledRegion)) {
-													if (newUserChannel == null) {
-														newUserChannel = dc.createNewUserVoiceChat();
-														targetVoice.moveTo(newUserChannel);
-														newUserChannel.setHost(targetVoice);
-														targetNearbyVoice.moveTo(newUserChannel);
-													} else {
-														targetNearbyVoice.moveTo(newUserChannel);
+													if (targetNearbyVoice.getCurrentChannel() == null) {
+														if (newUserChannel == null) {
+															newUserChannel = dc.createNewUserVoiceChat();
+															targetVoice.moveTo(newUserChannel);
+															newUserChannel.setHost(targetVoice);
+															targetNearbyVoice.moveTo(newUserChannel);
+														} else {
+															targetNearbyVoice.moveTo(newUserChannel);
+														}
+													}else if(newUserChannel==null&&targetNearbyVoice.getCurrentChannel()!=null&&targetNearbyVoice.getCurrentChannel().getHost()!=null) {
+														targetVoice.moveTo(targetNearbyVoice.getCurrentChannel());
+														break;
 													}
 												}
 											}
@@ -141,10 +170,10 @@ public class VoiceChatLogic {
 									}
 								}
 							}
-						} else if(targetVoice.getCurrentChannel() != null){ // Player is in a disabled region
+						} else if (targetVoice.getCurrentChannel() != null) { // Player is in a disabled region
 							targetVoice.moveTo(null);
 						}
-					} else if(targetVoice.getCurrentChannel() != null){ // Player is in disabled world
+					} else if (targetVoice.getCurrentChannel() != null) { // Player is in disabled world
 						targetVoice.moveTo(null);
 					}
 				}
