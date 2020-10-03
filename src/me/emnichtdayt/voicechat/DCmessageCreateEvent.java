@@ -1,14 +1,30 @@
 package me.emnichtdayt.voicechat;
 
+import java.awt.Color;
+
 import org.bukkit.entity.Player;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 public class DCmessageCreateEvent implements MessageCreateListener {
-	private String voiceDisconnectMessage;
+	private String voiceDisconnectMessage = "%VoiceChatDisconnected%";
+	
+	private String embedTitle = "%VoiceChatName%";
+	
+	private String connectedMessage = "%ConnectedMessage%";	
+	private String codeInvalid = "%CodeInvalid%";
+	private String noCode = "%NoCode%";
+	private String color = "GREEN";
 
-	protected DCmessageCreateEvent(String voiceDisconnectMessage) {
+	protected DCmessageCreateEvent(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
 		this.voiceDisconnectMessage = voiceDisconnectMessage;
+		
+		this.embedTitle = embedTitle;
+		this.connectedMessage = connectedMessage;
+		this.codeInvalid = codeInvalid;
+		this.noCode = noCode;
+		this.color = color;
 	}
 
 	@Override
@@ -62,18 +78,36 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 							}
 						}
 					}
+					
+					EmbedBuilder conBedBuild = new EmbedBuilder();
+					
+					conBedBuild.setColor(Color.decode(color));
+					
+					conBedBuild.addField(embedTitle, connectedMessage);
 
 					VoiceChatMain.registerKeys.remove(code);
 
 					VoiceChatMain.getSql().setID(target, event.getMessageAuthor().getId());
 
 					event.getMessage().getChannel()
-							.sendMessage("Got ya up and ready! Join the waiting channel and have fun playing!");
+							.sendMessage(conBedBuild);
 
 				} else {
-					event.getMessage().getChannel().sendMessage("That code is invalid.");
+					EmbedBuilder invalidBedBuild = new EmbedBuilder();
+					
+					invalidBedBuild.setColor(Color.decode(color));
+					
+					invalidBedBuild.addField(embedTitle, codeInvalid);
+					
+					event.getMessage().getChannel().sendMessage("conBedBuild");
 				}
 			} else {
+				EmbedBuilder noCodeBedBuild = new EmbedBuilder();
+				
+				noCodeBedBuild.setColor(Color.decode(color));
+				
+				noCodeBedBuild.addField(embedTitle, noCode );
+				
 				event.getMessage().getChannel()
 						.sendMessage("Nope, sorry I only accept a 4 digit code for registration."); // TODO da überall
 																									// config und emebds
@@ -83,8 +117,14 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 		}
 	}
 
-	protected void rload(String voiceDisconnectMessage) {
+	protected void rload(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
 		this.voiceDisconnectMessage = voiceDisconnectMessage;
+		
+		this.embedTitle = embedTitle;
+		this.connectedMessage = connectedMessage;
+		this.codeInvalid = codeInvalid;
+		this.noCode = noCode;
+		this.color = color;
 	}
 
 }

@@ -144,7 +144,13 @@ public class VoiceChatMain extends JavaPlugin {
 				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Successfully unlinked: ");
 		this.getConfig().addDefault("VoiceChat.message.reload", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY
 				+ "Successfully reloaded a part of the config. If something didn't reload please stop the server, then edit the config, save the config and start the server again.");
-
+		
+		this.getConfig().addDefault("VoiceChat.message.embed.title", "VoiceChat");
+		this.getConfig().addDefault("VoiceChat.message.embed.connectedMessage", "Got ya up and ready! Join the waiting channel and have fun playing.");
+		this.getConfig().addDefault("VoiceChat.message.embed.codeInvalid", "That code is invalid.");
+		this.getConfig().addDefault("VoiceChat.message.embed.noCode", "I only accept a 4 digit code for registration.");
+		this.getConfig().addDefault("VoiceChat.message.embed.color", "GREEN");
+		
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
 		this.saveDefaultConfig();
@@ -168,7 +174,12 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("DCbot.categoryID"), this.getConfig().getString("DCbot.waitinChannelID"),
 				ActivityType.valueOf(this.getConfig().getString("DCbot.statusType")),
 				this.getConfig().getString("DCbot.status"),
-				this.getConfig().getString("VoiceChat.message.leftDCChannel"));
+				this.getConfig().getString("VoiceChat.message.leftDCChannel"),
+				this.getConfig().getString("VoiceChat.message.embed.title"),
+				this.getConfig().getString("VoiceChat.message.embed.connectedMessage"),
+				this.getConfig().getString("VoiceChat.message.embed.codeInvalid"),
+				this.getConfig().getString("VoiceChat.message.embed.noCode"),
+				this.getConfig().getString("VoiceChat.message.embed.color"));
 
 		instance = this;
 		// INSTANCES END
@@ -206,7 +217,11 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("VoiceChat.message.notInWaitingChannel"));
 
 		if (dcbot != null) {
-			dcbot.rloadVoiceDisconnectMessafe(this.getConfig().getString("VoiceChat.message.leftDCChannel"));
+			dcbot.rloadVoiceDisconnectMessafe(this.getConfig().getString("VoiceChat.message.leftDCChannel"), this.getConfig().getString("VoiceChat.message.embed.title"),
+					this.getConfig().getString("VoiceChat.message.embed.connectedMessage"),
+					this.getConfig().getString("VoiceChat.message.embed.codeInvalid"),
+					this.getConfig().getString("VoiceChat.message.embed.noCode"),
+					this.getConfig().getString("VoiceChat.message.embed.color"));
 		}
 	}
 

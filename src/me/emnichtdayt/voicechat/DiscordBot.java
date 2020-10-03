@@ -33,7 +33,7 @@ public class DiscordBot {
 	private DCServerVoiceChannelMemberLeaveListener channelLeaveListener;
 
 	protected DiscordBot(String token, String server, String category, String waitingChannelID, ActivityType statusType,
-			String status, String voiceDisconnectMessage) {
+			String status, String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
 		api = new DiscordApiBuilder().setToken(token).login().join();
 
 		this.setStatus(status);
@@ -48,14 +48,14 @@ public class DiscordBot {
 			}
 		}
 
-		messageListener = new DCmessageCreateEvent(voiceDisconnectMessage);
+		messageListener = new DCmessageCreateEvent(voiceDisconnectMessage, embedTitle, connectedMessage, codeInvalid, noCode, color);
 		channelLeaveListener = new DCServerVoiceChannelMemberLeaveListener(voiceDisconnectMessage);
 		api.addListener(messageListener);
 		api.addListener(channelLeaveListener);
 	}
 
-	protected void rloadVoiceDisconnectMessafe(String voiceDisconnectMessage) {
-		messageListener.rload(voiceDisconnectMessage);
+	protected void rloadVoiceDisconnectMessafe(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
+		messageListener.rload(voiceDisconnectMessage, embedTitle, connectedMessage, codeInvalid, noCode, color);
 		channelLeaveListener.rload(voiceDisconnectMessage);
 	}
 
