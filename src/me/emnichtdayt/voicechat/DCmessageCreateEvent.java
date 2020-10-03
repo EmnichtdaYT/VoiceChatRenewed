@@ -99,7 +99,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 					
 					invalidBedBuild.addField(embedTitle, codeInvalid);
 					
-					event.getMessage().getChannel().sendMessage("conBedBuild");
+					event.getMessage().getChannel().sendMessage(invalidBedBuild);
 				}
 			} else {
 				EmbedBuilder noCodeBedBuild = new EmbedBuilder();
@@ -109,9 +109,8 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 				noCodeBedBuild.addField(embedTitle, noCode );
 				
 				event.getMessage().getChannel()
-						.sendMessage("Nope, sorry I only accept a 4 digit code for registration."); // TODO da überall
-																									// config und emebds
-																									// rein machen
+						.sendMessage(noCodeBedBuild);
+																									
 			}
 
 		}
