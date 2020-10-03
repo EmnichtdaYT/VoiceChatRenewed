@@ -62,6 +62,8 @@ public class DiscordBot {
 	/**
 	 * getCategory() returns the ChannelCategoty where all the channels will be
 	 * created
+	 * 
+	 * @return ChannelCategory category
 	 */
 	public ChannelCategory getCategory() {
 		return category;
@@ -69,6 +71,8 @@ public class DiscordBot {
 
 	/**
 	 * getServer() returns the Discord server the bot is set to operate at
+	 * 
+	 * @return Server server
 	 */
 	public Server getServer() {
 		return server;
@@ -76,6 +80,8 @@ public class DiscordBot {
 
 	/**
 	 * getStatus() returns the status displayed in Discord for the Discord Bot
+	 * 
+	 * @return String status
 	 */
 	public String getStatus() {
 		return status;
@@ -84,6 +90,8 @@ public class DiscordBot {
 	/**
 	 * setStatus(String status) sets the status displayed in Discord for the Discord
 	 * Bot
+	 * 
+	 * @param String status
 	 */
 	public void setStatus(String status) {
 		this.status = status;
@@ -93,6 +101,8 @@ public class DiscordBot {
 	/**
 	 * getStatusType() returns the ActivityType the Discord bot is currently set to.
 	 * For example: Playing, Watching, Streaming
+	 * 
+	 * @return ActivityType statusType
 	 */
 	public ActivityType getStatusType() {
 		return statusType;
@@ -101,6 +111,8 @@ public class DiscordBot {
 	/**
 	 * setStatusType(ActivityType statusType) sets the Activity for the Discord bot.
 	 * For example: Playing, Watching, Streaming
+	 * 
+	 * @param ActivityType statusType
 	 */
 	public void setStatusType(ActivityType statusType) {
 		this.statusType = statusType;
@@ -110,6 +122,9 @@ public class DiscordBot {
 	/**
 	 * getChannelByName(String name) returns the first registered DCChannel with the
 	 * given name. If no Channel was found it returns null
+	 * 
+	 * @param String name
+	 * @return DCChannel channelVC
 	 */
 	public DCChannel getChannelByName(String name) {
 
@@ -158,6 +173,9 @@ public class DiscordBot {
 	/**
 	 * createCustomChannel(String name) creates a new Discord Channel and returns
 	 * the DCChannel object
+	 * 
+	 * @param String name
+	 * @return DCChannel dcchann
 	 */
 	public DCChannel createCustomChannel(String name) {
 		ServerVoiceChannelBuilder nChan = new ServerVoiceChannelBuilder(getServer());
@@ -225,6 +243,8 @@ public class DiscordBot {
 	/**
 	 * Löscht den Kanal final. Löscht ihn auch aus channels arrL !!!kümmert sich
 	 * aber nicht darum dass alle user raus geschoben werden!!!
+	 * 
+	 * @param DCChannel dcChannel
 	 */
 	protected void deleteChannelFromDC(DCChannel dcChannel) {
 		VoiceChatMain.getChannels().remove(dcChannel);
@@ -241,11 +261,24 @@ public class DiscordBot {
 
 	}
 
+	/**
+	 * isInWaitingChannel(VoicePlayer player) returns if the player is in the
+	 * waiting channel
+	 * 
+	 * @param VoicePlayer player
+	 * @return isInWaitingChannel
+	 */
 	public boolean isInWaitingChannel(VoicePlayer player) {
 		return api.getServerVoiceChannelById(getWaitingChannelID()).get().getConnectedUserIds()
 				.contains(player.getDiscordID());
 	}
 
+	/**
+	 * getWaitingChannelID() returns the waiting channel discord id - if you want to
+	 * move a player to the waiting channel just use VoicePlayer.moveTo(null)
+	 * 
+	 * @return waitingChannelID
+	 */
 	public String getWaitingChannelID() {
 		return waitingChannelID;
 	}

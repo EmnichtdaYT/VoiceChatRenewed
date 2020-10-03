@@ -114,25 +114,26 @@ public class VoiceChatLogic {
 											List<Entity> nearby = target.getNearbyEntities(
 													VoiceChatMain.getVoiceRangeX(), VoiceChatMain.getVoiceRangeY(),
 													VoiceChatMain.getVoiceRangeZ());
-											
+
 											boolean foundPlayer = false;
-											
-											for(Entity targetNearby : nearby) {
-												if(targetNearby instanceof Player) {
-													for(VoicePlayer targetInChannelVoice : targetVoice.getCurrentChannel().getUsers()) {
+
+											for (Entity targetNearby : nearby) {
+												if (targetNearby instanceof Player) {
+													for (VoicePlayer targetInChannelVoice : targetVoice
+															.getCurrentChannel().getUsers()) {
 														Player targetInChannel = targetInChannelVoice.getPlayer();
-														if(targetNearby.equals(targetInChannel)) {
+														if (targetNearby.equals(targetInChannel)) {
 															foundPlayer = true;
 															break;
 														}
 													}
 												}
 											}
-											
-											if(!foundPlayer) {
+
+											if (!foundPlayer) {
 												targetVoice.moveTo(null);
 											}
-											
+
 										}
 									}
 								} else { // Player not in channel
@@ -160,7 +161,10 @@ public class VoiceChatLogic {
 														} else {
 															targetNearbyVoice.moveTo(newUserChannel);
 														}
-													}else if(newUserChannel==null&&targetNearbyVoice.getCurrentChannel()!=null&&targetNearbyVoice.getCurrentChannel().getHost()!=null) {
+													} else if (newUserChannel == null
+															&& targetNearbyVoice.getCurrentChannel() != null
+															&& targetNearbyVoice.getCurrentChannel()
+																	.getHost() != null) {
 														targetVoice.moveTo(targetNearbyVoice.getCurrentChannel());
 														break;
 													}

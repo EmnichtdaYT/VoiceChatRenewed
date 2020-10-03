@@ -5,13 +5,8 @@ import org.bukkit.entity.Player;
 public class VoicePlayer {
 	@Override
 	public String toString() {
-		return "VoicePlayer ["+ 
-	"state=" + 
-	state + 
-	", discordID=" +
-	discordID  
-	+ ", isAutomaticControlled=" + 
-	isAutomaticControlled + "]";
+		return "VoicePlayer [" + "state=" + state + ", discordID=" + discordID + ", isAutomaticControlled="
+				+ isAutomaticControlled + "]";
 	}
 
 	private Player player;
@@ -31,6 +26,8 @@ public class VoicePlayer {
 
 	/**
 	 * getState() returns the VoiceState of the player
+	 * 
+	 * @return state
 	 */
 	public VoiceState getState() {
 		return state;
@@ -42,6 +39,8 @@ public class VoicePlayer {
 
 	/**
 	 * getPlayer() returns the org.bukkit.entity.Player
+	 * 
+	 * @return player
 	 */
 	public Player getPlayer() {
 		return player;
@@ -49,6 +48,8 @@ public class VoicePlayer {
 
 	/**
 	 * getDiscordID() gets the Discord id of the player
+	 * 
+	 * @return discordID
 	 */
 	public long getDiscordID() {
 		return discordID;
@@ -64,7 +65,12 @@ public class VoicePlayer {
 	}
 
 	/**
-	 * getCurrentChannel() gets the channel the player is in currently
+	 * getCurrentChannel() gets the channel the player is in currently returns null
+	 * if in waiting channel or not in VoiceChat - use
+	 * DiscordBot.isInWaitingChannel() if you want to know if someone is in the
+	 * waiting channel
+	 * 
+	 * @return currentChannel
 	 */
 	public DCChannel getCurrentChannel() {
 		return currentChannel;
@@ -73,6 +79,8 @@ public class VoicePlayer {
 	/**
 	 * isAutomaticControlled() returns if the player gets controlled by the
 	 * VoiceChat logic.
+	 * 
+	 * @return isAutomaticControlled
 	 */
 	public boolean isAutomaticControlled() {
 		return isAutomaticControlled;
@@ -81,6 +89,8 @@ public class VoicePlayer {
 	/**
 	 * setAutomaticControlled(boolean isAutomaitcControlled) enables or disables
 	 * VoiceChat's logic for that player.
+	 * 
+	 * @param isAutomaticControlled
 	 */
 	public void setAutomaticControlled(boolean isAutomaticControlled) {
 		this.isAutomaticControlled = isAutomaticControlled;
@@ -89,7 +99,10 @@ public class VoicePlayer {
 	/**
 	 * moveTo(DCChannel channel) moves a player to another channel. NOTE: You have
 	 * to disable automaticControlled first, otherwise VoiceChat might move the
-	 * Player back to the Channel where it thinks it belongs to
+	 * Player back to the Channel where it thinks it belongs to. null is the waiting
+	 * channel
+	 * 
+	 * @param channel
 	 */
 	@SuppressWarnings("deprecation")
 	public void moveTo(DCChannel channel) {
@@ -113,8 +126,6 @@ public class VoicePlayer {
 
 		VoiceChatMain.getDcbot().movePlayer(this, channel);
 
-		
-		
 		VoiceChatMain.getInstance().getServer().getScheduler().scheduleAsyncDelayedTask(VoiceChatMain.getInstance(),
 				new Runnable() {
 					public void run() {

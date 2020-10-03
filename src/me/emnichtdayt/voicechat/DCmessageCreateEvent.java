@@ -19,7 +19,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 			try {
 				code = Integer.parseInt(event.getMessage().getContent());
 			} catch (NumberFormatException exc) {
-				
+
 			}
 			if (String.valueOf(code).length() == 4) {
 				if (VoiceChatMain.registerKeys.containsKey(code)) {
@@ -66,21 +66,24 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 					VoiceChatMain.registerKeys.remove(code);
 
 					VoiceChatMain.getSql().setID(target, event.getMessageAuthor().getId());
-					
-					event.getMessage().getChannel().sendMessage("Got ya up and ready! Join the waiting channel and have fun playing!");
+
+					event.getMessage().getChannel()
+							.sendMessage("Got ya up and ready! Join the waiting channel and have fun playing!");
 
 				} else {
 					event.getMessage().getChannel().sendMessage("That code is invalid.");
 				}
 			} else {
 				event.getMessage().getChannel()
-						.sendMessage("Nope, sorry I only accept a 4 digit code for registration."); //TODO da überall config und emebds rein machen
+						.sendMessage("Nope, sorry I only accept a 4 digit code for registration."); // TODO da überall
+																									// config und emebds
+																									// rein machen
 			}
 
 		}
 	}
 
-	public void rload(String voiceDisconnectMessage) {
+	protected void rload(String voiceDisconnectMessage) {
 		this.voiceDisconnectMessage = voiceDisconnectMessage;
 	}
 

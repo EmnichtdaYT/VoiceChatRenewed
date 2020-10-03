@@ -7,18 +7,18 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class VoiceChatMCEvents implements Listener {
-	
+
 	private static String voicechatInternalRegisterMessage = "%VoiceChatRegister%";
 	private static String voicechatExternalRegisterMessage = "%VoiceChatRegister%";
 	private static String notInWaitingChannelMessage = "%notInWaitingChannel%";
-	
-	protected static void rloadConfig(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage, String notInWaitingChannelMessage) {
+
+	protected static void rloadConfig(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage,
+			String notInWaitingChannelMessage) {
 		VoiceChatMCEvents.voicechatInternalRegisterMessage = voicechatInternalRegisterMessage;
 		VoiceChatMCEvents.voicechatExternalRegisterMessage = voicechatExternalRegisterMessage;
 		VoiceChatMCEvents.notInWaitingChannelMessage = notInWaitingChannelMessage;
 	}
-	
-	
+
 	@EventHandler
 	public void onPlayerJoinEvent(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
@@ -34,17 +34,17 @@ public class VoiceChatMCEvents implements Listener {
 			playerVoice = new VoicePlayer(e.getPlayer(), VoiceState.UNLINKED, -1);
 			if (VoiceChatMain.getVoiceChatRequired()) {
 				VoiceChatMain.fireVoiceStateChange(playerVoice, null, VoiceState.UNLINKED, true);
-				if(VoiceChatMain.isRegisterInternalMode()) {
+				if (VoiceChatMain.isRegisterInternalMode()) {
 					player.kickPlayer(voicechatInternalRegisterMessage + VoiceChatMain.getNewRegisterCodeFor(player));
-				}else {
+				} else {
 					player.kickPlayer(voicechatExternalRegisterMessage);
 				}
-				
+
 			} else {
 				VoiceChatMain.getPlayers().put(player, playerVoice);
 			}
 		}
-		
+
 		playerVoice.setAutomaticControlled(true);
 
 		if (VoiceChatMain.getDcbot().isInWaitingChannel(playerVoice)) {
@@ -56,19 +56,18 @@ public class VoiceChatMCEvents implements Listener {
 		} else {
 			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, false);
 		}
-		
+
 		if (!VoiceChatMain.getSql().isSet(player)) {
 			VoiceChatMain.getSql().createUser(player);
 		}
-		
-		
+
 	}
 
 	@EventHandler
 	public void onPlayerDisconnet(PlayerQuitEvent e) {
-		if(VoiceChatMain.getPlayers().containsKey(e.getPlayer())) {
+		if (VoiceChatMain.getPlayers().containsKey(e.getPlayer())) {
 			VoicePlayer targetVoice = VoiceChatMain.getPlayers().get(e.getPlayer());
-			if(targetVoice.getCurrentChannel() != null) {
+			if (targetVoice.getCurrentChannel() != null) {
 				targetVoice.moveTo(null);
 			}
 			VoiceChatMain.getPlayers().remove(e.getPlayer());

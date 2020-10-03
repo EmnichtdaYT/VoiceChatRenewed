@@ -8,47 +8,64 @@ public class DCChannel {
 	private ArrayList<VoicePlayer> users = new ArrayList<VoicePlayer>();
 	private VoicePlayer host = null;
 	private DiscordBot dc = VoiceChatMain.getDcbot();
-	
+
 	protected DCChannel(long id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * getId() gets the ID of the Channel in Discord
+	 * 
+	 * @return id
 	 */
 	public long getId() {
 		return id;
 	}
 
 	/**
-	 * getHost() gets the host of a Channel, if null its a System Channel like a WorldGuard Region for example
+	 * getHost() gets the host of a Channel, if null its a System Channel like a
+	 * WorldGuard Region for example
+	 * 
+	 * @return host
 	 */
 	public VoicePlayer getHost() {
 		return host;
 	}
 
 	/**
-	 * setHost(VoicePlayer host) defines a new Host, every person around that Player will be in the same VoiceChat. Can also be null if there is no such Player, for a phone call for example.
+	 * setHost(VoicePlayer host) defines a new Host, every person around that Player
+	 * will be in the same VoiceChat. Can also be null if there is no such Player,
+	 * for a phone call for example.
+	 * 
+	 * @param host
 	 */
 	public void setHost(VoicePlayer host) {
-		if(getUsers().contains(host)) {
+		if (getUsers().contains(host)) {
 			this.host = host;
-		}else {
+		} else {
 			throw new IllegalStateException("The specified host has to be in the Channel");
 		}
 	}
-	
-	public ArrayList<VoicePlayer> getUsers(){
+
+	/**
+	 * getUsers() - gets the users connected to the voicechat
+	 * 
+	 * @return users
+	 */
+	public ArrayList<VoicePlayer> getUsers() {
 		return users;
 	}
-	
+
+	/**
+	 * remove() - deletes the channel
+	 */
 	public void remove() {
 		try {
-			while(!getUsers().isEmpty()){
+			while (!getUsers().isEmpty()) {
 				getUsers().get(0).moveTo(null);
 			}
-		}catch(ConcurrentModificationException exc) {
-			
+		} catch (ConcurrentModificationException exc) {
+
 		}
 		host = null;
 		dc.deleteChannelFromDC(this);
@@ -59,5 +76,5 @@ public class DCChannel {
 	public String toString() {
 		return "DCChannel [id=" + id + ", host=" + host + ", dc=" + dc + "]";
 	}
-	
+
 }

@@ -142,8 +142,8 @@ public class VoiceChatMain extends JavaPlugin {
 				+ "Error: " + ChatColor.DARK_RED + "use /voicechat unlink [Name]");
 		this.getConfig().addDefault("VoiceChat.message.unlink.sucsess",
 				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Successfully unlinked: ");
-		this.getConfig().addDefault("VoiceChat.message.reload",
-				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Successfully reloaded a part of the config. If something didn't reload please stop the server, then edit the config, save the config and start the server again.");
+		this.getConfig().addDefault("VoiceChat.message.reload", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY
+				+ "Successfully reloaded a part of the config. If something didn't reload please stop the server, then edit the config, save the config and start the server again.");
 
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
@@ -226,6 +226,8 @@ public class VoiceChatMain extends JavaPlugin {
 	/**
 	 * addPlayerVoieStateChangeListener(PlayerVoiceStateChangeEvent listener)
 	 * registeres a new PlayerVoiceStateChangeEvent listener
+	 * 
+	 * @param listener
 	 */
 	public static void addPlayerVoiceStateChangeListener(PlayerVoiceStateChangeEvent listener) {
 		voiceStateChangeListeners.add(listener);
@@ -234,6 +236,8 @@ public class VoiceChatMain extends JavaPlugin {
 	/**
 	 * addPlayerMoveChannelListener(PlayerMoveChannelEvent listener) registeres a
 	 * new PlayerMoveChannelEvent listener
+	 * 
+	 * @param listener
 	 */
 	public static void addPlayerMoveChannelListener(PlayerMoveChannelEvent listener) {
 		moveChannelListeners.add(listener);
@@ -248,24 +252,30 @@ public class VoiceChatMain extends JavaPlugin {
 	}
 
 	/**
-	 * getPlayers() returns a HashMap<Player, VoicePlayer> with all the currently
+	 * getPlayers() returns a HashMap (Player, VoicePlayer) with all the currently
 	 * registered Players
+	 * 
+	 * @return players
 	 */
 	public static HashMap<Player, VoicePlayer> getPlayers() {
 		return players;
 	}
 
 	/**
-	 * getChannels() returns an ArrayList<DCChannel> with all the channels VoiceChat
+	 * getChannels() returns an ArrayList(DCChannel) with all the channels VoiceChat
 	 * has currently registered
+	 * 
+	 * @return channels
 	 */
 	public static ArrayList<DCChannel> getChannels() {
 		return channels;
 	}
 
 	/**
-	 * getDisabledWorlds returns an ArrayList<String> with the names of the worlds
+	 * getDisabledWorlds returns an ArrayList(String) with the names of the worlds
 	 * where VoiceChat is not going to operate
+	 * 
+	 * @return disabledWorlds
 	 */
 	public static ArrayList<String> getDisabledWorlds() {
 		return disabledWorlds;
@@ -275,14 +285,18 @@ public class VoiceChatMain extends JavaPlugin {
 	 * getInstance() returns the Minecraft plugin instance from the VoiceChat
 	 * plugin. NOTE: Only use if you really have to. Nearly everything you need is
 	 * static.
+	 * 
+	 * @return instance
 	 */
 	public static VoiceChatMain getInstance() {
 		return instance;
 	}
 
 	/**
-	 * getVoiceRangeX() returns the x distance arround the host within the players
-	 * can hear each other. (Doesnt affect non automatic controlled players)
+	 * getVoiceRangeX() returns the x distance within the players can hear each
+	 * other. (Doesnt affect non automatic controlled players)
+	 * 
+	 * @return rangeX
 	 */
 	public static int getVoiceRangeX() {
 		return rangeX;
@@ -293,8 +307,10 @@ public class VoiceChatMain extends JavaPlugin {
 	}
 
 	/**
-	 * getVoiceRangeY() returns the y distance arround the host within the players
-	 * can hear each other. (Doesnt affect non automatic controlled players)
+	 * getVoiceRangeY() returns the y distance within the players can hear each
+	 * other. (Doesnt affect non automatic controlled players)
+	 * 
+	 * @return rangeY
 	 */
 	public static int getVoiceRangeY() {
 		return rangeY;
@@ -305,8 +321,10 @@ public class VoiceChatMain extends JavaPlugin {
 	}
 
 	/**
-	 * getVoiceRangeZ() returns the z distance arround the host within the players
-	 * can hear each other. (Doesnt affect non automatic controlled players)
+	 * getVoiceRangeZ() returns the z distance within the players can hear each
+	 * other. (Doesnt affect non automatic controlled players)
+	 * 
+	 * @return rangeZ
 	 */
 	public static int getVoiceRangeZ() {
 		return rangeZ;
@@ -318,6 +336,8 @@ public class VoiceChatMain extends JavaPlugin {
 
 	/**
 	 * getVoiceChatRequired() returns if VoiceChat is required to play
+	 * 
+	 * @return voiceChatRequired
 	 */
 	public static boolean getVoiceChatRequired() {
 		return voiceChatRequired;
@@ -445,14 +465,14 @@ public class VoiceChatMain extends JavaPlugin {
 					} else {
 						sender.sendMessage(this.getConfig().getString("VoiceChat.message.unlink.usage"));
 					}
-				}else {
+				} else {
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
 				}
-			}else if(args[0].equalsIgnoreCase("reload")) {
-				if(sender.hasPermission("voicechat.reload")) {
+			} else if (args[0].equalsIgnoreCase("reload")) {
+				if (sender.hasPermission("voicechat.reload")) {
 					rloadConfig();
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.reload"));
-				}else {
+				} else {
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
 				}
 			}
@@ -460,6 +480,11 @@ public class VoiceChatMain extends JavaPlugin {
 		return true;
 	}
 
+	/**
+	 * isRegisterInternalMode() returns if the internal register mode is enabled
+	 * 
+	 * @return registerInternalMode
+	 */
 	public static boolean isRegisterInternalMode() {
 		return registerInternalMode;
 	}
@@ -468,6 +493,13 @@ public class VoiceChatMain extends JavaPlugin {
 		VoiceChatMain.registerInternalMode = registerInternalMode;
 	}
 
+	/**
+	 * getNewRegisterCodeFor(Player player) registers and returns a register key for
+	 * a player
+	 * 
+	 * @param player
+	 * @return code
+	 */
 	public static int getNewRegisterCodeFor(Player player) {
 		Random random = new Random();
 		int code = random.nextInt(10000);
@@ -478,6 +510,13 @@ public class VoiceChatMain extends JavaPlugin {
 		return code;
 	}
 
+	/**
+	 * getPlayerByID(long id) - gets a VoicePlayer by his discord id returns null if
+	 * not found
+	 * 
+	 * @param id
+	 * @return target
+	 */
 	public static VoicePlayer getPlayerByID(long id) {
 		Player target = getInstance().getServer().getPlayer(getSql().getUUIDbyDCID(id));
 		if (target != null) {

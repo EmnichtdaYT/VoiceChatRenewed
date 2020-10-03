@@ -33,6 +33,12 @@ public class VoiceChatSQL {
 		this.pass = pass;
 	}
 
+	/**
+	 * getID(Player player) - gets the id currently saved in sql from that player
+	 * 
+	 * @param player
+	 * @return dcID
+	 */
 	public long getID(Player player) {
 		try {
 
@@ -66,14 +72,21 @@ public class VoiceChatSQL {
 			return -1;
 		}
 	}
-	
+
+	/**
+	 * isSet(OfflinePlayer target) - checks if the player is in the sql database
+	 * 
+	 * @param target
+	 * @return isSet
+	 */
 	public boolean isSet(OfflinePlayer target) {
 		try {
 			Connection connect = null;
 			Statement statement = null;
 			ResultSet result = null;
 
-			String sqlQuery = "SELECT * FROM " + table + " WHERE " + uuidColumn + " = '" + target.getUniqueId().toString() + "'";
+			String sqlQuery = "SELECT * FROM " + table + " WHERE " + uuidColumn + " = '"
+					+ target.getUniqueId().toString() + "'";
 
 			Class.forName("com.mysql.jdbc.Driver");
 
@@ -82,11 +95,11 @@ public class VoiceChatSQL {
 
 			statement = connect.createStatement();
 			result = statement.executeQuery(sqlQuery);
-			
+
 			result.next();
-			
-			result.getString(1);			
-			
+
+			result.getString(1);
+
 			statement.close();
 			connect.close();
 			return true;
@@ -95,13 +108,20 @@ public class VoiceChatSQL {
 		}
 	}
 
+	/**
+	 * isSet(Player target) - checks if the player is in the sql database
+	 * 
+	 * @param target
+	 * @return isSet
+	 */
 	public boolean isSet(Player target) {
 		try {
 			Connection connect = null;
 			Statement statement = null;
 			ResultSet result = null;
 
-			String sqlQuery = "SELECT * FROM " + table + " WHERE " + uuidColumn + " = '" + target.getUniqueId().toString() + "'";
+			String sqlQuery = "SELECT * FROM " + table + " WHERE " + uuidColumn + " = '"
+					+ target.getUniqueId().toString() + "'";
 
 			Class.forName("com.mysql.jdbc.Driver");
 
@@ -110,11 +130,11 @@ public class VoiceChatSQL {
 
 			statement = connect.createStatement();
 			result = statement.executeQuery(sqlQuery);
-			
+
 			result.next();
-			
-			result.getString(1);			
-			
+
+			result.getString(1);
+
 			statement.close();
 			connect.close();
 			return true;
@@ -123,6 +143,11 @@ public class VoiceChatSQL {
 		}
 	}
 
+	/**
+	 * createUser(Player target) - creates a database entery for the player
+	 * 
+	 * @param target
+	 */
 	public void createUser(Player target) {
 		try {
 			Connection connect = null;
@@ -146,13 +171,21 @@ public class VoiceChatSQL {
 		}
 	}
 
+	/**
+	 * setID(OfflinePlayer target, long id) - sets the discord id in the sql
+	 * database
+	 * 
+	 * @param target
+	 * @param id
+	 */
 	public void setID(OfflinePlayer target, long id) {
 		try {
 
 			Connection connect = null;
 			Statement statement = null;
 
-			String sqlQuery = "UPDATE " + table + " SET " + dcIdColumn + " = '" + id + "' WHERE " + uuidColumn + " = '"+ target.getUniqueId().toString() + "'";
+			String sqlQuery = "UPDATE " + table + " SET " + dcIdColumn + " = '" + id + "' WHERE " + uuidColumn + " = '"
+					+ target.getUniqueId().toString() + "'";
 
 			Class.forName("com.mysql.jdbc.Driver");
 
@@ -169,14 +202,21 @@ public class VoiceChatSQL {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * setID(Player target, long id) - sets the discord id in the sql database
+	 * 
+	 * @param target
+	 * @param id
+	 */
 	public void setID(Player target, long id) {
 		try {
 
 			Connection connect = null;
 			Statement statement = null;
 
-			String sqlQuery = "UPDATE " + table + " SET " + dcIdColumn + " = '" + id + "' WHERE " + uuidColumn + " = '"+ target.getUniqueId().toString() + "'";
+			String sqlQuery = "UPDATE " + table + " SET " + dcIdColumn + " = '" + id + "' WHERE " + uuidColumn + " = '"
+					+ target.getUniqueId().toString() + "'";
 
 			Class.forName("com.mysql.jdbc.Driver");
 
@@ -193,15 +233,21 @@ public class VoiceChatSQL {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * getUUIDbyDCID(long dcID) - returns the UUID of a player in the sql database
+	 * by the discord id
+	 * 
+	 * @param dcID
+	 * @return uuid
+	 */
 	public UUID getUUIDbyDCID(long dcID) {
 		try {
 			Connection connect = null;
 			Statement statement = null;
 			ResultSet resultSet = null;
 
-			String sqlQuery = "SELECT " + uuidColumn + " FROM " + table + " WHERE " + dcIdColumn + " = '"
-					+ dcID + "'";
+			String sqlQuery = "SELECT " + uuidColumn + " FROM " + table + " WHERE " + dcIdColumn + " = '" + dcID + "'";
 
 			Class.forName("com.mysql.jdbc.Driver");
 
@@ -222,7 +268,7 @@ public class VoiceChatSQL {
 
 			return ret;
 
-		}catch(Exception e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
