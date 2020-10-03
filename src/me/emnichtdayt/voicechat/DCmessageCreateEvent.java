@@ -15,7 +15,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 	private String connectedMessage = "%ConnectedMessage%";	
 	private String codeInvalid = "%CodeInvalid%";
 	private String noCode = "%NoCode%";
-	private String color = "GREEN";
+	private String color = "#077d1f";
 
 	protected DCmessageCreateEvent(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
 		this.voiceDisconnectMessage = voiceDisconnectMessage;
@@ -81,7 +81,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 					
 					EmbedBuilder conBedBuild = new EmbedBuilder();
 					
-					conBedBuild.setColor(Color.decode(color));
+					conBedBuild.setColor(hexToColor(color));
 					
 					conBedBuild.addField(embedTitle, connectedMessage);
 
@@ -95,7 +95,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 				} else {
 					EmbedBuilder invalidBedBuild = new EmbedBuilder();
 					
-					invalidBedBuild.setColor(Color.decode(color));
+					invalidBedBuild.setColor(hexToColor(color));
 					
 					invalidBedBuild.addField(embedTitle, codeInvalid);
 					
@@ -104,7 +104,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 			} else {
 				EmbedBuilder noCodeBedBuild = new EmbedBuilder();
 				
-				noCodeBedBuild.setColor(Color.decode(color));
+				noCodeBedBuild.setColor(hexToColor(color));
 				
 				noCodeBedBuild.addField(embedTitle, noCode );
 				
@@ -115,6 +115,30 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 			}
 
 		}
+	}
+	
+	protected static final Color hexToColor( String value )
+	{
+		String digits;
+		if ( value.startsWith( "#" ) )
+		{
+			digits = value.substring( 1, Math.min( value.length( ), 7 ) );
+		}
+		else
+		{
+			digits = value;
+		}
+		String hstr = "0x" + digits;
+		Color c;
+		try
+		{
+			c = Color.decode( hstr );
+		}
+		catch ( NumberFormatException nfe )
+		{
+			c = null;
+		}
+		return c;
 	}
 
 	protected void rload(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
