@@ -3,7 +3,8 @@ package me.emnichtdayt.voicechat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class VoiceChatMCEvents implements Listener {
@@ -20,7 +21,7 @@ public class VoiceChatMCEvents implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerJoinEvent(PlayerJoinEvent e) {
+	public void onPlayerLoginEvent(PlayerLoginEvent e) {
 		Player player = e.getPlayer();
 		long dcId = -1;
 		dcId = VoiceChatMain.getSql().getID(player);
@@ -32,12 +33,12 @@ public class VoiceChatMCEvents implements Listener {
 			VoiceChatMain.getPlayers().put(player, playerVoice);
 		} else {
 			playerVoice = new VoicePlayer(e.getPlayer(), VoiceState.UNLINKED, -1);
-			if (VoiceChatMain.getVoiceChatRequired()) {
+			if (VoiceChatMain.getVoiceChatRequired()||!player.hasPermission("VoiceChat.bypass")||!player.isOp()) {
 				VoiceChatMain.fireVoiceStateChange(playerVoice, null, VoiceState.UNLINKED, true);
 				if (VoiceChatMain.isRegisterInternalMode()) {
-					player.kickPlayer(voicechatInternalRegisterMessage + VoiceChatMain.getNewRegisterCodeFor(player));
+					e.disallow(Result.KICK_OTHER, voicechatInternalRegisterMessage + VoiceChatMain.getNewRegisterCodeFor(player));
 				} else {
-					player.kickPlayer(voicechatExternalRegisterMessage);
+					e.disallow(Result.KICK_OTHER, voicechatExternalRegisterMessage);
 				}
 
 			} else {
@@ -51,10 +52,10 @@ public class VoiceChatMCEvents implements Listener {
 			playerVoice.setState(VoiceState.CONNECTED);
 			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, false);
 		} else if (VoiceChatMain.getVoiceChatRequired()) {
-			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, true);
-			player.kickPlayer(notInWaitingChannelMessage);
-		} else {
-			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, false);
+			if(!player.hasPermission("VoiceChat.bypass")||!player.isOp()) {
+				VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.DISCONNECTED, true);
+				e.disallow(Result.KICK_OTHER, notInWaitingChannelMessage);
+			}
 		}
 
 		if (!VoiceChatMain.getSql().isSet(player)) {
