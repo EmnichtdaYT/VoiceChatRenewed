@@ -86,6 +86,10 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 					conBedBuild.addField(embedTitle, connectedMessage);
 
 					VoiceChatMain.registerKeys.remove(code);
+					
+					if (!VoiceChatMain.getSql().isSet(target)) {
+						VoiceChatMain.getSql().createUser(target);
+					}
 
 					VoiceChatMain.getSql().setID(target, event.getMessageAuthor().getId());
 

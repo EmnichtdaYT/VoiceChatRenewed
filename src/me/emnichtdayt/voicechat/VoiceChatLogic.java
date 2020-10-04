@@ -97,8 +97,8 @@ public class VoiceChatLogic {
 												}
 												if (newHostChannel != null) { // neuer host in der nähe gefunden, wird
 																				// zusammen gelegt
-													for (VoicePlayer targetToMove : oldPlayerChannel.getUsers()) {
-														targetToMove.moveTo(newHostChannel);
+													while (oldPlayerChannel!=null&&!oldPlayerChannel.getUsers().isEmpty()) {
+														oldPlayerChannel.getUsers().get(0).moveTo(newHostChannel);
 													}
 													oldPlayerChannel = null;
 												}
@@ -115,22 +115,7 @@ public class VoiceChatLogic {
 													VoiceChatMain.getVoiceRangeX(), VoiceChatMain.getVoiceRangeY(),
 													VoiceChatMain.getVoiceRangeZ());
 
-											boolean foundPlayer = false;
-
-											for (Entity targetNearby : nearby) {
-												if (targetNearby instanceof Player) {
-													for (VoicePlayer targetInChannelVoice : targetVoice
-															.getCurrentChannel().getUsers()) {
-														Player targetInChannel = targetInChannelVoice.getPlayer();
-														if (targetNearby.equals(targetInChannel)) {
-															foundPlayer = true;
-															break;
-														}
-													}
-												}
-											}
-
-											if (!foundPlayer) {
+											if(!nearby.contains(targetVoice.getCurrentChannel().getHost().getPlayer())) {
 												targetVoice.moveTo(null);
 											}
 
@@ -163,8 +148,8 @@ public class VoiceChatLogic {
 														}
 													} else if (newUserChannel == null
 															&& targetNearbyVoice.getCurrentChannel() != null
-															&& targetNearbyVoice.getCurrentChannel()
-																	.getHost() != null) {
+															&& targetNearbyVoice.getCurrentChannel().getHost() != null
+															&& targetNearbyVoice.getCurrentChannel().getHost().equals(targetNearbyVoice)) {
 														targetVoice.moveTo(targetNearbyVoice.getCurrentChannel());
 														break;
 													}

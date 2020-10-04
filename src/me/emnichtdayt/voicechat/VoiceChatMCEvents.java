@@ -33,14 +33,14 @@ public class VoiceChatMCEvents implements Listener {
 			VoiceChatMain.getPlayers().put(player, playerVoice);
 		} else {
 			playerVoice = new VoicePlayer(e.getPlayer(), VoiceState.UNLINKED, -1);
-			if (VoiceChatMain.getVoiceChatRequired()||!player.hasPermission("VoiceChat.bypass")||!player.isOp()) {
+			if (VoiceChatMain.getVoiceChatRequired()&&(!player.hasPermission("VoiceChat.bypass")||!player.isOp())) {
 				VoiceChatMain.fireVoiceStateChange(playerVoice, null, VoiceState.UNLINKED, true);
 				if (VoiceChatMain.isRegisterInternalMode()) {
 					e.disallow(Result.KICK_OTHER, voicechatInternalRegisterMessage + VoiceChatMain.getNewRegisterCodeFor(player));
 				} else {
 					e.disallow(Result.KICK_OTHER, voicechatExternalRegisterMessage);
 				}
-
+				return;
 			} else {
 				VoiceChatMain.getPlayers().put(player, playerVoice);
 			}
@@ -58,9 +58,7 @@ public class VoiceChatMCEvents implements Listener {
 			}
 		}
 
-		if (!VoiceChatMain.getSql().isSet(player)) {
-			VoiceChatMain.getSql().createUser(player);
-		}
+		
 
 	}
 
