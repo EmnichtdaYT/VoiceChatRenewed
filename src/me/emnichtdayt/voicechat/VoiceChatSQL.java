@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 public class VoiceChatSQL {
 	private String ip;
+	private String port;
 	private String database;
 	private String table;
 
@@ -20,9 +21,10 @@ public class VoiceChatSQL {
 	private String user;
 	private String pass;
 
-	protected VoiceChatSQL(String ip, String database, String table, String dcIdColumn, String uuidColumn, String user,
+	protected VoiceChatSQL(String ip, String port, String database, String table, String dcIdColumn, String uuidColumn, String user,
 			String pass) {
 		this.ip = ip;
+		this.port = port;
 		this.database = database;
 		this.table = table;
 
@@ -52,7 +54,7 @@ public class VoiceChatSQL {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+					"jdbc:mysql://" + ip + "/" + database + ":" + port + "?useSSL=false&user=" + user + "&password=" + pass);
 
 			statement = connect.createStatement();
 
@@ -91,7 +93,7 @@ public class VoiceChatSQL {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+					"jdbc:mysql://" + ip + "/" + database + ":" + port + "?useSSL=false&user=" + user + "&password=" + pass);
 
 			statement = connect.createStatement();
 			result = statement.executeQuery(sqlQuery);
@@ -126,7 +128,7 @@ public class VoiceChatSQL {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+					"jdbc:mysql://" + ip + "/" + database + ":" + port + "?useSSL=false&user=" + user + "&password=" + pass);
 
 			statement = connect.createStatement();
 			result = statement.executeQuery(sqlQuery);
@@ -148,7 +150,7 @@ public class VoiceChatSQL {
 	 * 
 	 * @param target
 	 */
-	public void createUser(Player target) {
+	public void createUser(OfflinePlayer target) {
 		try {
 			Connection connect = null;
 			Statement statement = null;
@@ -159,7 +161,7 @@ public class VoiceChatSQL {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+					"jdbc:mysql://" + ip + "/" + database + ":" + port + "?useSSL=false&user=" + user + "&password=" + pass);
 
 			statement = connect.createStatement();
 			statement.executeUpdate(sqlQuery);
@@ -190,7 +192,7 @@ public class VoiceChatSQL {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+					"jdbc:mysql://" + ip + "/" + database + ":" + port + "?useSSL=false&user=" + user + "&password=" + pass);
 
 			statement = connect.createStatement();
 			statement.executeUpdate(sqlQuery);
@@ -221,7 +223,7 @@ public class VoiceChatSQL {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+					"jdbc:mysql://" + ip + "/" + database + ":" + port + "?useSSL=false&user=" + user + "&password=" + pass);
 
 			statement = connect.createStatement();
 			statement.executeUpdate(sqlQuery);
@@ -252,7 +254,7 @@ public class VoiceChatSQL {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+					"jdbc:mysql://" + ip + "/" + database + ":" + port + "?useSSL=false&user=" + user + "&password=" + pass);
 
 			statement = connect.createStatement();
 

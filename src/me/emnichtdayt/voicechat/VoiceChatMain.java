@@ -3,7 +3,10 @@ package me.emnichtdayt.voicechat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.UUID;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -17,6 +20,7 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 
+import github.scarsz.discordsrv.DiscordSRV;
 import net.md_5.bungee.api.ChatColor;
 
 public class VoiceChatMain extends JavaPlugin {
@@ -75,10 +79,11 @@ public class VoiceChatMain extends JavaPlugin {
 		// CONFIG
 		this.reloadConfig();
 
-		this.getConfig().options().header("Willkommen in der Config");
+		this.getConfig().options().header("Welcome to the VoiceChat config. If you want to change anything besides the messages please restart the server, /voicechat reload won't do anything. If you need help configurating the plugin take a look at https://roleplay.emnichtda.de/plugins/VoiceChat-Renewed/ and if you still have issues ask me on Discord! https://discord.gg/9vK65nD");
 		this.getConfig().options().copyHeader(true);
 
 		this.getConfig().addDefault("MySQL.ip", "ip");
+		this.getConfig().addDefault("MySQL.port", "3306");
 		this.getConfig().addDefault("MySQL.database", "data");
 		this.getConfig().addDefault("MySQL.table", "table");
 		this.getConfig().addDefault("MySQL.idColumn", "discordID");
@@ -100,8 +105,10 @@ public class VoiceChatMain extends JavaPlugin {
 		this.getConfig().addDefault("VoiceChat.range.z", 4);
 
 		this.getConfig().addDefault("VoiceChat.isRequired", true);
-
 		this.getConfig().addDefault("VoiceChat.register.internalMode", true);
+		
+		this.getConfig().addDefault("VoiceChat.register.useDiscordSRVregister", true);
+		
 		this.getConfig().addDefault("VoiceChat.message.register.internalMode", ChatColor.GREEN + "[VoiceChat] "
 				+ ChatColor.GRAY
 				+ "Please register in oder to use VoiceChat. Send the following code per direct message to the VoiceChat bot: ");
@@ -133,7 +140,9 @@ public class VoiceChatMain extends JavaPlugin {
 				+ " Generates a new code in order to register/re-register your discord account\n" + ChatColor.GRAY
 				+ ChatColor.GREEN + "/voicechat reload " + ChatColor.WHITE + "-" + ChatColor.GRAY
 				+ " Reloads parts of the config. If you want to change anything related to the discord bot or mysql or the plugin core please restart the server.\n"
-				+ ChatColor.GRAY + "\n---------------------------" + "[] = Required, () = Optional");
+				+ ChatColor.GREEN + "/voicechat DiscordSRV loadLinkedPlayers " + ChatColor.WHITE + "-" + ChatColor.GRAY
+				+ " Loads EVERY player registered via DiscordSRV! This might take a long time.\n"
+				+ ChatColor.GRAY + "\n------- " + "[] = Required, () = Optional");
 		this.getConfig().addDefault("VoiceChat.message.senderNoPlayer", ChatColor.GREEN + "[VoiceChat] "
 				+ ChatColor.GRAY + "Im sorry, but look at you! You are no player! You can only do this as a player!");
 		this.getConfig().addDefault("VoiceChat.message.register.externalMode.command", ChatColor.GREEN + "[VoiceChat] "
@@ -144,6 +153,7 @@ public class VoiceChatMain extends JavaPlugin {
 				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Successfully unlinked: ");
 		this.getConfig().addDefault("VoiceChat.message.reload", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY
 				+ "Successfully reloaded a part of the config. If something didn't reload please stop the server, then edit the config, save the config and start the server again.");
+		this.getConfig().addDefault("VoiceChat.message.cmdNotFound", ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "Command not found! Type /voicechat help for help.");
 		
 		this.getConfig().addDefault("VoiceChat.message.embed.title", "VoiceChat");
 		this.getConfig().addDefault("VoiceChat.message.embed.connectedMessage", "Got ya up and ready! Join the waiting channel and have fun playing.");
@@ -155,7 +165,20 @@ public class VoiceChatMain extends JavaPlugin {
 		this.saveConfig();
 		this.saveDefaultConfig();
 		// CONFIG END
-
+		
+		if(this.getConfig().getString("MySQL.ip").equalsIgnoreCase("ip")||this.getConfig().getString("DCbot.token").equalsIgnoreCase("token")) {
+			System.out.println(ChatColor.GREEN + "[VoiceChat] First time Startup detected!");
+			System.out.println("-----------------------------------------");
+			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "Welcome to VoiceChat.");
+			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE+ "Please take a look at how to configure the plugin: https://roleplay.emnichtda.de/plugins/VoiceChat-Renewed/");
+			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "No idea how to configure the plugin? Found a bug? Need a new feature? Ask me on Discord! https://discord.gg/9vK65nD");
+			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "Thanks for buying my plugin, please note that you are not permitted to redistribute or decompile my plugin.");
+			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "If you want to know how I programmed VoiceChat just ask me on Discord! If you need a new feature use the api or ask on Discord!");
+			System.out.println("-----------------------------------------");
+			System.out.println("VoiceChat will now disable...");
+			this.getPluginLoader().disablePlugin(this);
+		}
+		
 		this.reloadConfig();
 		rloadConfig();
 
@@ -165,7 +188,7 @@ public class VoiceChatMain extends JavaPlugin {
 		mcEvents = new VoiceChatMCEvents();
 		this.getServer().getPluginManager().registerEvents(mcEvents, this);
 
-		sql = new VoiceChatSQL(this.getConfig().getString("MySQL.ip"), this.getConfig().getString("MySQL.database"),
+		sql = new VoiceChatSQL(this.getConfig().getString("MySQL.ip"), this.getConfig().getString("MySQL.port"), this.getConfig().getString("MySQL.database"),
 				this.getConfig().getString("MySQL.table"), this.getConfig().getString("MySQL.idColumn"),
 				this.getConfig().getString("MySQL.uuidColumn"), this.getConfig().getString("MySQL.user"),
 				this.getConfig().getString("MySQL.password"));
@@ -182,6 +205,12 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("VoiceChat.message.embed.color"));
 
 		instance = this;
+		
+		if(this.getServer().getPluginManager().getPlugin("DiscordSRV")!=null&&this.getConfig().getBoolean("VoiceChat.register.useDiscordSRVregister")) {
+			DiscordSRV.api.subscribe(new DiscordSRVListener());
+			System.out.println("DiscordSRV found. Listening for new Player links.");			
+		}
+		
 		// INSTANCES END
 	}
 
@@ -362,6 +391,7 @@ public class VoiceChatMain extends JavaPlugin {
 		VoiceChatMain.voiceChatRequired = voiceChatRequired;
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean onCommand(org.bukkit.command.CommandSender sender, Command cmd, String cmdlabel, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("voicechatinfo")) {
 			if (args.length == 1) {
@@ -370,7 +400,7 @@ public class VoiceChatMain extends JavaPlugin {
 					if (getPlayers().containsKey(target)) {
 						sender.sendMessage(getPlayers().get(target).toString());
 					} else {
-						sender.sendMessage("[VoiceChat] That player is not in the System.");
+						sender.sendMessage("[VoiceChat] That player is not in the system.");
 					}
 				} else {
 					sender.sendMessage("[VoiceChat] That player is not online!");
@@ -464,7 +494,6 @@ public class VoiceChatMain extends JavaPlugin {
 			} else if (args[0].equalsIgnoreCase("unlink")) {
 				if (sender.hasPermission("voicechat.unlink")) {
 					if (args.length == 2) {
-						@SuppressWarnings("deprecation")
 						OfflinePlayer target = this.getServer().getOfflinePlayer(args[1]);
 						if (target != null) {
 							if (getSql().isSet(target)) {
@@ -490,6 +519,47 @@ public class VoiceChatMain extends JavaPlugin {
 				} else {
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
 				}
+			} else if(args[0].equalsIgnoreCase("discordSRV")) {
+				if(args.length==2) {
+					if(args[1].equalsIgnoreCase("loadLinkedPlayers")) {
+						if(sender.hasPermission("VoiceChat.discordSRV.loadLinkedPlayers")) {
+							sender.sendMessage("If you have a lot of linked players this can take a while.");
+							if(this.getServer().getPluginManager().getPlugin("DiscordSRV")!=null) {
+								Map<String, UUID> linkedPlayers = DiscordSRV.getPlugin().getAccountLinkManager().getLinkedAccounts();
+								final int length = linkedPlayers.entrySet().size(); 
+								for(final Entry<String, UUID> target : linkedPlayers.entrySet()) {
+									int i = 0;
+									if(i%10==0) {
+										sender.sendMessage("Loading DiscordSRV Players... " + i + "/" + length);
+									}
+									final OfflinePlayer targetPlayer = this.getServer().getOfflinePlayer(target.getValue());
+									final String dcID = target.getKey();
+									VoiceChatMain.getInstance().getServer().getScheduler().scheduleAsyncDelayedTask(VoiceChatMain.getInstance(),
+											new Runnable() {
+												public void run() {
+													if(getSql().isSet(targetPlayer)) {
+														getSql().setID(targetPlayer, Long.parseLong(dcID));
+													}else {
+														getSql().createUser(targetPlayer);
+														getSql().setID(targetPlayer, Long.parseLong(dcID));
+													}
+												}
+											}, 1);
+									i++;
+								}
+								sender.sendMessage("Done!");
+							}else {
+								sender.sendMessage("DiscordSRV not found.");
+							}
+						}else {
+							sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
+						}
+					}else {
+						sender.sendMessage(this.getConfig().getString("VoiceChat.message.cmdNotFound"));
+					}
+				}
+			} else {
+				sender.sendMessage(this.getConfig().getString("VoiceChat.message.cmdNotFound"));
 			}
 		}
 		return true;

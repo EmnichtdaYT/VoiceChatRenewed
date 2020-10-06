@@ -1,16 +1,17 @@
 main: me.emnichtdayt.voicechat.VoiceChatMain
 name: VoiceChat
 api-version: 1.14
-version: 1.0
+version: 1.1
 description: VoiceChat
 author: EmnichtdaYT
 website: emnichtdayt.lima-city.de
 
 depend: [WorldGuard]
-loadbefore: [WorldGuard]
+loadbefore: [WorldGuard, DiscordSRV]
+softdepend: [DiscordSRV]
 
 commands:
     voicechatinfo:
-         description: info
+         description: Information for developers. You can also type /voicechatinfo [Player]
     voicechat:
          description: VoiceChat main command
