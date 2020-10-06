@@ -2,6 +2,7 @@ package me.emnichtdayt.voicechat;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
@@ -20,7 +21,7 @@ public class VoiceChatMCEvents implements Listener {
 		VoiceChatMCEvents.notInWaitingChannelMessage = notInWaitingChannelMessage;
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerLoginEvent(PlayerLoginEvent e) {
 		Player player = e.getPlayer();
 		long dcId = -1;
