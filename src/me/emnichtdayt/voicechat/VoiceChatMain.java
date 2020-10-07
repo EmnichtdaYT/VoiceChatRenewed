@@ -553,7 +553,7 @@ public class VoiceChatMain extends JavaPlugin {
 									if(i != 0) {
 										query = query + ", (\"" + target.getValue() + "\", \"" + target.getKey() + "\")";
 									}else {
-										query = query + "REPLACE INTO " + getSql().getTable() + " (" + getSql().getUuidColumn()
+										query = "REPLACE INTO " + getSql().getTable() + " (" + getSql().getUuidColumn()
 												+ ", " + getSql().getDcIdColumn() + ") VALUES (\"" + target.getValue() + "\", \"" + target.getKey() + "\")";
 									}
 
@@ -561,7 +561,7 @@ public class VoiceChatMain extends JavaPlugin {
 								}
 								
 								if(query!=null) {
-									
+									getSql().executeUpdateQuery(query);
 								}
 								
 								sender.sendMessage("Done!");
