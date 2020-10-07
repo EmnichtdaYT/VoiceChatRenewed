@@ -34,6 +34,22 @@ public class VoiceChatSQL {
 		this.user = user;
 		this.pass = pass;
 	}
+	
+	public String getDcIdColumn() {
+		return dcIdColumn;
+	}
+	
+	public String getUuidColumn() {
+		return uuidColumn;
+	}
+	
+	public String getTable() {
+		return table;
+	}
+	
+	public String getDatabase() {
+		return database;
+	}
 
 	/**
 	 * getID(Player player) - gets the id currently saved in sql from that player
@@ -170,6 +186,7 @@ public class VoiceChatSQL {
 			connect.close();
 		} catch (Exception exc) {
 			exc.printStackTrace();
+			System.out.println("[VoiceChat] ERROR! An error occured whilst connecting to the SQL database please check the connection information in the config!");
 		}
 	}
 
@@ -202,6 +219,7 @@ public class VoiceChatSQL {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("[VoiceChat] ERROR! An error occured whilst connecting to the SQL database please check the connection information in the config!");
 		}
 	}
 
@@ -233,6 +251,7 @@ public class VoiceChatSQL {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("[VoiceChat] ERROR! An error occured whilst connecting to the SQL database please check the connection information in the config!");
 		}
 	}
 
@@ -272,6 +291,27 @@ public class VoiceChatSQL {
 
 		} catch (Exception e) {
 			return null;
+		}
+	}
+	
+	protected void executeUpdateQuery(String query) {
+		try {
+			Connection connect = null;
+			Statement statement = null;
+
+			Class.forName("com.mysql.jdbc.Driver");
+
+			connect = DriverManager.getConnection(
+					"jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+
+			statement = connect.createStatement();
+			statement.executeUpdate(query);
+
+			statement.close();
+			connect.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("[VoiceChat] ERROR! An error occured whilst connecting to the SQL database please check the connection information in the config!");
 		}
 	}
 }

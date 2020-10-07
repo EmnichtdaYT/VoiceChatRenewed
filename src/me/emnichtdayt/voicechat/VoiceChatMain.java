@@ -79,7 +79,8 @@ public class VoiceChatMain extends JavaPlugin {
 		// CONFIG
 		this.reloadConfig();
 
-		this.getConfig().options().header("Welcome to the VoiceChat config. If you want to change anything besides the messages please restart the server, /voicechat reload won't do anything. If you need help configurating the plugin take a look at https://roleplay.emnichtda.de/plugins/VoiceChat-Renewed/ and if you still have issues ask me on Discord! https://discord.gg/9vK65nD");
+		this.getConfig().options().header(
+				"Welcome to the VoiceChat config. If you want to change anything besides the messages please restart the server, /voicechat reload won't do anything. If you need help configurating the plugin take a look at https://roleplay.emnichtda.de/plugins/VoiceChat-Renewed/ and if you still have issues ask me on Discord! https://discord.gg/9vK65nD");
 		this.getConfig().options().copyHeader(true);
 
 		this.getConfig().addDefault("MySQL.ip", "ip");
@@ -106,9 +107,9 @@ public class VoiceChatMain extends JavaPlugin {
 
 		this.getConfig().addDefault("VoiceChat.isRequired", true);
 		this.getConfig().addDefault("VoiceChat.register.internalMode", true);
-		
+
 		this.getConfig().addDefault("VoiceChat.register.useDiscordSRVregister", true);
-		
+
 		this.getConfig().addDefault("VoiceChat.message.register.internalMode", ChatColor.GREEN + "[VoiceChat] "
 				+ ChatColor.GRAY
 				+ "Please register in oder to use VoiceChat. Send the following code per direct message to the VoiceChat bot: ");
@@ -141,8 +142,8 @@ public class VoiceChatMain extends JavaPlugin {
 				+ ChatColor.GREEN + "/voicechat reload " + ChatColor.WHITE + "-" + ChatColor.GRAY
 				+ " Reloads parts of the config. If you want to change anything related to the discord bot or mysql or the plugin core please restart the server.\n"
 				+ ChatColor.GREEN + "/voicechat DiscordSRV loadLinkedPlayers " + ChatColor.WHITE + "-" + ChatColor.GRAY
-				+ " Loads EVERY player registered via DiscordSRV! This might take a long time.\n"
-				+ ChatColor.GRAY + "\n------- " + "[] = Required, () = Optional");
+				+ " Loads EVERY player registered via DiscordSRV! This might take a long time.\n" + ChatColor.GRAY
+				+ "\n------- " + "[] = Required, () = Optional");
 		this.getConfig().addDefault("VoiceChat.message.senderNoPlayer", ChatColor.GREEN + "[VoiceChat] "
 				+ ChatColor.GRAY + "Im sorry, but look at you! You are no player! You can only do this as a player!");
 		this.getConfig().addDefault("VoiceChat.message.register.externalMode.command", ChatColor.GREEN + "[VoiceChat] "
@@ -153,33 +154,42 @@ public class VoiceChatMain extends JavaPlugin {
 				ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY + "Successfully unlinked: ");
 		this.getConfig().addDefault("VoiceChat.message.reload", ChatColor.GREEN + "[VoiceChat] " + ChatColor.GRAY
 				+ "Successfully reloaded a part of the config. If something didn't reload please stop the server, then edit the config, save the config and start the server again.");
-		this.getConfig().addDefault("VoiceChat.message.cmdNotFound", ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "Command not found! Type /voicechat help for help.");
-		
+		this.getConfig().addDefault("VoiceChat.message.cmdNotFound", ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE
+				+ "Command not found! Type /voicechat help for help.");
+
 		this.getConfig().addDefault("VoiceChat.message.embed.title", "VoiceChat");
-		this.getConfig().addDefault("VoiceChat.message.embed.connectedMessage", "Got ya up and ready! Join the waiting channel and have fun playing.");
+		this.getConfig().addDefault("VoiceChat.message.embed.connectedMessage",
+				"Got ya up and ready! Join the waiting channel and have fun playing.");
 		this.getConfig().addDefault("VoiceChat.message.embed.codeInvalid", "That code is invalid.");
 		this.getConfig().addDefault("VoiceChat.message.embed.noCode", "I only accept a 4 digit code for registration.");
 		this.getConfig().addDefault("VoiceChat.message.embed.color", "#077d1f");
-		
+
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
 		this.saveDefaultConfig();
 		// CONFIG END
-		
-		if(this.getConfig().getString("MySQL.ip").equalsIgnoreCase("ip")||this.getConfig().getString("DCbot.token").equalsIgnoreCase("token")) {
+
+		this.reloadConfig();
+
+		if (this.getConfig().getString("MySQL.ip").equalsIgnoreCase("ip")
+				|| this.getConfig().getString("DCbot.token").equalsIgnoreCase("token")) {
 			System.out.println(ChatColor.GREEN + "[VoiceChat] First time Startup detected!");
 			System.out.println("-----------------------------------------");
 			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "Welcome to VoiceChat.");
-			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE+ "Please take a look at how to configure the plugin: https://roleplay.emnichtda.de/plugins/VoiceChat-Renewed/");
-			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "No idea how to configure the plugin? Found a bug? Need a new feature? Ask me on Discord! https://discord.gg/9vK65nD");
-			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "Thanks for buying my plugin, please note that you are not permitted to redistribute or decompile my plugin.");
-			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE + "If you want to know how I programmed VoiceChat just ask me on Discord! If you need a new feature use the api or ask on Discord!");
+			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE
+					+ "Please take a look at how to configure the plugin: https://roleplay.emnichtda.de/plugins/VoiceChat-Renewed/");
+			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE
+					+ "No idea how to configure the plugin? Found a bug? Need a new feature? Ask me on Discord! https://discord.gg/9vK65nD");
+			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE
+					+ "Thanks for buying my plugin, please note that you are not permitted to redistribute or decompile my plugin.");
+			System.out.println(ChatColor.GREEN + "[VoiceChat] " + ChatColor.WHITE
+					+ "If you want to know how I programmed VoiceChat just ask me on Discord! If you need a new feature use the api or ask on Discord!");
 			System.out.println("-----------------------------------------");
 			System.out.println("VoiceChat will now disable...");
 			this.getPluginLoader().disablePlugin(this);
+			return;
 		}
-		
-		this.reloadConfig();
+
 		rloadConfig();
 
 		// INSTANCES
@@ -188,10 +198,10 @@ public class VoiceChatMain extends JavaPlugin {
 		mcEvents = new VoiceChatMCEvents();
 		this.getServer().getPluginManager().registerEvents(mcEvents, this);
 
-		sql = new VoiceChatSQL(this.getConfig().getString("MySQL.ip"), this.getConfig().getString("MySQL.port"), this.getConfig().getString("MySQL.database"),
-				this.getConfig().getString("MySQL.table"), this.getConfig().getString("MySQL.idColumn"),
-				this.getConfig().getString("MySQL.uuidColumn"), this.getConfig().getString("MySQL.user"),
-				this.getConfig().getString("MySQL.password"));
+		sql = new VoiceChatSQL(this.getConfig().getString("MySQL.ip"), this.getConfig().getString("MySQL.port"),
+				this.getConfig().getString("MySQL.database"), this.getConfig().getString("MySQL.table"),
+				this.getConfig().getString("MySQL.idColumn"), this.getConfig().getString("MySQL.uuidColumn"),
+				this.getConfig().getString("MySQL.user"), this.getConfig().getString("MySQL.password"));
 
 		dcbot = new DiscordBot(this.getConfig().getString("DCbot.token"), this.getConfig().getString("DCbot.serverID"),
 				this.getConfig().getString("DCbot.categoryID"), this.getConfig().getString("DCbot.waitinChannelID"),
@@ -205,12 +215,13 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("VoiceChat.message.embed.color"));
 
 		instance = this;
-		
-		if(this.getServer().getPluginManager().getPlugin("DiscordSRV")!=null&&this.getConfig().getBoolean("VoiceChat.register.useDiscordSRVregister")) {
+
+		if (this.getServer().getPluginManager().getPlugin("DiscordSRV") != null
+				&& this.getConfig().getBoolean("VoiceChat.register.useDiscordSRVregister")) {
 			DiscordSRV.api.subscribe(new DiscordSRVListener());
-			System.out.println("DiscordSRV found. Listening for new Player links.");			
+			System.out.println("DiscordSRV found. Listening for new Player links.");
 		}
-		
+
 		// INSTANCES END
 	}
 
@@ -246,7 +257,8 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("VoiceChat.message.notInWaitingChannel"));
 
 		if (dcbot != null) {
-			dcbot.rloadVoiceDisconnectMessafe(this.getConfig().getString("VoiceChat.message.leftDCChannel"), this.getConfig().getString("VoiceChat.message.embed.title"),
+			dcbot.rloadVoiceDisconnectMessafe(this.getConfig().getString("VoiceChat.message.leftDCChannel"),
+					this.getConfig().getString("VoiceChat.message.embed.title"),
 					this.getConfig().getString("VoiceChat.message.embed.connectedMessage"),
 					this.getConfig().getString("VoiceChat.message.embed.codeInvalid"),
 					this.getConfig().getString("VoiceChat.message.embed.noCode"),
@@ -519,42 +531,47 @@ public class VoiceChatMain extends JavaPlugin {
 				} else {
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
 				}
-			} else if(args[0].equalsIgnoreCase("discordSRV")) {
-				if(args.length==2) {
-					if(args[1].equalsIgnoreCase("loadLinkedPlayers")) {
-						if(sender.hasPermission("VoiceChat.discordSRV.loadLinkedPlayers")) {
+			} else if (args[0].equalsIgnoreCase("discordSRV")) {
+				if (args.length == 2) {
+					if (args[1].equalsIgnoreCase("loadLinkedPlayers")) {
+						if (sender.hasPermission("VoiceChat.discordSRV.loadLinkedPlayers")) {
 							sender.sendMessage("If you have a lot of linked players this can take a while.");
-							if(this.getServer().getPluginManager().getPlugin("DiscordSRV")!=null) {
-								Map<String, UUID> linkedPlayers = DiscordSRV.getPlugin().getAccountLinkManager().getLinkedAccounts();
-								final int length = linkedPlayers.entrySet().size(); 
-								for(final Entry<String, UUID> target : linkedPlayers.entrySet()) {
-									int i = 0;
-									if(i%10==0) {
+							if (this.getServer().getPluginManager().getPlugin("DiscordSRV") != null) {
+								Map<String, UUID> linkedPlayers = DiscordSRV.getPlugin().getAccountLinkManager()
+										.getLinkedAccounts();
+								final int length = linkedPlayers.entrySet().size();
+
+								String query = null;
+
+								int i = 0;
+								
+								for (final Entry<String, UUID> target : linkedPlayers.entrySet()) {
+									if (i % 10 == 0) {
 										sender.sendMessage("Loading DiscordSRV Players... " + i + "/" + length);
 									}
-									final OfflinePlayer targetPlayer = this.getServer().getOfflinePlayer(target.getValue());
-									final String dcID = target.getKey();
-									VoiceChatMain.getInstance().getServer().getScheduler().scheduleAsyncDelayedTask(VoiceChatMain.getInstance(),
-											new Runnable() {
-												public void run() {
-													if(getSql().isSet(targetPlayer)) {
-														getSql().setID(targetPlayer, Long.parseLong(dcID));
-													}else {
-														getSql().createUser(targetPlayer);
-														getSql().setID(targetPlayer, Long.parseLong(dcID));
-													}
-												}
-											}, 1);
+									
+									if(i != 0) {
+										query = query + ", (\"" + target.getValue() + "\", \"" + target.getKey() + "\")";
+									}else {
+										query = query + "REPLACE INTO " + getSql().getTable() + " (" + getSql().getUuidColumn()
+												+ ", " + getSql().getDcIdColumn() + ") VALUES (\"" + target.getValue() + "\", \"" + target.getKey() + "\")";
+									}
+
 									i++;
 								}
+								
+								if(query!=null) {
+									
+								}
+								
 								sender.sendMessage("Done!");
-							}else {
+							} else {
 								sender.sendMessage("DiscordSRV not found.");
 							}
-						}else {
+						} else {
 							sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
 						}
-					}else {
+					} else {
 						sender.sendMessage(this.getConfig().getString("VoiceChat.message.cmdNotFound"));
 					}
 				}
