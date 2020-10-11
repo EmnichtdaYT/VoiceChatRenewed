@@ -4,8 +4,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
+
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class VoiceChatMCEvents implements Listener {
@@ -21,30 +23,31 @@ public class VoiceChatMCEvents implements Listener {
 		VoiceChatMCEvents.notInWaitingChannelMessage = notInWaitingChannelMessage;
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerLoginEvent(PlayerLoginEvent e) {
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerJoinEvent(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		long dcId = -1;
 		dcId = VoiceChatMain.getSql().getID(player);
 
-		VoicePlayer playerVoice = null;
+		final VoicePlayer playerVoice;
 
 		if (dcId > 0) {
 			playerVoice = new VoicePlayer(e.getPlayer(), VoiceState.DISCONNECTED, dcId);
 			VoiceChatMain.getPlayers().put(player, playerVoice);
 		} else {
 			playerVoice = new VoicePlayer(e.getPlayer(), VoiceState.UNLINKED, -1);
-			if (VoiceChatMain.getVoiceChatRequired()&&(!player.hasPermission("VoiceChat.bypass")||!player.isOp())) {
+			if (VoiceChatMain.getVoiceChatRequired() && (!player.hasPermission("VoiceChat.bypass") || !player.isOp())) {
 				VoiceChatMain.fireVoiceStateChange(playerVoice, null, VoiceState.UNLINKED, true);
 				if (VoiceChatMain.isRegisterInternalMode()) {
-					e.disallow(Result.KICK_OTHER, voicechatInternalRegisterMessage + VoiceChatMain.getNewRegisterCodeFor(player));
+					player.kickPlayer(voicechatInternalRegisterMessage + VoiceChatMain.getNewRegisterCodeFor(player));
 				} else {
-					e.disallow(Result.KICK_OTHER, voicechatExternalRegisterMessage);
+					player.kickPlayer(voicechatExternalRegisterMessage);
 				}
 				return;
 			} else {
 				VoiceChatMain.getPlayers().put(player, playerVoice);
 			}
+
 		}
 
 		playerVoice.setAutomaticControlled(true);
@@ -53,13 +56,11 @@ public class VoiceChatMCEvents implements Listener {
 			playerVoice.setState(VoiceState.CONNECTED);
 			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, false);
 		} else if (VoiceChatMain.getVoiceChatRequired()) {
-			if(!player.hasPermission("VoiceChat.bypass")||!player.isOp()) {
+			if (!player.hasPermission("VoiceChat.bypass") || !player.isOp()) {
 				VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.DISCONNECTED, true);
-				e.disallow(Result.KICK_OTHER, notInWaitingChannelMessage);
+				player.kickPlayer(notInWaitingChannelMessage);
 			}
 		}
-
-		
 
 	}
 
