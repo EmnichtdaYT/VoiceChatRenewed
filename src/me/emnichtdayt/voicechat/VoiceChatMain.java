@@ -147,7 +147,7 @@ public class VoiceChatMain extends JavaPlugin {
 		this.getConfig().addDefault("VoiceChat.message.senderNoPlayer", ChatColor.GREEN + "[VoiceChat] "
 				+ ChatColor.GRAY + "Im sorry, but look at you! You are no player! You can only do this as a player!");
 		this.getConfig().addDefault("VoiceChat.message.register.externalMode.command", ChatColor.GREEN + "[VoiceChat] "
-				+ ChatColor.GRAY + "Ask an administrators how to register, I dunno, sorry!");
+				+ ChatColor.GRAY + "Ask an administrator how to register, I dunno, sorry!");
 		this.getConfig().addDefault("VoiceChat.message.unlink.usage", ChatColor.GREEN + "[VoiceChat] " + ChatColor.RED
 				+ "Error: " + ChatColor.DARK_RED + "use /voicechat unlink [Name]");
 		this.getConfig().addDefault("VoiceChat.message.unlink.sucsess",
