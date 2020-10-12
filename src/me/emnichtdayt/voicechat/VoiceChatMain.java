@@ -193,7 +193,7 @@ public class VoiceChatMain extends JavaPlugin {
 		rloadConfig();
 
 		// INSTANCES
-		this.timer = new VoiceChatTimer(this).runTaskTimer(this, 0, 10);
+		this.timer = new VoiceChatTimer().runTaskTimer(this, 0, 10);
 
 		mcEvents = new VoiceChatMCEvents();
 		this.getServer().getPluginManager().registerEvents(mcEvents, this);
@@ -252,7 +252,7 @@ public class VoiceChatMain extends JavaPlugin {
 
 		setRegisterInternalMode(this.getConfig().getBoolean("VoiceChat.register.internalMode"));
 
-		VoiceChatMCEvents.rloadConfig(this.getConfig().getString("VoiceChat.message.register.internalMode"),
+		mcEvents.rloadConfig(this.getConfig().getString("VoiceChat.message.register.internalMode"),
 				this.getConfig().getString("VoiceChat.message.register.externalMode"),
 				this.getConfig().getString("VoiceChat.message.notInWaitingChannel"));
 

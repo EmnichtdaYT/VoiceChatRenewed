@@ -16,9 +16,14 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
 public class VoiceChatLogic {
-	private static ArrayList<String> disabledWorlds = null;
+	private ArrayList<String> disabledWorlds = null;
 
-	protected static void doLogic(VoiceChatMain pl) {
+	protected VoiceChatLogic() {
+		
+	}
+	
+	protected void doLogic() {
+		VoiceChatMain pl = VoiceChatMain.getInstance();
 
 		while (!VoiceChatMain.kickList.isEmpty()) {
 			VoiceChatMain.kickList.get(0).kickPlayer(DCServerVoiceChannelMemberLeaveListener.voiceDisconnectMessage);

@@ -3,15 +3,15 @@ package me.emnichtdayt.voicechat;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class VoiceChatTimer extends BukkitRunnable{
-	VoiceChatMain pl = null;
+	VoiceChatLogic l = new VoiceChatLogic();
 	
-	protected VoiceChatTimer(VoiceChatMain pl) {
-		this.pl = pl;
+	protected VoiceChatTimer() {
+		
 	}
 	
 	@Override
 	public void run() {
-		VoiceChatLogic.doLogic(pl);
+		l.doLogic();
 	}
 
 }
