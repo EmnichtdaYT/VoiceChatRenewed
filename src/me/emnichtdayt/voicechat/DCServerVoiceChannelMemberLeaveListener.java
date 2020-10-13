@@ -9,33 +9,35 @@ import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelMemberLe
 
 public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChannelMemberLeaveListener {
 
-	protected static String voiceDisconnectMessage;
+	protected String voiceDisconnectMessage;
+	
+	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
 	protected DCServerVoiceChannelMemberLeaveListener(String voiceDisconnectMessage) {
-		DCServerVoiceChannelMemberLeaveListener.voiceDisconnectMessage = voiceDisconnectMessage;
+		this.voiceDisconnectMessage = voiceDisconnectMessage;
 	}
 
 	@Override
 	public void onServerVoiceChannelMemberLeave(ServerVoiceChannelMemberLeaveEvent event) {
 		Optional<ServerVoiceChannel> optionalNChannel = event.getNewChannel();
-		VoicePlayer targetVoice = VoiceChatMain.getPlayerByID(event.getUser().getId());
+		VoicePlayer targetVoice = pl.getPlayerByID(event.getUser().getId());
 		if (targetVoice != null) {
 			if (targetVoice.getState() == VoiceState.CONNECTED) {
 				if (optionalNChannel.isPresent() && optionalNChannel.get().getName().length() > 8
 						&& !optionalNChannel.get().getName().substring(0, 9).equals("VoiceChat")) {
-					if (optionalNChannel.isPresent() && optionalNChannel.get().getId() != Long.parseLong(VoiceChatMain.getDcbot().getWaitingChannelID())) {
+					if (optionalNChannel.isPresent() && optionalNChannel.get().getId() != Long.parseLong(pl.getDcbot().getWaitingChannelID())) {
 						Player target = targetVoice.getPlayer();
-						if (VoiceChatMain.getVoiceChatRequired() && !target.hasPermission("VoiceChat.bypass")) {
+						if (pl.getVoiceChatRequired() && !target.hasPermission("VoiceChat.bypass")) {
 							targetVoice.setState(VoiceState.DISCONNECTED);
 							VoiceChatMain.fireVoiceStateChange(targetVoice, VoiceState.CONNECTED,
 									VoiceState.DISCONNECTED, true);
-							VoiceChatMain.kickList.add(target);
+							pl.kickList.add(target);
 						} else {
 							if (targetVoice.getCurrentChannel() != null) {
 								DCChannel oldChannel = targetVoice.getCurrentChannel();
 								targetVoice.getCurrentChannel().getUsers().remove(targetVoice);
 								targetVoice.currentChannel = null;
-								VoiceChatMain.firePlayerMoveChannel(targetVoice, oldChannel, null);
+								pl.firePlayerMoveChannel(targetVoice, oldChannel, null);
 								VoiceChatMain.fireVoiceStateChange(targetVoice, VoiceState.CONNECTED,
 										VoiceState.DISCONNECTED, false);
 								if (oldChannel.getUsers().size() < 2) {
@@ -52,7 +54,7 @@ public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChann
 	}
 
 	protected void rload(String voiceDisconnectMessage) {
-		DCServerVoiceChannelMemberLeaveListener.voiceDisconnectMessage = voiceDisconnectMessage;
+		this.voiceDisconnectMessage = voiceDisconnectMessage;
 	}
 
 }

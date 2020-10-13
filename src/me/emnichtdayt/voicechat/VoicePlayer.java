@@ -15,13 +15,15 @@ public class VoicePlayer {
 	protected DCChannel currentChannel = null;
 	private boolean isAutomaticControlled = true;
 	protected boolean isInVoiceRegion = false;
+	
+	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
 	protected VoicePlayer(Player player, VoiceState state, long discordID) {
 		this.player = player;
 		this.setState(state);
 		this.discordID = discordID;
 
-		VoiceChatMain.getPlayers().put(player, this);
+		pl.getPlayers().put(player, this);
 	}
 
 	/**
@@ -60,7 +62,7 @@ public class VoicePlayer {
 	}
 
 	protected void disconnect() {
-		VoiceChatMain.getPlayers().remove(player);
+		pl.getPlayers().remove(player);
 		player = null;
 	}
 
@@ -115,7 +117,7 @@ public class VoicePlayer {
 			}
 		}
 		DCChannel oldChannel = currentChannel;
-		VoiceChatMain.firePlayerMoveChannel(this, oldChannel, channel);
+		pl.firePlayerMoveChannel(this, oldChannel, channel);
 		if (oldChannel != null) {
 			oldChannel.getUsers().remove(this);
 		}
@@ -124,7 +126,7 @@ public class VoicePlayer {
 			currentChannel.getUsers().add(this);
 		}
 
-		VoiceChatMain.getDcbot().movePlayer(this, channel);
+		pl.getDcbot().movePlayer(this, channel);
 
 		VoiceChatMain.getInstance().getServer().getScheduler().scheduleAsyncDelayedTask(VoiceChatMain.getInstance(),
 				new Runnable() {

@@ -7,7 +7,8 @@ public class DCChannel {
 	private long id;
 	private ArrayList<VoicePlayer> users = new ArrayList<VoicePlayer>();
 	private VoicePlayer host = null;
-	private DiscordBot dc = VoiceChatMain.getDcbot();
+	private VoiceChatMain pl = VoiceChatMain.getInstance();
+	private DiscordBot dc = pl.getDcbot();
 
 	protected DCChannel(long id) {
 		this.id = id;

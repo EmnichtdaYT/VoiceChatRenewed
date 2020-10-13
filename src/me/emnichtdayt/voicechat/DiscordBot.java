@@ -31,6 +31,8 @@ public class DiscordBot {
 
 	private DCmessageCreateEvent messageListener;
 	private DCServerVoiceChannelMemberLeaveListener channelLeaveListener;
+	
+	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
 	protected DiscordBot(String token, String server, String category, String waitingChannelID, ActivityType statusType,
 			String status, String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
@@ -131,7 +133,7 @@ public class DiscordBot {
 		for (Iterator<? extends ServerVoiceChannel> channels = api.getServerVoiceChannelsByName(name)
 				.iterator(); channels.hasNext();) {
 			ServerVoiceChannel channel = channels.next();
-			for (DCChannel channelVC : VoiceChatMain.getChannels()) {
+			for (DCChannel channelVC : pl.getChannels()) {
 				if (channelVC.getId() == channel.getId()) {
 					return channelVC;
 				}
@@ -164,7 +166,7 @@ public class DiscordBot {
 			e.printStackTrace();
 		}
 		if (dcchann != null) {
-			VoiceChatMain.getChannels().add(dcchann);
+			pl.getChannels().add(dcchann);
 		}
 
 		return dcchann;
@@ -199,7 +201,7 @@ public class DiscordBot {
 			e.printStackTrace();
 		}
 		if (dcchann != null) {
-			VoiceChatMain.getChannels().add(dcchann);
+			pl.getChannels().add(dcchann);
 		}
 
 		return dcchann;
@@ -231,7 +233,7 @@ public class DiscordBot {
 	}
 
 	protected void instantDeleteChannelFromDC(DCChannel dcChannel) {
-		VoiceChatMain.getChannels().remove(dcChannel);
+		pl.getChannels().remove(dcChannel);
 		Optional<ServerVoiceChannel> channel = api.getServerVoiceChannelById(dcChannel.getId());
 
 		if (channel.isPresent()) {
@@ -247,7 +249,7 @@ public class DiscordBot {
 	 * @param DCChannel dcChannel
 	 */
 	protected void deleteChannelFromDC(DCChannel dcChannel) {
-		VoiceChatMain.getChannels().remove(dcChannel);
+		pl.getChannels().remove(dcChannel);
 		Optional<ServerVoiceChannel> channel = api.getServerVoiceChannelById(dcChannel.getId());
 		VoiceChatMain.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(VoiceChatMain.getInstance(),
 				new Runnable() {

@@ -16,6 +16,8 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 	private String codeInvalid = "%CodeInvalid%";
 	private String noCode = "%NoCode%";
 	private String color = "#077d1f";
+	
+	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
 	protected DCmessageCreateEvent(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
 		this.voiceDisconnectMessage = voiceDisconnectMessage;
@@ -38,16 +40,16 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 
 			}
 			if (String.valueOf(code).length() == 4) {
-				if (VoiceChatMain.registerKeys.containsKey(code)) {
-					Player target = VoiceChatMain.registerKeys.get(code);
+				if (pl.registerKeys.containsKey(code)) {
+					Player target = pl.registerKeys.get(code);
 					VoicePlayer targetVoice;
-					if (VoiceChatMain.getPlayers().containsKey(target)) {
-						targetVoice = VoiceChatMain.getPlayers().get(target);
+					if (pl.getPlayers().containsKey(target)) {
+						targetVoice = pl.getPlayers().get(target);
 						VoiceState oldVoiceState = targetVoice.getState();
 						targetVoice.setDIscordID(event.getMessageAuthor().getId());
 						if (oldVoiceState == VoiceState.CONNECTED) {
-							if (!VoiceChatMain.getDcbot().isInWaitingChannel(targetVoice)) {
-								if (target.isOnline() && VoiceChatMain.getVoiceChatRequired()) {
+							if (!pl.getDcbot().isInWaitingChannel(targetVoice)) {
+								if (target.isOnline() && pl.getVoiceChatRequired()) {
 									target.kickPlayer(voiceDisconnectMessage);
 									VoiceChatMain.fireVoiceStateChange(targetVoice, oldVoiceState,
 											VoiceState.DISCONNECTED, true);
@@ -56,7 +58,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 											VoiceState.DISCONNECTED, false);
 								}
 							}
-						} else if (target.isOnline() && VoiceChatMain.getDcbot().isInWaitingChannel(targetVoice)) {
+						} else if (target.isOnline() && pl.getDcbot().isInWaitingChannel(targetVoice)) {
 							VoiceChatMain.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.CONNECTED, false);
 						} else {
 							VoiceChatMain.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.DISCONNECTED,
@@ -65,7 +67,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 					} else {
 						targetVoice = new VoicePlayer(target, VoiceState.DISCONNECTED,
 								event.getMessageAuthor().getId());
-						if (VoiceChatMain.getDcbot().isInWaitingChannel(targetVoice)) {
+						if (pl.getDcbot().isInWaitingChannel(targetVoice)) {
 							VoiceChatMain.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.CONNECTED,
 									false);
 						} else {
@@ -85,13 +87,13 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 					
 					conBedBuild.addField(embedTitle, connectedMessage);
 
-					VoiceChatMain.registerKeys.remove(code);
+					pl.registerKeys.remove(code);
 					
-					if (!VoiceChatMain.getSql().isSet(target)) {
-						VoiceChatMain.getSql().createUser(target);
+					if (!pl.getSql().isSet(target)) {
+						pl.getSql().createUser(target);
 					}
 
-					VoiceChatMain.getSql().setID(target, event.getMessageAuthor().getId());
+					pl.getSql().setID(target, event.getMessageAuthor().getId());
 
 					event.getMessage().getChannel()
 							.sendMessage(conBedBuild);

@@ -16,28 +16,27 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
 public class VoiceChatLogic {
-	private ArrayList<String> disabledWorlds = null;
-
+	private VoiceChatMain pl = VoiceChatMain.getInstance();
+	
 	protected VoiceChatLogic() {
 		
 	}
 	
-	protected void doLogic() {
-		VoiceChatMain pl = VoiceChatMain.getInstance();
-
-		while (!VoiceChatMain.kickList.isEmpty()) {
-			VoiceChatMain.kickList.get(0).kickPlayer(DCServerVoiceChannelMemberLeaveListener.voiceDisconnectMessage);
-			VoiceChatMain.kickList.remove(0);
+	protected void doLogic(String voiceDisconnectMessage) {
+		
+		while (!pl.kickList.isEmpty()) {
+			pl.kickList.get(0).kickPlayer(voiceDisconnectMessage);
+			pl.kickList.remove(0);
 		}
 
-		disabledWorlds = VoiceChatMain.getDisabledWorlds();
+		ArrayList<String> disabledWorlds = pl.getDisabledWorlds();
 
-		DiscordBot dc = VoiceChatMain.getDcbot();
+		DiscordBot dc = pl.getDcbot();
 
 		for (Iterator<? extends Player> iterator = pl.getServer().getOnlinePlayers().iterator(); iterator.hasNext();) {
 			Player target = iterator.next();
-			if (VoiceChatMain.getPlayers().containsKey(target)) {
-				VoicePlayer targetVoice = VoiceChatMain.getPlayers().get(target);
+			if (pl.getPlayers().containsKey(target)) {
+				VoicePlayer targetVoice = pl.getPlayers().get(target);
 				if (targetVoice.isAutomaticControlled() && targetVoice.getDiscordID() > 0) {
 					if (!disabledWorlds.contains(target.getWorld().getName())) {
 
@@ -45,9 +44,9 @@ public class VoiceChatLogic {
 						RegionQuery query = container.createQuery();
 						ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(target.getLocation()));
 						if (!set.testState(WorldGuardPlugin.inst().wrapPlayer(target),
-								VoiceChatMain.isDisabledRegion)) {
+								pl.isDisabledRegion)) {
 							if (set.testState(WorldGuardPlugin.inst().wrapPlayer(target),
-									VoiceChatMain.isOwnVoiceRegion)) {
+									pl.isOwnVoiceRegion)) {
 
 								String regionName = null;
 								int maxPriority = -1;
@@ -79,14 +78,14 @@ public class VoiceChatLogic {
 									VoicePlayer oldChannelHost = oldPlayerChannel.getHost();
 									if (oldChannelHost != null && oldChannelHost == targetVoice) { // Player is
 																									// Channelhost
-										List<Entity> nearby = target.getNearbyEntities(VoiceChatMain.getVoiceRangeX(),
-												VoiceChatMain.getVoiceRangeY(), VoiceChatMain.getVoiceRangeZ());
+										List<Entity> nearby = target.getNearbyEntities(pl.getVoiceRangeX(),
+												pl.getVoiceRangeY(), pl.getVoiceRangeZ());
 										if (nearby.stream().anyMatch(ent -> ent instanceof Player)) { // host hat leute
 																										// um sich
 											DCChannel newHostChannel = null;
 											for (Entity targetNearby : nearby) {
 												if (targetNearby instanceof Player) {
-													VoicePlayer targetNearbyVoice = VoiceChatMain.getPlayers()
+													VoicePlayer targetNearbyVoice = pl.getPlayers()
 															.get((Player) targetNearby);
 													if (targetNearbyVoice != null
 															&& targetNearbyVoice.getDiscordID() > 0
@@ -117,8 +116,8 @@ public class VoiceChatLogic {
 										if (targetVoice.getCurrentChannel().getHost() != null) {
 
 											List<Entity> nearby = target.getNearbyEntities(
-													VoiceChatMain.getVoiceRangeX(), VoiceChatMain.getVoiceRangeY(),
-													VoiceChatMain.getVoiceRangeZ());
+													pl.getVoiceRangeX(), pl.getVoiceRangeY(),
+													pl.getVoiceRangeZ());
 
 											if(!nearby.contains(targetVoice.getCurrentChannel().getHost().getPlayer())) {
 												targetVoice.moveTo(null);
@@ -127,13 +126,13 @@ public class VoiceChatLogic {
 										}
 									}
 								} else { // Player not in channel
-									List<Entity> nearby = target.getNearbyEntities(VoiceChatMain.getVoiceRangeX(),
-											VoiceChatMain.getVoiceRangeY(), VoiceChatMain.getVoiceRangeZ());
+									List<Entity> nearby = target.getNearbyEntities(pl.getVoiceRangeX(),
+											pl.getVoiceRangeY(), pl.getVoiceRangeZ());
 									if (nearby.stream().anyMatch(ent -> ent instanceof Player)) { // Person hat leute um
 										DCChannel newUserChannel = null;
 										for (Entity entNearby : nearby) {
 											if (entNearby instanceof Player) {
-												VoicePlayer targetNearbyVoice = VoiceChatMain.getPlayers()
+												VoicePlayer targetNearbyVoice = pl.getPlayers()
 														.get((Player) entNearby);
 												ApplicableRegionSet setEnt = query.getApplicableRegions(
 														BukkitAdapter.adapt(entNearby.getLocation()));
@@ -141,7 +140,7 @@ public class VoiceChatLogic {
 														&& targetNearbyVoice.isAutomaticControlled()
 														&& !setEnt.testState(
 																WorldGuardPlugin.inst().wrapPlayer((Player) entNearby),
-																VoiceChatMain.isDisabledRegion)) {
+																pl.isDisabledRegion)) {
 													if (targetNearbyVoice.getCurrentChannel() == null) {
 														if (newUserChannel == null) {
 															newUserChannel = dc.createNewUserVoiceChat();

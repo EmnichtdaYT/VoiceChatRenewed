@@ -12,7 +12,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 import org.javacord.api.entity.activity.ActivityType;
 
 import com.sk89q.worldguard.WorldGuard;
@@ -27,33 +26,32 @@ public class VoiceChatMain extends JavaPlugin {
 	private static List<PlayerVoiceStateChangeEvent> voiceStateChangeListeners = new ArrayList<>();
 	private static List<PlayerMoveChannelEvent> moveChannelListeners = new ArrayList<>();
 
-	private static DiscordBot dcbot = null;
-	private static VoiceChatSQL sql = null;
+	private DiscordBot dcbot = null;
+	private VoiceChatSQL sql = null;
 
-	public static StateFlag isOwnVoiceRegion;
-	public static StateFlag isDisabledRegion;
+	public StateFlag isOwnVoiceRegion;
+	public StateFlag isDisabledRegion;
 
 	private static VoiceChatMain instance = null;
 
-	@SuppressWarnings("unused")
-	private BukkitTask timer = null;
+	private VoiceChatTimer timer = null;
 
-	private static VoiceChatMCEvents mcEvents = null;
+	private VoiceChatMCEvents mcEvents = null;
 
-	private static HashMap<Player, VoicePlayer> players = new HashMap<Player, VoicePlayer>();
-	private static ArrayList<DCChannel> channels = new ArrayList<DCChannel>();
+	private HashMap<Player, VoicePlayer> players = new HashMap<Player, VoicePlayer>();
+	private ArrayList<DCChannel> channels = new ArrayList<DCChannel>();
 
-	private static ArrayList<String> disabledWorlds = new ArrayList<String>();
+	private ArrayList<String> disabledWorlds = new ArrayList<String>();
 
-	private static int rangeX = 4;
-	private static int rangeY = 4;
-	private static int rangeZ = 4;
+	private int rangeX = 4;
+	private int rangeY = 4;
+	private int rangeZ = 4;
 
-	protected static HashMap<Integer, Player> registerKeys = new HashMap<Integer, Player>();
+	protected HashMap<Integer, Player> registerKeys = new HashMap<Integer, Player>();
 
-	private static boolean voiceChatRequired = true;
-	private static boolean registerInternalMode = true;
-	protected static ArrayList<Player> kickList = new ArrayList<Player>();
+	private boolean voiceChatRequired = true;
+	private boolean registerInternalMode = true;
+	protected ArrayList<Player> kickList = new ArrayList<Player>();
 
 	public void onLoad() {
 		// WORLDGUARD
@@ -61,14 +59,14 @@ public class VoiceChatMain extends JavaPlugin {
 		try {
 			StateFlag flag = new StateFlag("isOwnVoiceChatRegion", false);
 			registry.register(flag);
-			VoiceChatMain.isOwnVoiceRegion = flag;
+			this.isOwnVoiceRegion = flag;
 		} catch (FlagConflictException e) {
 
 		}
 		try {
 			StateFlag flag = new StateFlag("isDisabledVoiceChatRegion", false);
 			registry.register(flag);
-			VoiceChatMain.isDisabledRegion = flag;
+			this.isDisabledRegion = flag;
 		} catch (FlagConflictException e) {
 
 		}
@@ -193,7 +191,8 @@ public class VoiceChatMain extends JavaPlugin {
 		rloadConfig();
 
 		// INSTANCES
-		this.timer = new VoiceChatTimer().runTaskTimer(this, 0, 10);
+		this.timer = new VoiceChatTimer(this.getConfig().getString("VoiceChat.message.leftDCChannel"));
+		timer.runTaskTimer(this, 0, 10);
 
 		mcEvents = new VoiceChatMCEvents();
 		this.getServer().getPluginManager().registerEvents(mcEvents, this);
@@ -264,6 +263,9 @@ public class VoiceChatMain extends JavaPlugin {
 					this.getConfig().getString("VoiceChat.message.embed.noCode"),
 					this.getConfig().getString("VoiceChat.message.embed.color"));
 		}
+		if(timer != null) {
+			timer.rload(this.getConfig().getString("VoiceChat.message.leftDCChannel"));
+		}
 	}
 
 	protected static void fireVoiceStateChange(VoicePlayer player, VoiceState oldVoiceState, VoiceState newVoiceState,
@@ -273,7 +275,7 @@ public class VoiceChatMain extends JavaPlugin {
 		}
 	}
 
-	protected static void firePlayerMoveChannel(VoicePlayer player, DCChannel oldChannel, DCChannel newChannel) {
+	protected void firePlayerMoveChannel(VoicePlayer player, DCChannel oldChannel, DCChannel newChannel) {
 		for (PlayerMoveChannelEvent listener : moveChannelListeners) {
 			listener.onPlayerMoveChannel(player, oldChannel, newChannel);
 		}
@@ -285,7 +287,7 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @param listener
 	 */
-	public static void addPlayerVoiceStateChangeListener(PlayerVoiceStateChangeEvent listener) {
+	public void addPlayerVoiceStateChangeListener(PlayerVoiceStateChangeEvent listener) {
 		voiceStateChangeListeners.add(listener);
 	}
 
@@ -295,15 +297,15 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @param listener
 	 */
-	public static void addPlayerMoveChannelListener(PlayerMoveChannelEvent listener) {
+	public void addPlayerMoveChannelListener(PlayerMoveChannelEvent listener) {
 		moveChannelListeners.add(listener);
 	}
 
-	protected static DiscordBot getDcbot() {
+	protected DiscordBot getDcbot() {
 		return dcbot;
 	}
 
-	protected static VoiceChatSQL getSql() {
+	protected VoiceChatSQL getSql() {
 		return sql;
 	}
 
@@ -313,7 +315,7 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @return players
 	 */
-	public static HashMap<Player, VoicePlayer> getPlayers() {
+	public HashMap<Player, VoicePlayer> getPlayers() {
 		return players;
 	}
 
@@ -323,7 +325,7 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @return channels
 	 */
-	public static ArrayList<DCChannel> getChannels() {
+	public ArrayList<DCChannel> getChannels() {
 		return channels;
 	}
 
@@ -333,14 +335,13 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @return disabledWorlds
 	 */
-	public static ArrayList<String> getDisabledWorlds() {
+	public ArrayList<String> getDisabledWorlds() {
 		return disabledWorlds;
 	}
 
 	/**
 	 * getInstance() returns the Minecraft plugin instance from the VoiceChat
-	 * plugin. NOTE: Only use if you really have to. Nearly everything you need is
-	 * static.
+	 * plugin.
 	 * 
 	 * @return instance
 	 */
@@ -354,12 +355,12 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @return rangeX
 	 */
-	public static int getVoiceRangeX() {
+	public int getVoiceRangeX() {
 		return rangeX;
 	}
 
-	private static void setVoiceRangeX(int rangeX) {
-		VoiceChatMain.rangeX = rangeX;
+	private void setVoiceRangeX(int rangeX) {
+		this.rangeX = rangeX;
 	}
 
 	/**
@@ -368,12 +369,12 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @return rangeY
 	 */
-	public static int getVoiceRangeY() {
+	public int getVoiceRangeY() {
 		return rangeY;
 	}
 
-	private static void setVoiceRangeY(int rangeY) {
-		VoiceChatMain.rangeY = rangeY;
+	private void setVoiceRangeY(int rangeY) {
+		this.rangeY = rangeY;
 	}
 
 	/**
@@ -382,12 +383,12 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @return rangeZ
 	 */
-	public static int getVoiceRangeZ() {
+	public int getVoiceRangeZ() {
 		return rangeZ;
 	}
 
-	private static void setVoiceRangeZ(int rangeZ) {
-		VoiceChatMain.rangeZ = rangeZ;
+	private void setVoiceRangeZ(int rangeZ) {
+		this.rangeZ = rangeZ;
 	}
 
 	/**
@@ -395,12 +396,12 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @return voiceChatRequired
 	 */
-	public static boolean getVoiceChatRequired() {
+	public boolean getVoiceChatRequired() {
 		return voiceChatRequired;
 	}
 
 	private void setVoiceChatRequired(boolean voiceChatRequired) {
-		VoiceChatMain.voiceChatRequired = voiceChatRequired;
+		this.voiceChatRequired = voiceChatRequired;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -496,7 +497,7 @@ public class VoiceChatMain extends JavaPlugin {
 				if (registerInternalMode) {
 					if (sender instanceof Player) {
 						sender.sendMessage(this.getConfig().getString("VoiceChat.message.register.internalMode")
-								+ VoiceChatMain.getNewRegisterCodeFor((Player) sender));
+								+ this.getNewRegisterCodeFor((Player) sender));
 					} else {
 						sender.sendMessage(this.getConfig().getString("VoiceChat.message.senderNoPlayer"));
 					}
@@ -587,12 +588,12 @@ public class VoiceChatMain extends JavaPlugin {
 	 * 
 	 * @return registerInternalMode
 	 */
-	public static boolean isRegisterInternalMode() {
+	public boolean isRegisterInternalMode() {
 		return registerInternalMode;
 	}
 
-	private static void setRegisterInternalMode(boolean registerInternalMode) {
-		VoiceChatMain.registerInternalMode = registerInternalMode;
+	private void setRegisterInternalMode(boolean registerInternalMode) {
+		this.registerInternalMode = registerInternalMode;
 	}
 
 	/**
@@ -602,7 +603,7 @@ public class VoiceChatMain extends JavaPlugin {
 	 * @param player
 	 * @return code
 	 */
-	public static int getNewRegisterCodeFor(Player player) {
+	public int getNewRegisterCodeFor(Player player) {
 		Random random = new Random();
 		int code = random.nextInt(10000);
 		while (String.valueOf(code).length() != 4) {
@@ -619,7 +620,7 @@ public class VoiceChatMain extends JavaPlugin {
 	 * @param id
 	 * @return target
 	 */
-	public static VoicePlayer getPlayerByID(long id) {
+	public VoicePlayer getPlayerByID(long id) {
 		Player target = getInstance().getServer().getPlayer(getSql().getUUIDbyDCID(id));
 		if (target != null) {
 			return getPlayers().get(target);
