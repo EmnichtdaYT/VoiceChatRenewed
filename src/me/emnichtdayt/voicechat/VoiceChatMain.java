@@ -250,10 +250,11 @@ public class VoiceChatMain extends JavaPlugin {
 		setVoiceChatRequired(this.getConfig().getBoolean("VoiceChat.isRequired"));
 
 		setRegisterInternalMode(this.getConfig().getBoolean("VoiceChat.register.internalMode"));
-
-		mcEvents.rloadConfig(this.getConfig().getString("VoiceChat.message.register.internalMode"),
-				this.getConfig().getString("VoiceChat.message.register.externalMode"),
-				this.getConfig().getString("VoiceChat.message.notInWaitingChannel"));
+		if (mcEvents != null) {
+			mcEvents.rloadConfig(this.getConfig().getString("VoiceChat.message.register.internalMode"),
+					this.getConfig().getString("VoiceChat.message.register.externalMode"),
+					this.getConfig().getString("VoiceChat.message.notInWaitingChannel"));
+		}
 
 		if (dcbot != null) {
 			dcbot.rloadVoiceDisconnectMessafe(this.getConfig().getString("VoiceChat.message.leftDCChannel"),
@@ -263,7 +264,7 @@ public class VoiceChatMain extends JavaPlugin {
 					this.getConfig().getString("VoiceChat.message.embed.noCode"),
 					this.getConfig().getString("VoiceChat.message.embed.color"));
 		}
-		if(timer != null) {
+		if (timer != null) {
 			timer.rload(this.getConfig().getString("VoiceChat.message.leftDCChannel"));
 		}
 	}
@@ -545,26 +546,28 @@ public class VoiceChatMain extends JavaPlugin {
 								String query = null;
 
 								int i = 0;
-								
+
 								for (final Entry<String, UUID> target : linkedPlayers.entrySet()) {
 									if (i % 10 == 0) {
 										sender.sendMessage("Loading DiscordSRV Players... " + i + "/" + length);
 									}
-									
-									if(i != 0) {
-										query = query + ", (\"" + target.getValue() + "\", \"" + target.getKey() + "\")";
-									}else {
+
+									if (i != 0) {
+										query = query + ", (\"" + target.getValue() + "\", \"" + target.getKey()
+												+ "\")";
+									} else {
 										query = "REPLACE INTO " + getSql().getTable() + " (" + getSql().getUuidColumn()
-												+ ", " + getSql().getDcIdColumn() + ") VALUES (\"" + target.getValue() + "\", \"" + target.getKey() + "\")";
+												+ ", " + getSql().getDcIdColumn() + ") VALUES (\"" + target.getValue()
+												+ "\", \"" + target.getKey() + "\")";
 									}
 
 									i++;
 								}
-								
-								if(query!=null) {
+
+								if (query != null) {
 									getSql().executeUpdateQuery(query);
 								}
-								
+
 								sender.sendMessage("Done!");
 							} else {
 								sender.sendMessage("DiscordSRV not found.");
