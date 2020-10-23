@@ -187,6 +187,8 @@ public class VoiceChatMain extends JavaPlugin {
 			this.getPluginLoader().disablePlugin(this);
 			return;
 		}
+		
+		instance = this;
 
 		rloadConfig();
 
@@ -194,7 +196,10 @@ public class VoiceChatMain extends JavaPlugin {
 		this.timer = new VoiceChatTimer(this.getConfig().getString("VoiceChat.message.leftDCChannel"));
 		timer.runTaskTimer(this, 0, 10);
 
-		mcEvents = new VoiceChatMCEvents();
+		mcEvents = new VoiceChatMCEvents(this.getConfig().getString("VoiceChat.message.register.internalMode"),
+				this.getConfig().getString("VoiceChat.message.register.externalMode"),
+				this.getConfig().getString("VoiceChat.message.notInWaitingChannel"));
+		
 		this.getServer().getPluginManager().registerEvents(mcEvents, this);
 
 		sql = new VoiceChatSQL(this.getConfig().getString("MySQL.ip"), this.getConfig().getString("MySQL.port"),
@@ -212,8 +217,6 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("VoiceChat.message.embed.codeInvalid"),
 				this.getConfig().getString("VoiceChat.message.embed.noCode"),
 				this.getConfig().getString("VoiceChat.message.embed.color"));
-
-		instance = this;
 
 		if (this.getServer().getPluginManager().getPlugin("DiscordSRV") != null
 				&& this.getConfig().getBoolean("VoiceChat.register.useDiscordSRVregister")) {

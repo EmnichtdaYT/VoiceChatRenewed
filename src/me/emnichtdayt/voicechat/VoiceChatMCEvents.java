@@ -9,6 +9,13 @@ import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class VoiceChatMCEvents implements Listener {
+	
+	protected VoiceChatMCEvents(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage,
+			String notInWaitingChannelMessage) {
+		this.voicechatInternalRegisterMessage = voicechatInternalRegisterMessage;
+		this.voicechatExternalRegisterMessage = voicechatExternalRegisterMessage;
+		this.notInWaitingChannelMessage = notInWaitingChannelMessage;
+	}
 
 	private String voicechatInternalRegisterMessage = "%VoiceChatRegister%";
 	private String voicechatExternalRegisterMessage = "%VoiceChatRegister%";

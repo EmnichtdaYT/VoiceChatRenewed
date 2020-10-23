@@ -225,7 +225,7 @@ public class DiscordBot {
 			boolean getsKicked = pl.getConfig().getBoolean("VoiceChat.isRequired");
 			if (getsKicked) {
 				target.getPlayer()
-						.kickPlayer("[VoiceChat] Ein Fehler ist aufgetreten daher wurde dein VoiceChat deaktiviert.");
+						.kickPlayer("[VoiceChat] Ooops, an error occured but it's not my fault! Are you registered? Is the information in the config correct?");
 			}
 			VoiceChatMain.fireVoiceStateChange(target, target.getState(), VoiceState.DISCONNECTED, getsKicked);
 			target.disconnect();
