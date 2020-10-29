@@ -42,11 +42,19 @@ public class DiscordBot {
 		this.setStatusType(statusType);
 
 		this.setWaitingChannelID(waitingChannelID);
-
+		
+		System.out.println(server);
+		
+		System.out.println("Nähern uns dem fragwürdigen Code");
+		
 		if (api.getServerById(server).isPresent()) {
+			System.out.println("Drin.");
 			this.server = api.getServerById(server).get();
+			System.out.println("Server wurde gesetzt.");
 			if (api.getChannelCategoryById(category).isPresent()) {
+				System.out.println("Kategorie exestiert.");
 				this.category = api.getChannelCategoryById(category).get();
+				System.out.println("Kategorie gesetzt.");
 			}
 		}
 

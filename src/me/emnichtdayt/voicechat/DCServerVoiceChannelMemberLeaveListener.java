@@ -25,7 +25,7 @@ public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChann
 			if (targetVoice.getState() == VoiceState.CONNECTED && targetVoice.isAutomaticControlled()) {
 				if ((optionalNChannel.isPresent() && optionalNChannel.get().getName().length() > 8
 						&& !optionalNChannel.get().getName().substring(0, 9).equals("VoiceChat"))||!optionalNChannel.isPresent()||(optionalNChannel.isPresent() && optionalNChannel.get().getName().length() <= 8)) {
-					if ((optionalNChannel.isPresent() && optionalNChannel.get().getId() != Long.parseLong(pl.getDcbot().getWaitingChannelID())||!optionalNChannel.isPresent())) {
+					if ((optionalNChannel.isPresent() && optionalNChannel.get().getId() != Long.parseLong(pl.getDcbot().getWaitingChannelID()))||!optionalNChannel.isPresent()) {
 						Player target = targetVoice.getPlayer();
 						if (pl.getVoiceChatRequired() && !target.hasPermission("VoiceChat.bypass")) {
 							targetVoice.setState(VoiceState.DISCONNECTED);

@@ -207,6 +207,8 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("MySQL.idColumn"), this.getConfig().getString("MySQL.uuidColumn"),
 				this.getConfig().getString("MySQL.user"), this.getConfig().getString("MySQL.password"));
 
+		System.out.println("[VoiceChat] Starting the Discord Bot");
+		
 		dcbot = new DiscordBot(this.getConfig().getString("DCbot.token"), this.getConfig().getString("DCbot.serverID"),
 				this.getConfig().getString("DCbot.categoryID"), this.getConfig().getString("DCbot.waitinChannelID"),
 				ActivityType.valueOf(this.getConfig().getString("DCbot.statusType")),
@@ -217,6 +219,8 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("VoiceChat.message.embed.codeInvalid"),
 				this.getConfig().getString("VoiceChat.message.embed.noCode"),
 				this.getConfig().getString("VoiceChat.message.embed.color"));
+		
+		System.out.println("[VoiceChat] Done starting Discord Bot");
 
 		if (this.getServer().getPluginManager().getPlugin("DiscordSRV") != null
 				&& this.getConfig().getBoolean("VoiceChat.register.useDiscordSRVregister")) {
