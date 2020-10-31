@@ -66,6 +66,8 @@ public class VoiceChatMCEvents implements Listener {
 			if (!(player.hasPermission("VoiceChat.bypass") || player.isOp())) {
 				VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.DISCONNECTED, true);
 				e.disallow(Result.KICK_OTHER, notInWaitingChannelMessage);
+			}else {
+				playerVoice.setAutomaticControlled(false);
 			}
 		}
 
