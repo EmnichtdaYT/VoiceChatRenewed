@@ -43,8 +43,6 @@ public class DiscordBot {
 
 		this.setWaitingChannelID(waitingChannelID);
 		
-		System.out.println(server);
-		
 		if (api.getServerById(server).isPresent()) {
 			this.server = api.getServerById(server).get();
 			if (api.getChannelCategoryById(category).isPresent()) {
