@@ -1,7 +1,8 @@
-package me.emnichtdayt.voicechat;
+package me.emnichtdayt.voicechat.listener;
 
 import github.scarsz.discordsrv.api.Subscribe;
 import github.scarsz.discordsrv.api.events.AccountLinkedEvent;
+import me.emnichtdayt.voicechat.VoiceChatMain;
 
 public class DiscordSRVListener {
 	private VoiceChatMain pl = VoiceChatMain.getInstance();

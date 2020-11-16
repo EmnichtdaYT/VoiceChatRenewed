@@ -1,4 +1,4 @@
-package me.emnichtdayt.voicechat;
+package me.emnichtdayt.voicechat.listener;
 
 import java.awt.Color;
 
@@ -7,19 +7,23 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
+import me.emnichtdayt.voicechat.VoiceChatMain;
+import me.emnichtdayt.voicechat.VoiceState;
+import me.emnichtdayt.voicechat.entity.VoicePlayer;
+
 public class DCmessageCreateEvent implements MessageCreateListener {
-	private String voiceDisconnectMessage = "%VoiceChatDisconnected%";
+	private String voiceDisconnectMessage;
 	
-	private String embedTitle = "%VoiceChatName%";
+	private String embedTitle;
 	
-	private String connectedMessage = "%ConnectedMessage%";	
-	private String codeInvalid = "%CodeInvalid%";
-	private String noCode = "%NoCode%";
-	private String color = "#077d1f";
+	private String connectedMessage;
+	private String codeInvalid;
+	private String noCode;
+	private String color;
 	
 	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
-	protected DCmessageCreateEvent(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
+	public DCmessageCreateEvent(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
 		this.voiceDisconnectMessage = voiceDisconnectMessage;
 		
 		this.embedTitle = embedTitle;
@@ -146,7 +150,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 		return c;
 	}
 
-	protected void rload(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
+	public void rload(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
 		this.voiceDisconnectMessage = voiceDisconnectMessage;
 		
 		this.embedTitle = embedTitle;

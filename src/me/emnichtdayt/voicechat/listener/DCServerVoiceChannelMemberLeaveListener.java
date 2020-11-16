@@ -1,4 +1,4 @@
-package me.emnichtdayt.voicechat;
+package me.emnichtdayt.voicechat.listener;
 
 import java.util.Optional;
 
@@ -7,13 +7,18 @@ import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.event.channel.server.voice.ServerVoiceChannelMemberLeaveEvent;
 import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelMemberLeaveListener;
 
+import me.emnichtdayt.voicechat.VoiceChatMain;
+import me.emnichtdayt.voicechat.VoiceState;
+import me.emnichtdayt.voicechat.entity.DCChannel;
+import me.emnichtdayt.voicechat.entity.VoicePlayer;
+
 public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChannelMemberLeaveListener {
 
 	protected String voiceDisconnectMessage;
 	
 	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
-	protected DCServerVoiceChannelMemberLeaveListener(String voiceDisconnectMessage) {
+	public DCServerVoiceChannelMemberLeaveListener(String voiceDisconnectMessage) {
 		this.voiceDisconnectMessage = voiceDisconnectMessage;
 	}
 
@@ -53,7 +58,7 @@ public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChann
 		}
 	}
 
-	protected void rload(String voiceDisconnectMessage) {
+	public void rload(String voiceDisconnectMessage) {
 		this.voiceDisconnectMessage = voiceDisconnectMessage;
 	}
 

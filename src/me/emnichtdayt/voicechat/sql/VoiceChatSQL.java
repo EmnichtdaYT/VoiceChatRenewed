@@ -1,4 +1,4 @@
-package me.emnichtdayt.voicechat;
+package me.emnichtdayt.voicechat.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,7 +21,7 @@ public class VoiceChatSQL {
 	private String user;
 	private String pass;
 
-	protected VoiceChatSQL(String ip, String port, String database, String table, String dcIdColumn, String uuidColumn, String user,
+	public VoiceChatSQL(String ip, String port, String database, String table, String dcIdColumn, String uuidColumn, String user,
 			String pass) {
 		this.ip = ip;
 		this.port = port;
@@ -294,7 +294,7 @@ public class VoiceChatSQL {
 		}
 	}
 	
-	protected void executeUpdateQuery(String query) {
+	public void executeUpdateQuery(String query) {
 		try {
 			Connection connect = null;
 			Statement statement = null;

@@ -1,7 +1,9 @@
-package me.emnichtdayt.voicechat;
+package me.emnichtdayt.voicechat.entity;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+
+import me.emnichtdayt.voicechat.VoiceChatMain;
 
 public class DCChannel {
 	private long id;

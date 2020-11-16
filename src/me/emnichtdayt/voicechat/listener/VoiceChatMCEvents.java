@@ -1,4 +1,4 @@
-package me.emnichtdayt.voicechat;
+package me.emnichtdayt.voicechat.listener;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -6,24 +6,29 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
+
+import me.emnichtdayt.voicechat.VoiceChatMain;
+import me.emnichtdayt.voicechat.VoiceState;
+import me.emnichtdayt.voicechat.entity.VoicePlayer;
+
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class VoiceChatMCEvents implements Listener {
 	
-	protected VoiceChatMCEvents(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage,
+	public VoiceChatMCEvents(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage,
 			String notInWaitingChannelMessage) {
 		this.voicechatInternalRegisterMessage = voicechatInternalRegisterMessage;
 		this.voicechatExternalRegisterMessage = voicechatExternalRegisterMessage;
 		this.notInWaitingChannelMessage = notInWaitingChannelMessage;
 	}
 
-	private String voicechatInternalRegisterMessage = "%VoiceChatRegister%";
-	private String voicechatExternalRegisterMessage = "%VoiceChatRegister%";
-	private String notInWaitingChannelMessage = "%notInWaitingChannel%";
+	private String voicechatInternalRegisterMessage;
+	private String voicechatExternalRegisterMessage;
+	private String notInWaitingChannelMessage;
 	
 	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
-	protected void rloadConfig(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage,
+	public void rloadConfig(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage,
 			String notInWaitingChannelMessage) {
 		this.voicechatInternalRegisterMessage = voicechatInternalRegisterMessage;
 		this.voicechatExternalRegisterMessage = voicechatExternalRegisterMessage;

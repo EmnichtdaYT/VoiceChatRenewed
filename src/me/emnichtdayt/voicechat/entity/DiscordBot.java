@@ -1,4 +1,4 @@
-package me.emnichtdayt.voicechat;
+package me.emnichtdayt.voicechat.entity;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -14,6 +14,11 @@ import org.javacord.api.entity.channel.ServerVoiceChannelBuilder;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.server.Server;
+
+import me.emnichtdayt.voicechat.VoiceChatMain;
+import me.emnichtdayt.voicechat.VoiceState;
+import me.emnichtdayt.voicechat.listener.DCServerVoiceChannelMemberLeaveListener;
+import me.emnichtdayt.voicechat.listener.DCmessageCreateEvent;
 
 public class DiscordBot {
 
@@ -34,7 +39,7 @@ public class DiscordBot {
 	
 	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
-	protected DiscordBot(String token, String server, String category, String waitingChannelID, ActivityType statusType,
+	public DiscordBot(String token, String server, String category, String waitingChannelID, ActivityType statusType,
 			String status, String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
 		api = new DiscordApiBuilder().setToken(token).login().join();
 
@@ -56,7 +61,7 @@ public class DiscordBot {
 		api.addListener(channelLeaveListener);
 	}
 
-	protected void rloadVoiceDisconnectMessafe(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
+	public void rloadVoiceDisconnectMessafe(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
 		messageListener.rload(voiceDisconnectMessage, embedTitle, connectedMessage, codeInvalid, noCode, color);
 		channelLeaveListener.rload(voiceDisconnectMessage);
 	}
@@ -142,7 +147,7 @@ public class DiscordBot {
 		return null;
 	}
 
-	protected DCChannel createNewUserVoiceChat() {
+	public DCChannel createNewUserVoiceChat() {
 		ServerVoiceChannelBuilder nChan = new ServerVoiceChannelBuilder(getServer());
 		nChan.setAuditLogReason("VoiceChat-customChannel");
 		nChan.setName("VoiceChat-" + nextChannel);
@@ -207,7 +212,7 @@ public class DiscordBot {
 		return dcchann;
 	}
 
-	protected void movePlayer(VoicePlayer target, DCChannel channel) {
+	public void movePlayer(VoicePlayer target, DCChannel channel) {
 		try {
 			if (channel != null) {
 				api.getUserById(target.getDiscordID()).get().move(api.getServerVoiceChannelById(channel.getId()).get());
@@ -232,14 +237,13 @@ public class DiscordBot {
 		}
 	}
 
-	protected void instantDeleteChannelFromDC(DCChannel dcChannel) {
+	public void instantDeleteChannelFromDC(DCChannel dcChannel) {
 		pl.getChannels().remove(dcChannel);
 		Optional<ServerVoiceChannel> channel = api.getServerVoiceChannelById(dcChannel.getId());
 
 		if (channel.isPresent()) {
 			channel.get().delete();
 		}
-
 	}
 
 	/**

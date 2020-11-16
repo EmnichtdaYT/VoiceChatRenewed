@@ -15,6 +15,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
+import me.emnichtdayt.voicechat.entity.DCChannel;
+import me.emnichtdayt.voicechat.entity.DiscordBot;
+import me.emnichtdayt.voicechat.entity.VoicePlayer;
+
 public class VoiceChatLogic {
 	private VoiceChatMain pl = VoiceChatMain.getInstance();
 	

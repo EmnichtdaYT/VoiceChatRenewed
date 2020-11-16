@@ -20,6 +20,14 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 
 import github.scarsz.discordsrv.DiscordSRV;
+import me.emnichtdayt.voicechat.entity.DCChannel;
+import me.emnichtdayt.voicechat.entity.DiscordBot;
+import me.emnichtdayt.voicechat.entity.VoicePlayer;
+import me.emnichtdayt.voicechat.events.PlayerMoveChannelEvent;
+import me.emnichtdayt.voicechat.events.PlayerVoiceStateChangeEvent;
+import me.emnichtdayt.voicechat.listener.DiscordSRVListener;
+import me.emnichtdayt.voicechat.listener.VoiceChatMCEvents;
+import me.emnichtdayt.voicechat.sql.VoiceChatSQL;
 import net.md_5.bungee.api.ChatColor;
 
 public class VoiceChatMain extends JavaPlugin {
@@ -47,11 +55,11 @@ public class VoiceChatMain extends JavaPlugin {
 	private int rangeY = 4;
 	private int rangeZ = 4;
 
-	protected HashMap<Integer, Player> registerKeys = new HashMap<Integer, Player>();
+	public HashMap<Integer, Player> registerKeys = new HashMap<Integer, Player>();
 
 	private boolean voiceChatRequired = true;
 	private boolean registerInternalMode = true;
-	protected ArrayList<Player> kickList = new ArrayList<Player>();
+	public ArrayList<Player> kickList = new ArrayList<Player>();
 
 	public void onLoad() {
 		// WORLDGUARD
@@ -187,7 +195,7 @@ public class VoiceChatMain extends JavaPlugin {
 			this.getPluginLoader().disablePlugin(this);
 			return;
 		}
-		
+
 		instance = this;
 
 		rloadConfig();
@@ -199,7 +207,7 @@ public class VoiceChatMain extends JavaPlugin {
 		mcEvents = new VoiceChatMCEvents(this.getConfig().getString("VoiceChat.message.register.internalMode"),
 				this.getConfig().getString("VoiceChat.message.register.externalMode"),
 				this.getConfig().getString("VoiceChat.message.notInWaitingChannel"));
-		
+
 		this.getServer().getPluginManager().registerEvents(mcEvents, this);
 
 		sql = new VoiceChatSQL(this.getConfig().getString("MySQL.ip"), this.getConfig().getString("MySQL.port"),
@@ -208,7 +216,7 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("MySQL.user"), this.getConfig().getString("MySQL.password"));
 
 		System.out.println("[VoiceChat] Starting the Discord Bot");
-		
+
 		dcbot = new DiscordBot(this.getConfig().getString("DCbot.token"), this.getConfig().getString("DCbot.serverID"),
 				this.getConfig().getString("DCbot.categoryID"), this.getConfig().getString("DCbot.waitinChannelID"),
 				ActivityType.valueOf(this.getConfig().getString("DCbot.statusType")),
@@ -219,7 +227,7 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("VoiceChat.message.embed.codeInvalid"),
 				this.getConfig().getString("VoiceChat.message.embed.noCode"),
 				this.getConfig().getString("VoiceChat.message.embed.color"));
-		
+
 		System.out.println("[VoiceChat] Done starting Discord Bot");
 
 		if (this.getServer().getPluginManager().getPlugin("DiscordSRV") != null
@@ -276,14 +284,14 @@ public class VoiceChatMain extends JavaPlugin {
 		}
 	}
 
-	protected static void fireVoiceStateChange(VoicePlayer player, VoiceState oldVoiceState, VoiceState newVoiceState,
+	public static void fireVoiceStateChange(VoicePlayer player, VoiceState oldVoiceState, VoiceState newVoiceState,
 			boolean getsKicked) {
 		for (PlayerVoiceStateChangeEvent listener : voiceStateChangeListeners) {
 			listener.onPlayerVoiceStateChange(player, oldVoiceState, newVoiceState, getsKicked);
 		}
 	}
 
-	protected void firePlayerMoveChannel(VoicePlayer player, DCChannel oldChannel, DCChannel newChannel) {
+	public void firePlayerMoveChannel(VoicePlayer player, DCChannel oldChannel, DCChannel newChannel) {
 		for (PlayerMoveChannelEvent listener : moveChannelListeners) {
 			listener.onPlayerMoveChannel(player, oldChannel, newChannel);
 		}
@@ -309,11 +317,11 @@ public class VoiceChatMain extends JavaPlugin {
 		moveChannelListeners.add(listener);
 	}
 
-	protected DiscordBot getDcbot() {
+	public DiscordBot getDcbot() {
 		return dcbot;
 	}
 
-	protected VoiceChatSQL getSql() {
+	public VoiceChatSQL getSql() {
 		return sql;
 	}
 
@@ -415,180 +423,210 @@ public class VoiceChatMain extends JavaPlugin {
 	@SuppressWarnings("deprecation")
 	public boolean onCommand(org.bukkit.command.CommandSender sender, Command cmd, String cmdlabel, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("voicechatinfo")) {
-			if (args.length == 1) {
-				Player target = this.getServer().getPlayer(args[0]);
-				if (target != null && target.isOnline()) {
-					if (getPlayers().containsKey(target)) {
-						sender.sendMessage(getPlayers().get(target).toString());
-					} else {
-						sender.sendMessage("[VoiceChat] That player is not in the system.");
-					}
-				} else {
-					sender.sendMessage("[VoiceChat] That player is not online!");
-				}
-			} else {
+			if (args.length != 1) {
 				for (DCChannel channel : channels) {
 					sender.sendMessage(channel.toString());
 				}
+				return true;
 			}
+
+			Player target = this.getServer().getPlayer(args[0]);
+			if (target == null || !target.isOnline()) {
+				sender.sendMessage("[VoiceChat] That player is not online!");
+				return true;
+			}
+
+			if (!getPlayers().containsKey(target)) {
+				sender.sendMessage("[VoiceChat] That player is not in the system.");
+				return true;
+			}
+
+			sender.sendMessage(getPlayers().get(target).toString());
 
 		} else if (cmd.getName().equalsIgnoreCase("VoiceChat")) {
 			this.reloadConfig();
 			if (args.length == 0) {
 				sender.sendMessage(this.getConfig().getString("VoiceChat.message.info"));
-			} else if (args[0].equalsIgnoreCase("toggle")) {
-				if (sender.hasPermission("voicechat.toggle")) {
-					if (args.length == 2) {
-						Player target = this.getServer().getPlayer(args[1]);
-						if (target != null) {
-							VoicePlayer targetVoice = getPlayers().get(target);
-							if (targetVoice != null) {
-								targetVoice.setAutomaticControlled(!targetVoice.isAutomaticControlled());
-								if (targetVoice.isAutomaticControlled()) {
-									sender.sendMessage(this.getConfig().getString("VoiceChat.message.voice.enabled")
-											+ target.getName());
-								} else {
-									if (targetVoice.getCurrentChannel() != null
-											&& targetVoice.getCurrentChannel().getUsers().size() <= 2) {
-										targetVoice.getCurrentChannel().remove();
-										targetVoice.moveTo(null);
-									} else {
-										targetVoice.moveTo(null);
-									}
-									sender.sendMessage(this.getConfig().getString("VoiceChat.message.voice.disabled")
-											+ target.getName());
-								}
-							} else {
-								sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
-							}
+				return true;
+			}
+
+			switch (args[0].toLowerCase()) {
+
+			case "toggle":
+				if (!sender.hasPermission("voicechat.toggle")) {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
+					return true;
+				}
+
+				Player target = this.getServer().getPlayer(args[1]);
+
+				if (target == null) {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
+					return true;
+				}
+
+				VoicePlayer targetVoice = getPlayers().get(target);
+
+				if (targetVoice == null) {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
+					return true;
+				}
+
+				if (args.length == 2) {
+					targetVoice.setAutomaticControlled(!targetVoice.isAutomaticControlled());
+					if (targetVoice.isAutomaticControlled()) {
+						sender.sendMessage(
+								this.getConfig().getString("VoiceChat.message.voice.enabled") + target.getName());
+					} else {
+						if (targetVoice.getCurrentChannel() != null
+								&& targetVoice.getCurrentChannel().getUsers().size() <= 2) {
+							targetVoice.getCurrentChannel().remove();
+							targetVoice.moveTo(null);
 						} else {
-							sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
+							targetVoice.moveTo(null);
 						}
-					} else if (args.length == 3) {
-						Player target = this.getServer().getPlayer(args[1]);
-						if (target != null) {
-							VoicePlayer targetVoice = getPlayers().get(target);
-							if (targetVoice != null) {
-								if (args[2].equalsIgnoreCase("on")) {
-									targetVoice.setAutomaticControlled(true);
-									sender.sendMessage(this.getConfig().getString("VoiceChat.message.voice.enabled")
-											+ target.getName());
-								} else if (args[2].equalsIgnoreCase("off")) {
-									targetVoice.setAutomaticControlled(false);
-									if (targetVoice.getCurrentChannel() != null
-											&& targetVoice.getCurrentChannel().getUsers().size() <= 2) {
-										targetVoice.moveTo(null);
-										targetVoice.getCurrentChannel().remove();
-									} else {
-										targetVoice.moveTo(null);
-									}
-									sender.sendMessage(this.getConfig().getString("VoiceChat.message.voice.disabled")
-											+ target.getName());
-								} else {
-									sender.sendMessage(this.getConfig().getString("VoiceChat.message.toggle.usage"));
-								}
-							} else {
-								sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
-							}
+						sender.sendMessage(
+								this.getConfig().getString("VoiceChat.message.voice.disabled") + target.getName());
+					}
+				} else if (args.length == 3) {
+					if (args[2].equalsIgnoreCase("on")) {
+						targetVoice.setAutomaticControlled(true);
+						sender.sendMessage(
+								this.getConfig().getString("VoiceChat.message.voice.enabled") + target.getName());
+					} else if (args[2].equalsIgnoreCase("off")) {
+						targetVoice.setAutomaticControlled(false);
+						if (targetVoice.getCurrentChannel() != null
+								&& targetVoice.getCurrentChannel().getUsers().size() <= 2) {
+							targetVoice.moveTo(null);
+							targetVoice.getCurrentChannel().remove();
 						} else {
-							sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
+							targetVoice.moveTo(null);
 						}
+						sender.sendMessage(
+								this.getConfig().getString("VoiceChat.message.voice.disabled") + target.getName());
 					} else {
 						sender.sendMessage(this.getConfig().getString("VoiceChat.message.toggle.usage"));
 					}
 				} else {
-					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.toggle.usage"));
 				}
-			} else if (args[0].equalsIgnoreCase("help")) {
+
+				break;
+
+			case "help":
 				sender.sendMessage(this.getConfig().getString("VoiceChat.message.help"));
-			} else if (args[0].equalsIgnoreCase("register")) {
-				if (registerInternalMode) {
-					if (sender instanceof Player) {
-						sender.sendMessage(this.getConfig().getString("VoiceChat.message.register.internalMode")
-								+ this.getNewRegisterCodeFor((Player) sender));
-					} else {
-						sender.sendMessage(this.getConfig().getString("VoiceChat.message.senderNoPlayer"));
-					}
-				} else {
+				break;
+
+			case "register":
+				if (!registerInternalMode) {
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.register.externalMode.command"));
+					return true;
 				}
-			} else if (args[0].equalsIgnoreCase("unlink")) {
-				if (sender.hasPermission("voicechat.unlink")) {
-					if (args.length == 2) {
-						OfflinePlayer target = this.getServer().getOfflinePlayer(args[1]);
-						if (target != null) {
-							if (getSql().isSet(target)) {
-								getSql().setID(target, 0);
-								sender.sendMessage(this.getConfig().getString("VoiceChat.message.unlink.sucsess")
-										+ target.getName());
-							} else {
-								sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
-							}
-						} else {
-							sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
-						}
-					} else {
-						sender.sendMessage(this.getConfig().getString("VoiceChat.message.unlink.usage"));
-					}
-				} else {
+				if (!(sender instanceof Player)) {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.senderNoPlayer"));
+					return true;
+				}
+
+				sender.sendMessage(this.getConfig().getString("VoiceChat.message.register.internalMode")
+						+ this.getNewRegisterCodeFor((Player) sender));
+
+				break;
+
+			case "unlink":
+				if (!sender.hasPermission("voicechat.unlink")) {
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
+					return true;
 				}
-			} else if (args[0].equalsIgnoreCase("reload")) {
-				if (sender.hasPermission("voicechat.reload")) {
-					rloadConfig();
-					sender.sendMessage(this.getConfig().getString("VoiceChat.message.reload"));
-				} else {
+
+				if (args.length != 2) {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.unlink.usage"));
+					return true;
+				}
+
+				OfflinePlayer targetOffline = this.getServer().getOfflinePlayer(args[1]);
+
+				if (targetOffline == null) {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
+					return true;
+				}
+
+				if (!getSql().isSet(targetOffline)) {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
+					return true;
+				}
+
+				getSql().setID(targetOffline, 0);
+				sender.sendMessage(
+						this.getConfig().getString("VoiceChat.message.unlink.sucsess") + targetOffline.getName());
+
+				break;
+
+			case "reload":
+				if (!sender.hasPermission("voicechat.reload")) {
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
+					return true;
 				}
-			} else if (args[0].equalsIgnoreCase("discordSRV")) {
-				if (args.length == 2) {
-					if (args[1].equalsIgnoreCase("loadLinkedPlayers")) {
-						if (sender.hasPermission("VoiceChat.discordSRV.loadLinkedPlayers")) {
-							sender.sendMessage("If you have a lot of linked players this can take a while.");
-							if (this.getServer().getPluginManager().getPlugin("DiscordSRV") != null) {
-								Map<String, UUID> linkedPlayers = DiscordSRV.getPlugin().getAccountLinkManager()
-										.getLinkedAccounts();
-								final int length = linkedPlayers.entrySet().size();
 
-								String query = null;
+				rloadConfig();
+				sender.sendMessage(this.getConfig().getString("VoiceChat.message.reload"));
 
-								int i = 0;
+				break;
 
-								for (final Entry<String, UUID> target : linkedPlayers.entrySet()) {
-									if (i % 10 == 0) {
-										sender.sendMessage("Loading DiscordSRV Players... " + i + "/" + length);
-									}
+			case "discordSRV":
+				if (args.length != 2) {
+					sender.sendMessage("Type /voicechat help for help.");
+					return true;
+				}
 
-									if (i != 0) {
-										query = query + ", (\"" + target.getValue() + "\", \"" + target.getKey()
-												+ "\")";
-									} else {
-										query = "REPLACE INTO " + getSql().getTable() + " (" + getSql().getUuidColumn()
-												+ ", " + getSql().getDcIdColumn() + ") VALUES (\"" + target.getValue()
-												+ "\", \"" + target.getKey() + "\")";
-									}
+				if (!args[1].equalsIgnoreCase("loadLinkedPlayers")) {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.cmdNotFound"));
+					return true;
+				}
 
-									i++;
-								}
+				if (!sender.hasPermission("VoiceChat.discordSRV.loadLinkedPlayers")) {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
+					return true;
+				}
 
-								if (query != null) {
-									getSql().executeUpdateQuery(query);
-								}
+				if (this.getServer().getPluginManager().getPlugin("DiscordSRV") == null) {
+					sender.sendMessage("DiscordSRV not found.");
+					return true;
+				}
 
-								sender.sendMessage("Done!");
-							} else {
-								sender.sendMessage("DiscordSRV not found.");
-							}
-						} else {
-							sender.sendMessage(this.getConfig().getString("VoiceChat.message.noPermission"));
-						}
-					} else {
-						sender.sendMessage(this.getConfig().getString("VoiceChat.message.cmdNotFound"));
+				sender.sendMessage("If you have a lot of linked players this can take a while.");
+				Map<String, UUID> linkedPlayers = DiscordSRV.getPlugin().getAccountLinkManager().getLinkedAccounts();
+				final int length = linkedPlayers.entrySet().size();
+
+				String query = null;
+
+				int i = 0;
+
+				for (final Entry<String, UUID> targetEntery : linkedPlayers.entrySet()) {
+					if (i % 10 == 0) {
+						sender.sendMessage("Loading DiscordSRV Players... " + i + "/" + length);
 					}
+
+					if (i != 0) {
+						query = query + ", (\"" + targetEntery.getValue() + "\", \"" + targetEntery.getKey() + "\")";
+					} else {
+						query = "REPLACE INTO " + getSql().getTable() + " (" + getSql().getUuidColumn() + ", "
+								+ getSql().getDcIdColumn() + ") VALUES (\"" + targetEntery.getValue() + "\", \""
+								+ targetEntery.getKey() + "\")";
+					}
+
+					i++;
 				}
-			} else {
-				sender.sendMessage(this.getConfig().getString("VoiceChat.message.cmdNotFound"));
+
+				if (query != null) {
+					getSql().executeUpdateQuery(query);
+				}
+
+				sender.sendMessage("Done!");
+
+				break;
+
 			}
+
 		}
 		return true;
 	}

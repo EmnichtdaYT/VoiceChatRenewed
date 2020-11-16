@@ -1,6 +1,9 @@
-package me.emnichtdayt.voicechat;
+package me.emnichtdayt.voicechat.entity;
 
 import org.bukkit.entity.Player;
+
+import me.emnichtdayt.voicechat.VoiceChatMain;
+import me.emnichtdayt.voicechat.VoiceState;
 
 public class VoicePlayer {
 	@Override
@@ -12,13 +15,13 @@ public class VoicePlayer {
 	private Player player;
 	private VoiceState state;
 	private long discordID;
-	protected DCChannel currentChannel = null;
+	public DCChannel currentChannel = null;
 	private boolean isAutomaticControlled = true;
-	protected boolean isInVoiceRegion = false;
+	public boolean isInVoiceRegion = false;
 	
 	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
-	protected VoicePlayer(Player player, VoiceState state, long discordID) {
+	public VoicePlayer(Player player, VoiceState state, long discordID) {
 		this.player = player;
 		this.setState(state);
 		this.discordID = discordID;
@@ -35,7 +38,7 @@ public class VoicePlayer {
 		return state;
 	}
 
-	protected void setState(VoiceState state) {
+	public void setState(VoiceState state) {
 		this.state = state;
 	}
 
@@ -57,7 +60,7 @@ public class VoicePlayer {
 		return discordID;
 	}
 
-	protected void setDIscordID(long discordID) {
+	public void setDIscordID(long discordID) {
 		this.discordID = discordID;
 	}
 
