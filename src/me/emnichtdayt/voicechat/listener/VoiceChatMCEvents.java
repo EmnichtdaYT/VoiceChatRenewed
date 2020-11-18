@@ -14,7 +14,7 @@ import me.emnichtdayt.voicechat.entity.VoicePlayer;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class VoiceChatMCEvents implements Listener {
-	
+
 	public VoiceChatMCEvents(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage,
 			String notInWaitingChannelMessage) {
 		this.voicechatInternalRegisterMessage = voicechatInternalRegisterMessage;
@@ -25,7 +25,7 @@ public class VoiceChatMCEvents implements Listener {
 	private String voicechatInternalRegisterMessage;
 	private String voicechatExternalRegisterMessage;
 	private String notInWaitingChannelMessage;
-	
+
 	private VoiceChatMain pl = VoiceChatMain.getInstance();
 
 	public void rloadConfig(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage,
@@ -71,7 +71,7 @@ public class VoiceChatMCEvents implements Listener {
 			if (!(player.hasPermission("VoiceChat.bypass") || player.isOp())) {
 				VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.DISCONNECTED, true);
 				e.disallow(Result.KICK_OTHER, notInWaitingChannelMessage);
-			}else {
+			} else {
 				playerVoice.setAutomaticControlled(false);
 			}
 		}
@@ -80,13 +80,14 @@ public class VoiceChatMCEvents implements Listener {
 
 	@EventHandler
 	public void onPlayerDisconnet(PlayerQuitEvent e) {
-		if (pl.getPlayers().containsKey(e.getPlayer())) {
-			VoicePlayer targetVoice = pl.getPlayers().get(e.getPlayer());
-			if (targetVoice.getCurrentChannel() != null) {
-				targetVoice.moveTo(null);
-			}
-			pl.getPlayers().remove(e.getPlayer());
-			VoiceChatMain.fireVoiceStateChange(targetVoice, targetVoice.getState(), VoiceState.DISCONNECTED, true);
+		if (!pl.getPlayers().containsKey(e.getPlayer())) {
+			return;
 		}
+		VoicePlayer targetVoice = pl.getPlayers().get(e.getPlayer());
+		if (targetVoice.getCurrentChannel() != null) {
+			targetVoice.moveTo(null);
+		}
+		pl.getPlayers().remove(e.getPlayer());
+		VoiceChatMain.fireVoiceStateChange(targetVoice, targetVoice.getState(), VoiceState.DISCONNECTED, true);
 	}
 }

@@ -201,7 +201,7 @@ public class VoiceChatMain extends JavaPlugin {
 		rloadConfig();
 
 		// INSTANCES
-		this.timer = new VoiceChatTimer(this.getConfig().getString("VoiceChat.message.leftDCChannel"));
+		this.timer = new VoiceChatTimer(this.getConfig().getString("VoiceChat.message.leftDCChannel"), this);
 		timer.runTaskTimer(this, 0, 10);
 
 		mcEvents = new VoiceChatMCEvents(this.getConfig().getString("VoiceChat.message.register.internalMode"),
