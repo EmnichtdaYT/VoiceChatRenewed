@@ -1,52 +1,70 @@
 package me.emnichtdayt.voicechat.sql;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 public class VoiceChatSQL {
-	private String ip;
-	private String port;
 	private String database;
 	private String table;
 
 	private String uuidColumn;
 	private String dcIdColumn;
 
-	private String user;
-	private String pass;
+	private HikariDataSource ds;
 
-	public VoiceChatSQL(String ip, String port, String database, String table, String dcIdColumn, String uuidColumn, String user,
-			String pass) {
-		this.ip = ip;
-		this.port = port;
+	public VoiceChatSQL(String ip, String port, String database, String table, String dcIdColumn, String uuidColumn,
+			String user, String pass, boolean usessl) {
 		this.database = database;
 		this.table = table;
 
 		this.dcIdColumn = dcIdColumn;
 		this.uuidColumn = uuidColumn;
 
-		this.user = user;
-		this.pass = pass;
+		HikariConfig config = new HikariConfig();
+
+		config.setJdbcUrl("jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=" + usessl);
+		config.setUsername(user);
+		config.setPassword(pass);
+		config.addDataSourceProperty("cachePrepStmts", true);
+		config.addDataSourceProperty("prepStmtCacheSize", "250");
+		config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+		ds = new HikariDataSource(config);
+
 	}
-	
+
+	public Connection getConnection() {
+		try {
+			return ds.getConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("[VoiceChat] ERROR! Couldn't connect to the database!");
+			return null;
+		}
+	}
+
 	public String getDcIdColumn() {
 		return dcIdColumn;
 	}
-	
+
 	public String getUuidColumn() {
 		return uuidColumn;
 	}
-	
+
 	public String getTable() {
 		return table;
 	}
-	
+
 	public String getDatabase() {
 		return database;
 	}
@@ -58,35 +76,23 @@ public class VoiceChatSQL {
 	 * @return dcID
 	 */
 	public long getID(Player player) {
+
+		PreparedStatement generalStatement;
+		ResultSet resultSet;
 		try {
+			generalStatement = getConnection().prepareStatement("SELECT " + dcIdColumn + " FROM " + table + " WHERE " + uuidColumn + " = ?");
+			generalStatement.setString(1, player.getUniqueId().toString());
 
-			Connection connect = null;
-			Statement statement = null;
-			ResultSet resultSet = null;
-
-			String sqlQuery = "SELECT " + dcIdColumn + " FROM " + table + " WHERE " + uuidColumn + " = '"
-					+ player.getUniqueId().toString() + "'";
-
-			Class.forName("com.mysql.jdbc.Driver");
-
-			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
-
-			statement = connect.createStatement();
-
-			resultSet = statement.executeQuery(sqlQuery);
-
+			resultSet = generalStatement.executeQuery();
 			resultSet.next();
 
 			long ret = resultSet.getLong(1);
 
 			resultSet.close();
-			statement.close();
-			connect.close();
+			generalStatement.close();
 
 			return ret;
-
-		} catch (Exception e) {
+		} catch (SQLException e1) {
 			return -1;
 		}
 	}
@@ -98,30 +104,25 @@ public class VoiceChatSQL {
 	 * @return isSet
 	 */
 	public boolean isSet(OfflinePlayer target) {
+		PreparedStatement generalStatement;
+		ResultSet resultSet;
 		try {
-			Connection connect = null;
-			Statement statement = null;
-			ResultSet result = null;
+			generalStatement = getConnection().prepareStatement("SELECT * FROM " + table + " WHERE " + uuidColumn + " = ?");
+			generalStatement.setString(1, target.getUniqueId().toString());
 
-			String sqlQuery = "SELECT * FROM " + table + " WHERE " + uuidColumn + " = '"
-					+ target.getUniqueId().toString() + "'";
+			resultSet = generalStatement.executeQuery();
+			resultSet.next();
 
-			Class.forName("com.mysql.jdbc.Driver");
+			resultSet.getString(1);
 
-			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+			resultSet.close();
+			generalStatement.close();
 
-			statement = connect.createStatement();
-			result = statement.executeQuery(sqlQuery);
-
-			result.next();
-
-			result.getString(1);
-
-			statement.close();
-			connect.close();
 			return true;
-		} catch (Exception exc) {
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.out.println(
+					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
 			return false;
 		}
 	}
@@ -133,30 +134,25 @@ public class VoiceChatSQL {
 	 * @return isSet
 	 */
 	public boolean isSet(Player target) {
+		PreparedStatement generalStatement;
+		ResultSet resultSet;
 		try {
-			Connection connect = null;
-			Statement statement = null;
-			ResultSet result = null;
+			generalStatement = getConnection().prepareStatement("SELECT * FROM " + table + " WHERE " + uuidColumn + " = ?");
+			generalStatement.setString(1, target.getUniqueId().toString());
 
-			String sqlQuery = "SELECT * FROM " + table + " WHERE " + uuidColumn + " = '"
-					+ target.getUniqueId().toString() + "'";
+			resultSet = generalStatement.executeQuery();
+			resultSet.next();
 
-			Class.forName("com.mysql.jdbc.Driver");
+			resultSet.getString(1);
 
-			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
+			resultSet.close();
+			generalStatement.close();
 
-			statement = connect.createStatement();
-			result = statement.executeQuery(sqlQuery);
-
-			result.next();
-
-			result.getString(1);
-
-			statement.close();
-			connect.close();
 			return true;
-		} catch (Exception exc) {
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.out.println(
+					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
 			return false;
 		}
 	}
@@ -167,26 +163,18 @@ public class VoiceChatSQL {
 	 * @param target
 	 */
 	public void createUser(OfflinePlayer target) {
+
+		PreparedStatement generalStatement;
 		try {
-			Connection connect = null;
-			Statement statement = null;
+			generalStatement = getConnection().prepareStatement("INSERT INTO " + table + " (" + uuidColumn + ") VALUES (?)");
+			generalStatement.setString(1, target.getUniqueId().toString());
 
-			String sqlQuery = "INSERT INTO " + table + " (" + uuidColumn + ") VALUES (\""
-					+ target.getUniqueId().toString() + "\")";
-
-			Class.forName("com.mysql.jdbc.Driver");
-
-			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
-
-			statement = connect.createStatement();
-			statement.executeUpdate(sqlQuery);
-
-			statement.close();
-			connect.close();
-		} catch (Exception exc) {
-			exc.printStackTrace();
-			System.out.println("[VoiceChat] ERROR! An error occured whilst connecting to the SQL database please check the connection information in the config!");
+			generalStatement.executeUpdate();
+			generalStatement.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.out.println(
+					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
 		}
 	}
 
@@ -198,28 +186,19 @@ public class VoiceChatSQL {
 	 * @param id
 	 */
 	public void setID(OfflinePlayer target, long id) {
+
+		PreparedStatement generalStatement;
 		try {
+			generalStatement = getConnection().prepareStatement("UPDATE " + table + " SET " + dcIdColumn + " = ? WHERE " + uuidColumn + " = ?");
+			generalStatement.setLong(1, id);
+			generalStatement.setString(2, target.getUniqueId().toString());
 
-			Connection connect = null;
-			Statement statement = null;
-
-			String sqlQuery = "UPDATE " + table + " SET " + dcIdColumn + " = '" + id + "' WHERE " + uuidColumn + " = '"
-					+ target.getUniqueId().toString() + "'";
-
-			Class.forName("com.mysql.jdbc.Driver");
-
-			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
-
-			statement = connect.createStatement();
-			statement.executeUpdate(sqlQuery);
-
-			statement.close();
-			connect.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("[VoiceChat] ERROR! An error occured whilst connecting to the SQL database please check the connection information in the config!");
+			generalStatement.executeUpdate();
+			generalStatement.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.out.println(
+					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
 		}
 	}
 
@@ -230,28 +209,18 @@ public class VoiceChatSQL {
 	 * @param id
 	 */
 	public void setID(Player target, long id) {
+		PreparedStatement generalStatement;
 		try {
+			generalStatement = getConnection().prepareStatement("UPDATE " + table + " SET " + dcIdColumn + " = ? WHERE " + uuidColumn + " = ?");
+			generalStatement.setLong(1, id);
+			generalStatement.setString(2, target.getUniqueId().toString());
 
-			Connection connect = null;
-			Statement statement = null;
-
-			String sqlQuery = "UPDATE " + table + " SET " + dcIdColumn + " = '" + id + "' WHERE " + uuidColumn + " = '"
-					+ target.getUniqueId().toString() + "'";
-
-			Class.forName("com.mysql.jdbc.Driver");
-
-			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
-
-			statement = connect.createStatement();
-			statement.executeUpdate(sqlQuery);
-
-			statement.close();
-			connect.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("[VoiceChat] ERROR! An error occured whilst connecting to the SQL database please check the connection information in the config!");
+			generalStatement.executeUpdate();
+			generalStatement.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.out.println(
+					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
 		}
 	}
 
@@ -263,55 +232,41 @@ public class VoiceChatSQL {
 	 * @return uuid
 	 */
 	public UUID getUUIDbyDCID(long dcID) {
+
+		PreparedStatement generalStatement;
+		ResultSet resultSet;
 		try {
-			Connection connect = null;
-			Statement statement = null;
-			ResultSet resultSet = null;
+			generalStatement = getConnection().prepareStatement("SELECT " + uuidColumn + " FROM " + table + " WHERE " + dcIdColumn + " = ?");
+			generalStatement.setLong(1, dcID);
 
-			String sqlQuery = "SELECT " + uuidColumn + " FROM " + table + " WHERE " + dcIdColumn + " = '" + dcID + "'";
-
-			Class.forName("com.mysql.jdbc.Driver");
-
-			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
-
-			statement = connect.createStatement();
-
-			resultSet = statement.executeQuery(sqlQuery);
-
+			resultSet = generalStatement.executeQuery();
 			resultSet.next();
 
 			UUID ret = UUID.fromString(resultSet.getString(1));
 
 			resultSet.close();
-			statement.close();
-			connect.close();
+			generalStatement.close();
 
 			return ret;
-
-		} catch (Exception e) {
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.out.println(
+					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
 			return null;
 		}
 	}
-	
+
 	public void executeUpdateQuery(String query) {
 		try {
-			Connection connect = null;
-			Statement statement = null;
-
-			Class.forName("com.mysql.jdbc.Driver");
-
-			connect = DriverManager.getConnection(
-					"jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=false&user=" + user + "&password=" + pass);
-
-			statement = connect.createStatement();
+			Statement statement = getConnection().createStatement();
+			
 			statement.executeUpdate(query);
-
+			
 			statement.close();
-			connect.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("[VoiceChat] ERROR! An error occured whilst connecting to the SQL database please check the connection information in the config!");
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.out.println(
+					"[VoiceChat] [ERROR] That query is invalid.");
 		}
 	}
 }

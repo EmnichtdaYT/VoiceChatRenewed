@@ -169,6 +169,7 @@ public class VoiceChatMain extends JavaPlugin {
 		this.getConfig().addDefault("VoiceChat.message.embed.codeInvalid", "That code is invalid.");
 		this.getConfig().addDefault("VoiceChat.message.embed.noCode", "I only accept a 4 digit code for registration.");
 		this.getConfig().addDefault("VoiceChat.message.embed.color", "#077d1f");
+		this.getConfig().addDefault("MySQL.usessl", false);
 
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
@@ -213,7 +214,7 @@ public class VoiceChatMain extends JavaPlugin {
 		sql = new VoiceChatSQL(this.getConfig().getString("MySQL.ip"), this.getConfig().getString("MySQL.port"),
 				this.getConfig().getString("MySQL.database"), this.getConfig().getString("MySQL.table"),
 				this.getConfig().getString("MySQL.idColumn"), this.getConfig().getString("MySQL.uuidColumn"),
-				this.getConfig().getString("MySQL.user"), this.getConfig().getString("MySQL.password"));
+				this.getConfig().getString("MySQL.user"), this.getConfig().getString("MySQL.password"), this.getConfig().getBoolean("MySQL.usessl"));
 
 		System.out.println("[VoiceChat] Starting the Discord Bot");
 

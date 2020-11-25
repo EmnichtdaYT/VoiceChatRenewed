@@ -6,12 +6,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import me.emnichtdayt.voicechat.VoiceChatMain;
 import me.emnichtdayt.voicechat.VoiceState;
 import me.emnichtdayt.voicechat.entity.VoicePlayer;
-
-import org.bukkit.event.player.PlayerQuitEvent;
 
 public class VoiceChatMCEvents implements Listener {
 
