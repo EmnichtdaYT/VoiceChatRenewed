@@ -249,9 +249,6 @@ public class VoiceChatSQL {
 
 			return ret;
 		} catch (SQLException e1) {
-			e1.printStackTrace();
-			System.out.println(
-					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
 			return null;
 		}
 	}
