@@ -232,7 +232,7 @@ public class DiscordBot {
 				target.getPlayer()
 						.kickPlayer("[VoiceChat] Ooops, an error occured but it's not my fault! Are you registered? Is the information in the config correct?");
 			}
-			VoiceChatMain.fireVoiceStateChange(target, target.getState(), VoiceState.DISCONNECTED, getsKicked);
+			pl.fireVoiceStateChange(target, target.getState(), VoiceState.DISCONNECTED, getsKicked);
 			target.disconnect();
 		}
 	}

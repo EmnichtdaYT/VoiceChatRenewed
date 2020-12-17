@@ -81,26 +81,26 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 				if (!pl.getDcbot().isInWaitingChannel(targetVoice)) {
 					if (target.isOnline() && pl.getVoiceChatRequired()) {
 						target.kickPlayer(voiceDisconnectMessage);
-						VoiceChatMain.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.DISCONNECTED, true);
+						pl.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.DISCONNECTED, true);
 					} else {
-						VoiceChatMain.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.DISCONNECTED, false);
+						pl.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.DISCONNECTED, false);
 					}
 				}
 			} else if (target.isOnline() && pl.getDcbot().isInWaitingChannel(targetVoice)) {
-				VoiceChatMain.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.CONNECTED, false);
+				pl.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.CONNECTED, false);
 			} else {
-				VoiceChatMain.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.DISCONNECTED, false);
+				pl.fireVoiceStateChange(targetVoice, oldVoiceState, VoiceState.DISCONNECTED, false);
 			}
 		} else {
 			targetVoice = new VoicePlayer(target, VoiceState.DISCONNECTED, event.getMessageAuthor().getId());
 			if (pl.getDcbot().isInWaitingChannel(targetVoice)) {
-				VoiceChatMain.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.CONNECTED, false);
+				pl.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.CONNECTED, false);
 			} else {
 				if (target.isOnline()) {
-					VoiceChatMain.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.DISCONNECTED,
+					pl.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.DISCONNECTED,
 							false);
 				} else {
-					VoiceChatMain.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.DISCONNECTED, true);
+					pl.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.DISCONNECTED, true);
 				}
 			}
 		}

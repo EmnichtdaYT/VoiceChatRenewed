@@ -109,7 +109,7 @@ public class VoicePlayer {
 	 * 
 	 * @param channel
 	 */
-	@SuppressWarnings("deprecation")
+	
 	public void moveTo(DCChannel channel) {
 		if (getCurrentChannel() != null && getCurrentChannel().getHost() != null
 				&& getCurrentChannel().getHost().equals(this)) {
@@ -130,8 +130,8 @@ public class VoicePlayer {
 		}
 
 		pl.getDcbot().movePlayer(this, channel);
-
-		VoiceChatMain.getInstance().getServer().getScheduler().scheduleAsyncDelayedTask(VoiceChatMain.getInstance(),
+		
+		pl.getServer().getScheduler().runTaskLaterAsynchronously(VoiceChatMain.getInstance(),
 				new Runnable() {
 					public void run() {
 						if (oldChannel != null && oldChannel.getUsers().isEmpty()) {

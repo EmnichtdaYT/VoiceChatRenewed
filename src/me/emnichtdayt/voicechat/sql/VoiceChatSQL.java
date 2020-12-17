@@ -79,8 +79,11 @@ public class VoiceChatSQL {
 
 		PreparedStatement generalStatement;
 		ResultSet resultSet;
+		Connection connect = getConnection();
 		try {
-			generalStatement = getConnection().prepareStatement("SELECT " + dcIdColumn + " FROM " + table + " WHERE " + uuidColumn + " = ?");
+
+			generalStatement = connect
+					.prepareStatement("SELECT " + dcIdColumn + " FROM " + table + " WHERE " + uuidColumn + " = ?");
 			generalStatement.setString(1, player.getUniqueId().toString());
 
 			resultSet = generalStatement.executeQuery();
@@ -91,8 +94,14 @@ public class VoiceChatSQL {
 			resultSet.close();
 			generalStatement.close();
 
+			connect.close();
 			return ret;
 		} catch (SQLException e1) {
+			try {
+				connect.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			return -1;
 		}
 	}
@@ -106,8 +115,10 @@ public class VoiceChatSQL {
 	public boolean isSet(OfflinePlayer target) {
 		PreparedStatement generalStatement;
 		ResultSet resultSet;
+		Connection connect = getConnection();
 		try {
-			generalStatement = getConnection().prepareStatement("SELECT * FROM " + table + " WHERE " + uuidColumn + " = ?");
+			generalStatement = connect
+					.prepareStatement("SELECT * FROM " + table + " WHERE " + uuidColumn + " = ?");
 			generalStatement.setString(1, target.getUniqueId().toString());
 
 			resultSet = generalStatement.executeQuery();
@@ -117,12 +128,15 @@ public class VoiceChatSQL {
 
 			resultSet.close();
 			generalStatement.close();
+			connect.close();
 
 			return true;
 		} catch (SQLException e1) {
-			e1.printStackTrace();
-			System.out.println(
-					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
+			try {
+				connect.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			return false;
 		}
 	}
@@ -136,8 +150,10 @@ public class VoiceChatSQL {
 	public boolean isSet(Player target) {
 		PreparedStatement generalStatement;
 		ResultSet resultSet;
+		Connection connect = getConnection();
 		try {
-			generalStatement = getConnection().prepareStatement("SELECT * FROM " + table + " WHERE " + uuidColumn + " = ?");
+			generalStatement = connect
+					.prepareStatement("SELECT * FROM " + table + " WHERE " + uuidColumn + " = ?");
 			generalStatement.setString(1, target.getUniqueId().toString());
 
 			resultSet = generalStatement.executeQuery();
@@ -147,12 +163,15 @@ public class VoiceChatSQL {
 
 			resultSet.close();
 			generalStatement.close();
+			connect.close();
 
 			return true;
 		} catch (SQLException e1) {
-			e1.printStackTrace();
-			System.out.println(
-					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
+			try {
+				connect.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			return false;
 		}
 	}
@@ -165,13 +184,20 @@ public class VoiceChatSQL {
 	public void createUser(OfflinePlayer target) {
 
 		PreparedStatement generalStatement;
+		Connection connect = getConnection();
 		try {
-			generalStatement = getConnection().prepareStatement("INSERT INTO " + table + " (" + uuidColumn + ") VALUES (?)");
+			generalStatement = connect
+					.prepareStatement("INSERT INTO " + table + " (" + uuidColumn + ") VALUES (?)");
 			generalStatement.setString(1, target.getUniqueId().toString());
 
 			generalStatement.executeUpdate();
 			generalStatement.close();
 		} catch (SQLException e1) {
+			try {
+				connect.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			e1.printStackTrace();
 			System.out.println(
 					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
@@ -188,14 +214,22 @@ public class VoiceChatSQL {
 	public void setID(OfflinePlayer target, long id) {
 
 		PreparedStatement generalStatement;
+		Connection connect = getConnection();
 		try {
-			generalStatement = getConnection().prepareStatement("UPDATE " + table + " SET " + dcIdColumn + " = ? WHERE " + uuidColumn + " = ?");
+			generalStatement = connect
+					.prepareStatement("UPDATE " + table + " SET " + dcIdColumn + " = ? WHERE " + uuidColumn + " = ?");
 			generalStatement.setLong(1, id);
 			generalStatement.setString(2, target.getUniqueId().toString());
 
 			generalStatement.executeUpdate();
 			generalStatement.close();
+			connect.close();
 		} catch (SQLException e1) {
+			try {
+				connect.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			e1.printStackTrace();
 			System.out.println(
 					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
@@ -210,14 +244,22 @@ public class VoiceChatSQL {
 	 */
 	public void setID(Player target, long id) {
 		PreparedStatement generalStatement;
+		Connection connect = getConnection();
 		try {
-			generalStatement = getConnection().prepareStatement("UPDATE " + table + " SET " + dcIdColumn + " = ? WHERE " + uuidColumn + " = ?");
+			generalStatement = connect
+					.prepareStatement("UPDATE " + table + " SET " + dcIdColumn + " = ? WHERE " + uuidColumn + " = ?");
 			generalStatement.setLong(1, id);
 			generalStatement.setString(2, target.getUniqueId().toString());
 
 			generalStatement.executeUpdate();
 			generalStatement.close();
+			connect.close();
 		} catch (SQLException e1) {
+			try {
+				connect.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			e1.printStackTrace();
 			System.out.println(
 					"[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
@@ -235,8 +277,10 @@ public class VoiceChatSQL {
 
 		PreparedStatement generalStatement;
 		ResultSet resultSet;
+		Connection connect = getConnection();
 		try {
-			generalStatement = getConnection().prepareStatement("SELECT " + uuidColumn + " FROM " + table + " WHERE " + dcIdColumn + " = ?");
+			generalStatement = connect
+					.prepareStatement("SELECT " + uuidColumn + " FROM " + table + " WHERE " + dcIdColumn + " = ?");
 			generalStatement.setLong(1, dcID);
 
 			resultSet = generalStatement.executeQuery();
@@ -246,24 +290,36 @@ public class VoiceChatSQL {
 
 			resultSet.close();
 			generalStatement.close();
-
+			connect.close();
+			
 			return ret;
 		} catch (SQLException e1) {
+			try {
+				connect.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			return null;
 		}
 	}
 
 	public void executeUpdateQuery(String query) {
+		Connection connect = getConnection();
 		try {
-			Statement statement = getConnection().createStatement();
-			
+			Statement statement = connect.createStatement();
+
 			statement.executeUpdate(query);
-			
+
 			statement.close();
+			connect.close();
 		} catch (SQLException e1) {
+			try {
+				connect.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			e1.printStackTrace();
-			System.out.println(
-					"[VoiceChat] [ERROR] That query is invalid.");
+			System.out.println("[VoiceChat] [ERROR] That query is invalid.");
 		}
 	}
 }

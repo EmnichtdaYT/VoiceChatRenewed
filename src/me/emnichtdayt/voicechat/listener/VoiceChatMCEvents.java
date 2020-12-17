@@ -48,7 +48,7 @@ public class VoiceChatMCEvents implements Listener {
 		} else {
 			playerVoice = new VoicePlayer(e.getPlayer(), VoiceState.UNLINKED, -1);
 			if (pl.getVoiceChatRequired() && !(player.hasPermission("VoiceChat.bypass") || player.isOp())) {
-				VoiceChatMain.fireVoiceStateChange(playerVoice, null, VoiceState.UNLINKED, true);
+				pl.fireVoiceStateChange(playerVoice, null, VoiceState.UNLINKED, true);
 				if (pl.isRegisterInternalMode()) {
 					e.disallow(Result.KICK_OTHER, voicechatInternalRegisterMessage + pl.getNewRegisterCodeFor(player));
 				} else {
@@ -65,10 +65,10 @@ public class VoiceChatMCEvents implements Listener {
 
 		if (pl.getDcbot().isInWaitingChannel(playerVoice)) {
 			playerVoice.setState(VoiceState.CONNECTED);
-			VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, false);
+			pl.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.CONNECTED, false);
 		} else if (pl.getVoiceChatRequired()) {
 			if (!(player.hasPermission("VoiceChat.bypass") || player.isOp())) {
-				VoiceChatMain.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.DISCONNECTED, true);
+				pl.fireVoiceStateChange(playerVoice, VoiceState.DISCONNECTED, VoiceState.DISCONNECTED, true);
 				e.disallow(Result.KICK_OTHER, notInWaitingChannelMessage);
 			} else {
 				playerVoice.setAutomaticControlled(false);
@@ -87,6 +87,6 @@ public class VoiceChatMCEvents implements Listener {
 			targetVoice.moveTo(null);
 		}
 		pl.getPlayers().remove(e.getPlayer());
-		VoiceChatMain.fireVoiceStateChange(targetVoice, targetVoice.getState(), VoiceState.DISCONNECTED, true);
+		pl.fireVoiceStateChange(targetVoice, targetVoice.getState(), VoiceState.DISCONNECTED, true);
 	}
 }

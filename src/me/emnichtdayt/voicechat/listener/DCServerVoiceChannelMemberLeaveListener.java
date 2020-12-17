@@ -46,7 +46,7 @@ public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChann
 				Player target = targetVoice.getPlayer();
 				if (pl.getVoiceChatRequired() && !target.hasPermission("VoiceChat.bypass")) {
 					targetVoice.setState(VoiceState.DISCONNECTED);
-					VoiceChatMain.fireVoiceStateChange(targetVoice, VoiceState.CONNECTED, VoiceState.DISCONNECTED,
+					pl.fireVoiceStateChange(targetVoice, VoiceState.CONNECTED, VoiceState.DISCONNECTED,
 							true);
 					pl.kickList.add(target);
 				} else {
@@ -55,7 +55,7 @@ public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChann
 						targetVoice.getCurrentChannel().getUsers().remove(targetVoice);
 						targetVoice.currentChannel = null;
 						pl.firePlayerMoveChannel(targetVoice, oldChannel, null);
-						VoiceChatMain.fireVoiceStateChange(targetVoice, VoiceState.CONNECTED, VoiceState.DISCONNECTED,
+						pl.fireVoiceStateChange(targetVoice, VoiceState.CONNECTED, VoiceState.DISCONNECTED,
 								false);
 						if (oldChannel.getUsers().size() < 2) {
 							oldChannel.remove();

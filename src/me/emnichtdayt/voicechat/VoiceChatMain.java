@@ -31,8 +31,8 @@ import me.emnichtdayt.voicechat.sql.VoiceChatSQL;
 import net.md_5.bungee.api.ChatColor;
 
 public class VoiceChatMain extends JavaPlugin {
-	private static List<PlayerVoiceStateChangeEvent> voiceStateChangeListeners = new ArrayList<>();
-	private static List<PlayerMoveChannelEvent> moveChannelListeners = new ArrayList<>();
+	private List<PlayerVoiceStateChangeEvent> voiceStateChangeListeners = new ArrayList<>();
+	private List<PlayerMoveChannelEvent> moveChannelListeners = new ArrayList<>();
 
 	private DiscordBot dcbot = null;
 	private VoiceChatSQL sql = null;
@@ -285,7 +285,7 @@ public class VoiceChatMain extends JavaPlugin {
 		}
 	}
 
-	public static void fireVoiceStateChange(VoicePlayer player, VoiceState oldVoiceState, VoiceState newVoiceState,
+	public void fireVoiceStateChange(VoicePlayer player, VoiceState oldVoiceState, VoiceState newVoiceState,
 			boolean getsKicked) {
 		for (PlayerVoiceStateChangeEvent listener : voiceStateChangeListeners) {
 			listener.onPlayerVoiceStateChange(player, oldVoiceState, newVoiceState, getsKicked);
