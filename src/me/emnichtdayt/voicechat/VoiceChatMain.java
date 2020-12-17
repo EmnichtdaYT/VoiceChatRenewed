@@ -69,21 +69,21 @@ public class VoiceChatMain extends JavaPlugin {
 			registry.register(flag);
 			this.isOwnVoiceRegion = flag;
 		} catch (FlagConflictException e) {
-
+			this.getLogger().warning("Couldn't set the flag. Is there any other plugin with the flag 'isOwnVoiceChatRegion'?");
 		}
 		try {
 			StateFlag flag = new StateFlag("isDisabledVoiceChatRegion", false);
 			registry.register(flag);
 			this.isDisabledRegion = flag;
 		} catch (FlagConflictException e) {
-
+			this.getLogger().warning("Couldn't set the flag. Is there any other plugin with the flag 'isDisabledVoiceChatRegion'?");
 		}
 		// WORLDGUARD END
 	}
 
 	public void onEnable() {
 		// CONFIG
-		this.reloadConfig();
+		super.reloadConfig();
 
 		this.getConfig().options().header(
 				"Welcome to the VoiceChat config. If you want to change anything besides the messages please restart the server, /voicechat reload won't do anything. If you need help configurating the plugin take a look at https://roleplay.emnichtda.de/plugins/VoiceChat-Renewed/ and if you still have issues ask me on Discord! https://discord.gg/9vK65nD");
@@ -176,7 +176,7 @@ public class VoiceChatMain extends JavaPlugin {
 		this.saveDefaultConfig();
 		// CONFIG END
 
-		this.reloadConfig();
+		super.reloadConfig();
 
 		if (this.getConfig().getString("MySQL.ip").equalsIgnoreCase("ip")
 				|| this.getConfig().getString("DCbot.token").equalsIgnoreCase("token")) {
@@ -199,7 +199,7 @@ public class VoiceChatMain extends JavaPlugin {
 
 		instance = this;
 
-		rloadConfig();
+		reloadConfig();
 
 		// INSTANCES
 		this.timer = new VoiceChatTimer(this.getConfig().getString("VoiceChat.message.leftDCChannel"), this);
@@ -250,12 +250,13 @@ public class VoiceChatMain extends JavaPlugin {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	/**
 	 * rloadConfig() reloads the VoiceChat config
 	 */
-	public void rloadConfig() {
-		this.reloadConfig();
+	public void reloadConfig() {
+		super.reloadConfig();
 
 		disabledWorlds = (ArrayList<String>) this.getConfig().getList("VoiceChat.disabledWorlds");
 
@@ -445,7 +446,7 @@ public class VoiceChatMain extends JavaPlugin {
 			sender.sendMessage(getPlayers().get(target).toString());
 
 		} else if (cmd.getName().equalsIgnoreCase("VoiceChat")) {
-			this.reloadConfig();
+			super.reloadConfig();
 			if (args.length == 0) {
 				sender.sendMessage(this.getConfig().getString("VoiceChat.message.info"));
 				return true;
@@ -568,7 +569,7 @@ public class VoiceChatMain extends JavaPlugin {
 					return true;
 				}
 
-				rloadConfig();
+				reloadConfig();
 				sender.sendMessage(this.getConfig().getString("VoiceChat.message.reload"));
 
 				break;

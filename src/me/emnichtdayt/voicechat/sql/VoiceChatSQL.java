@@ -177,7 +177,7 @@ public class VoiceChatSQL {
 	}
 
 	/**
-	 * createUser(Player target) - creates a database entery for the player
+	 * createUser(Player target) - creates a database entry for the player
 	 * 
 	 * @param target
 	 */

@@ -123,7 +123,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 
 	}
 
-	protected static final Color hexToColor(String value) {
+	protected Color hexToColor(String value) {
 		String digits;
 		if (value.startsWith("#")) {
 			digits = value.substring(1, Math.min(value.length(), 7));

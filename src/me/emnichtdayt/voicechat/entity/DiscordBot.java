@@ -226,8 +226,7 @@ public class DiscordBot {
 			} catch (Exception ex) {
 			}
 			VoiceChatMain pl = VoiceChatMain.getInstance();
-			pl.reloadConfig();
-			boolean getsKicked = pl.getConfig().getBoolean("VoiceChat.isRequired");
+			boolean getsKicked = pl.getVoiceChatRequired();
 			if (getsKicked) {
 				target.getPlayer()
 						.kickPlayer("[VoiceChat] Ooops, an error occured but it's not my fault! Are you registered? Is the information in the config correct?");
