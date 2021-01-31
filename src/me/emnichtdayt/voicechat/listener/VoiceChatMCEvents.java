@@ -34,8 +34,9 @@ public class VoiceChatMCEvents implements Listener {
 		this.notInWaitingChannelMessage = notInWaitingChannelMessage;
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerLoginEvent(PlayerLoginEvent e) {
+		
 		Player player = e.getPlayer();
 		long dcId = -1;
 		dcId = pl.getSql().getID(player);

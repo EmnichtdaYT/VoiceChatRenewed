@@ -97,6 +97,7 @@ public class VoiceChatMain extends JavaPlugin {
 		this.getConfig().addDefault("MySQL.uuidColumn", "uuid");
 		this.getConfig().addDefault("MySQL.user", "user");
 		this.getConfig().addDefault("MySQL.password", "pass");
+		this.getConfig().addDefault("MySQL.usessl", false);
 
 		this.getConfig().addDefault("DCbot.token", "token");
 		this.getConfig().addDefault("DCbot.status", "roleplay.emnichtda.de");
@@ -169,7 +170,6 @@ public class VoiceChatMain extends JavaPlugin {
 		this.getConfig().addDefault("VoiceChat.message.embed.codeInvalid", "That code is invalid.");
 		this.getConfig().addDefault("VoiceChat.message.embed.noCode", "I only accept a 4 digit code for registration.");
 		this.getConfig().addDefault("VoiceChat.message.embed.color", "#077d1f");
-		this.getConfig().addDefault("MySQL.usessl", false);
 
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();

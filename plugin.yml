@@ -7,7 +7,6 @@ author: EmnichtdaYT
 website: emnichtdayt.lima-city.de
 
 depend: [WorldGuard]
-loadbefore: [WorldGuard, DiscordSRV]
 softdepend: [DiscordSRV]
 
 commands:

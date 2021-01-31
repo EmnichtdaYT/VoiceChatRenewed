@@ -59,7 +59,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 			return;
 		}
 
-		if (pl.registerKeys.containsKey(code)) {
+		if (!pl.registerKeys.containsKey(code)) {
 			EmbedBuilder invalidBedBuild = new EmbedBuilder();
 
 			invalidBedBuild.setColor(hexToColor(color));
