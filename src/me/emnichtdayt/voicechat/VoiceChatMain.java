@@ -62,6 +62,9 @@ public class VoiceChatMain extends JavaPlugin {
 	public ArrayList<Player> kickList = new ArrayList<Player>();
 
 	public void onLoad() {
+
+		instance = this;
+
 		// WORLDGUARD
 		FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
 		try {
@@ -69,14 +72,16 @@ public class VoiceChatMain extends JavaPlugin {
 			registry.register(flag);
 			this.isOwnVoiceRegion = flag;
 		} catch (FlagConflictException e) {
-			this.getLogger().warning("Couldn't set the flag. Is there any other plugin with the flag 'isOwnVoiceChatRegion'?");
+			this.getLogger()
+					.warning("Couldn't set the flag. Is there any other plugin with the flag 'isOwnVoiceChatRegion'?");
 		}
 		try {
 			StateFlag flag = new StateFlag("isDisabledVoiceChatRegion", false);
 			registry.register(flag);
 			this.isDisabledRegion = flag;
 		} catch (FlagConflictException e) {
-			this.getLogger().warning("Couldn't set the flag. Is there any other plugin with the flag 'isDisabledVoiceChatRegion'?");
+			this.getLogger().warning(
+					"Couldn't set the flag. Is there any other plugin with the flag 'isDisabledVoiceChatRegion'?");
 		}
 		// WORLDGUARD END
 	}
@@ -197,13 +202,9 @@ public class VoiceChatMain extends JavaPlugin {
 			return;
 		}
 
-		instance = this;
-
 		reloadConfig();
 
 		// INSTANCES
-		this.timer = new VoiceChatTimer(this.getConfig().getString("VoiceChat.message.leftDCChannel"), this);
-		timer.runTaskTimer(this, 0, 10);
 
 		mcEvents = new VoiceChatMCEvents(this.getConfig().getString("VoiceChat.message.register.internalMode"),
 				this.getConfig().getString("VoiceChat.message.register.externalMode"),
@@ -214,7 +215,8 @@ public class VoiceChatMain extends JavaPlugin {
 		sql = new VoiceChatSQL(this.getConfig().getString("MySQL.ip"), this.getConfig().getString("MySQL.port"),
 				this.getConfig().getString("MySQL.database"), this.getConfig().getString("MySQL.table"),
 				this.getConfig().getString("MySQL.idColumn"), this.getConfig().getString("MySQL.uuidColumn"),
-				this.getConfig().getString("MySQL.user"), this.getConfig().getString("MySQL.password"), this.getConfig().getBoolean("MySQL.usessl"));
+				this.getConfig().getString("MySQL.user"), this.getConfig().getString("MySQL.password"),
+				this.getConfig().getBoolean("MySQL.usessl"));
 
 		System.out.println("[VoiceChat] Starting the Discord Bot");
 
@@ -230,6 +232,9 @@ public class VoiceChatMain extends JavaPlugin {
 				this.getConfig().getString("VoiceChat.message.embed.color"));
 
 		System.out.println("[VoiceChat] Done starting Discord Bot");
+
+		this.timer = new VoiceChatTimer(this.getConfig().getString("VoiceChat.message.leftDCChannel"), this);
+		timer.runTaskTimer(this, 0, 10);
 
 		if (this.getServer().getPluginManager().getPlugin("DiscordSRV") != null
 				&& this.getConfig().getBoolean("VoiceChat.register.useDiscordSRVregister")) {
@@ -460,7 +465,15 @@ public class VoiceChatMain extends JavaPlugin {
 					return true;
 				}
 
-				Player target = this.getServer().getPlayer(args[1]);
+				Player target;
+				if (args.length >= 2) {
+					target = this.getServer().getPlayer(args[1]);
+				} else if (sender instanceof Player) {
+					target = (Player) sender;
+				} else {
+					sender.sendMessage(this.getConfig().getString("VoiceChat.message.senderNoPlayer"));
+					return true;
+				}
 
 				if (target == null) {
 					sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
