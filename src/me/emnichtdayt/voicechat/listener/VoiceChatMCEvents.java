@@ -23,7 +23,7 @@ public class VoiceChatMCEvents implements Listener {
   private String voicechatExternalRegisterMessage;
   private String notInWaitingChannelMessage;
 
-  private VoiceChatMain pl = VoiceChatMain.getInstance();
+  private final VoiceChatMain pl = VoiceChatMain.getInstance();
 
   public void rloadConfig(String voicechatInternalRegisterMessage, String voicechatExternalRegisterMessage, String notInWaitingChannelMessage) {
     this.voicechatInternalRegisterMessage = voicechatInternalRegisterMessage;
@@ -39,8 +39,7 @@ public class VoiceChatMCEvents implements Listener {
     }
 
     Player player = e.getPlayer();
-    long dcId = -1;
-    dcId = pl.getSql().getID(player);
+    long dcId = pl.getSql().getID(player);
 
     final VoicePlayer playerVoice;
 
@@ -78,7 +77,7 @@ public class VoiceChatMCEvents implements Listener {
   }
 
   @EventHandler
-  public void onPlayerDisconnet(PlayerQuitEvent e) {
+  public void onPlayerDisconnect(PlayerQuitEvent e) {
 
     if(pl.isInConfigMode()){
       return;

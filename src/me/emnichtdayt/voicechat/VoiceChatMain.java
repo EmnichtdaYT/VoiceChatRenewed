@@ -48,20 +48,20 @@ public class VoiceChatMain extends JavaPlugin {
 
     private VoiceChatMCEvents mcEvents = null;
 
-    private final HashMap<Player, VoicePlayer> players = new HashMap<Player, VoicePlayer>();
-    private final ArrayList<DCChannel> channels = new ArrayList<DCChannel>();
+    private final HashMap<Player, VoicePlayer> players = new HashMap<>();
+    private final ArrayList<DCChannel> channels = new ArrayList<>();
 
-    private ArrayList<String> disabledWorlds = new ArrayList<String>();
+    private ArrayList<String> disabledWorlds = new ArrayList<>();
 
     private int rangeX = 4;
     private int rangeY = 4;
     private int rangeZ = 4;
 
-    public HashMap<Integer, Player> registerKeys = new HashMap<Integer, Player>();
+    public HashMap<Integer, Player> registerKeys = new HashMap<>();
 
     private boolean voiceChatRequired = true;
     private boolean registerInternalMode = true;
-    public ArrayList<Player> kickList = new ArrayList<Player>();
+    public ArrayList<Player> kickList = new ArrayList<>();
 
     private boolean isInConfigMode = false;
 
@@ -123,7 +123,7 @@ public class VoiceChatMain extends JavaPlugin {
 
         reloadConfig();
 
-        if(isInConfigMode){
+        if (isInConfigMode) {
             return;
         }
 
@@ -151,7 +151,7 @@ public class VoiceChatMain extends JavaPlugin {
                 this
         );
 
-        if(!sql.init()){
+        if (!sql.init()) {
             enableConfigMode();
             return;
         }
@@ -189,7 +189,7 @@ public class VoiceChatMain extends JavaPlugin {
     public void enableConfigMode() {
         this.getLogger().warning("Entering config mode. Only config commands are available, all other features will be disabled!");
         isInConfigMode = true;
-        if(timer!=null&&!timer.isCancelled()){
+        if (timer != null && !timer.isCancelled()) {
             timer.cancel();
         }
     }
@@ -204,11 +204,11 @@ public class VoiceChatMain extends JavaPlugin {
         }
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
     /**
      * rloadConfig() reloads the VoiceChat config
      */
+    @Override
+    @SuppressWarnings("unchecked")
     public void reloadConfig() {
         super.reloadConfig();
 
@@ -326,7 +326,7 @@ public class VoiceChatMain extends JavaPlugin {
 
     /**
      * getVoiceRangeX() returns the x distance within the players can hear each
-     * other. (Doesn't affect non automatic controlled players)
+     * other. (Doesn't affect non-automatic controlled players)
      *
      * @return rangeX
      */
@@ -340,7 +340,7 @@ public class VoiceChatMain extends JavaPlugin {
 
     /**
      * getVoiceRangeY() returns the y distance within the players can hear each
-     * other. (Doesn't affect non automatic controlled players)
+     * other. (Doesn't affect non-automatic controlled players)
      *
      * @return rangeY
      */
@@ -354,7 +354,7 @@ public class VoiceChatMain extends JavaPlugin {
 
     /**
      * getVoiceRangeZ() returns the z distance within the players can hear each
-     * other. (Doesn't affect non automatic controlled players)
+     * other. (Doesn't affect non-automatic controlled players)
      *
      * @return rangeZ
      */
@@ -410,7 +410,7 @@ public class VoiceChatMain extends JavaPlugin {
 
             switch (args[0].toLowerCase()) {
                 case "toggle":
-                    if(this.isInConfigMode){
+                    if (this.isInConfigMode) {
                         sender.sendMessage("VoiceChat is in config mode. Check console for more information!");
                         return true;
                     }
@@ -480,7 +480,7 @@ public class VoiceChatMain extends JavaPlugin {
                     sender.sendMessage(this.getConfig().getString("VoiceChat.message.help"));
                     break;
                 case "register":
-                    if(this.isInConfigMode){
+                    if (this.isInConfigMode) {
                         sender.sendMessage("VoiceChat is in config mode. Check console for more information!");
                         return true;
                     }
@@ -497,7 +497,7 @@ public class VoiceChatMain extends JavaPlugin {
 
                     break;
                 case "unlink":
-                    if(this.isInConfigMode){
+                    if (this.isInConfigMode) {
                         sender.sendMessage("VoiceChat is in config mode. Check console for more information!");
                         return true;
                     }
@@ -513,11 +513,6 @@ public class VoiceChatMain extends JavaPlugin {
 
                     OfflinePlayer targetOffline = this.getServer().getOfflinePlayer(args[1]);
 
-                    if (targetOffline == null) {
-                        sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
-                        return true;
-                    }
-
                     if (!getSql().isSet(targetOffline)) {
                         sender.sendMessage(this.getConfig().getString("VoiceChat.message.playerNotFound"));
                         return true;
@@ -528,7 +523,7 @@ public class VoiceChatMain extends JavaPlugin {
 
                     break;
                 case "reload":
-                    if(this.isInConfigMode){
+                    if (this.isInConfigMode) {
                         sender.sendMessage("VoiceChat is in config mode. Check console for more information!");
                         return true;
                     }
@@ -542,7 +537,7 @@ public class VoiceChatMain extends JavaPlugin {
 
                     break;
                 case "discordsrv":
-                    if(this.isInConfigMode){
+                    if (this.isInConfigMode) {
                         sender.sendMessage("VoiceChat is in config mode. Check console for more information!");
                         return true;
                     }
@@ -570,7 +565,7 @@ public class VoiceChatMain extends JavaPlugin {
                     Map<String, UUID> linkedPlayers = DiscordSRV.getPlugin().getAccountLinkManager().getLinkedAccounts();
                     final int length = linkedPlayers.entrySet().size();
 
-                    String query = null;
+                    StringBuilder query = null;
 
                     int i = 0;
 
@@ -580,27 +575,26 @@ public class VoiceChatMain extends JavaPlugin {
                         }
 
                         if (i != 0) {
-                            query = query + ", (\"" + targetEntery.getValue() + "\", \"" + targetEntery.getKey() + "\")";
+                            query.append(", (\"").append(targetEntery.getValue()).append("\", \"").append(targetEntery.getKey()).append("\")");
                         } else {
-                            query =
-                                    "REPLACE INTO " +
-                                            getSql().getTable() +
-                                            " (" +
-                                            getSql().getUuidColumn() +
-                                            ", " +
-                                            getSql().getDcIdColumn() +
-                                            ") VALUES (\"" +
-                                            targetEntery.getValue() +
-                                            "\", \"" +
-                                            targetEntery.getKey() +
-                                            "\")";
+                            query = new StringBuilder("REPLACE INTO " +
+                                    getSql().getTable() +
+                                    " (" +
+                                    getSql().getUuidColumn() +
+                                    ", " +
+                                    getSql().getDcIdColumn() +
+                                    ") VALUES (\"" +
+                                    targetEntery.getValue() +
+                                    "\", \"" +
+                                    targetEntery.getKey() +
+                                    "\")");
                         }
 
                         i++;
                     }
 
                     if (query != null) {
-                        getSql().executeUpdateQuery(query);
+                        getSql().executeUpdateQuery(query.toString());
                     }
 
                     sender.sendMessage("Done!");
@@ -613,7 +607,7 @@ public class VoiceChatMain extends JavaPlugin {
                         return true;
                     }
 
-                    if(args.length!=1){
+                    if (args.length != 1) {
                         sender.sendMessage(this.getConfig().getString("VoiceChat.message.info"));
                         return true;
                     }
@@ -634,7 +628,7 @@ public class VoiceChatMain extends JavaPlugin {
         return true;
     }
 
-    private void doInitDatabaseCommand(org.bukkit.command.CommandSender sender){
+    private void doInitDatabaseCommand(org.bukkit.command.CommandSender sender) {
         String mysqlIp = this.getConfig().getString("MySQL.ip");
         String mysqlPort = this.getConfig().getString("MySQL.port");
         String mysqlDatabase = this.getConfig().getString("MySQL.database");
@@ -645,98 +639,88 @@ public class VoiceChatMain extends JavaPlugin {
         String mysqlPassword = this.getConfig().getString("MySQL.password");
         boolean mysqlUsessl = this.getConfig().getBoolean("MySQL.usessl");
 
-        VoiceChatDatabaseInitSql dbInit = null;
-        Connection connection = null;
+        VoiceChatDatabaseInitSql dbInit;
+        Connection connection;
         try {
-            dbInit = new VoiceChatDatabaseInitSql(mysqlIp, mysqlPort, mysqlDatabase, mysqlTable, mysqlIdColumn, mysqlUuidColumn, mysqlUser, mysqlPassword, mysqlUsessl);
+            dbInit = new VoiceChatDatabaseInitSql(mysqlIp, mysqlPort, mysqlDatabase, mysqlUser, mysqlPassword, mysqlUsessl);
             connection = dbInit.getConnection();
-        }catch (Exception e){
+        } catch (Exception e) {
             sender.sendMessage(ChatColor.RED + "Error while opening connection to database. Error: '" + e.getLocalizedMessage() + "', check database ip, port, name, username, password and ssl settings. Check console for stacktrace.");
             this.getLogger().throwing("VoiceChatMain", "doInitDatabaseCommand", e);
             return;
         }
 
-        int tableCount = -1;
-        PreparedStatement tableCountStatement = null;
-        ResultSet tableCountResultSet = null;
+        int tableCount;
+        PreparedStatement tableCountStatement;
+        ResultSet tableCountResultSet;
         try {
             tableCountStatement = connection.prepareStatement("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?");
             tableCountStatement.setString(1, mysqlDatabase);
             tableCountResultSet = tableCountStatement.executeQuery();
             tableCountResultSet.next();
             tableCount = tableCountResultSet.getInt(1);
-        }catch (Exception e){
+        } catch (Exception e) {
             sender.sendMessage(ChatColor.RED + "Error while trying to get amount of tables in database. Error: '" + e.getLocalizedMessage() + "', check console for stacktrace.");
             this.getLogger().throwing("VoiceChatMain", "doInitDatabaseCommand", e);
             return;
         }
 
-        try{
-            if(tableCountResultSet!=null) {
-                tableCountResultSet.close();
-            }
-            if(tableCountStatement!=null) {
-                tableCountStatement.close();
-            }
-        }catch (Exception e){
+        try {
+            tableCountResultSet.close();
+            tableCountStatement.close();
+        } catch (Exception e) {
             sender.sendMessage(ChatColor.GOLD + "Warning: Error while closing statement or result set to get amount of tables in database. Error: '" + e.getLocalizedMessage() + "', does the user '" + mysqlUser + "' have the required permissions? Check console for stacktrace. " + ChatColor.BOLD + "Continuing anyways.");
             this.getLogger().throwing("VoiceChatMain", "doInitDatabaseCommand", e);
         }
 
-        if(tableCount != 0){
+        if (tableCount != 0) {
             sender.sendMessage(ChatColor.GOLD + "Warning: Database is not empty. " + ChatColor.BOLD + "Continuing anyways " + ChatColor.RESET + ChatColor.GOLD + "Don't worry, VoiceChat won't override any existing tables or data.");
         }
 
         boolean tableExists;
-        PreparedStatement tableExistsStatement = null;
-        ResultSet tableExistsResultSet = null;
-        try{
+        PreparedStatement tableExistsStatement;
+        ResultSet tableExistsResultSet;
+        try {
             tableExistsStatement = connection.prepareStatement("SELECT EXISTS( SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA LIKE ? AND TABLE_TYPE LIKE 'BASE TABLE' AND TABLE_NAME = ? )");
             tableExistsStatement.setString(1, mysqlDatabase);
             tableExistsStatement.setString(2, mysqlTable);
             tableExistsResultSet = tableExistsStatement.executeQuery();
             tableExistsResultSet.next();
             tableExists = tableExistsResultSet.getBoolean(1);
-        }catch(Exception e){
+        } catch (Exception e) {
             sender.sendMessage(ChatColor.RED + "Error while trying to get if table exists in database. Error: '" + e.getLocalizedMessage() + "', does the user '" + mysqlUser + "' have the required permissions? Check console for stacktrace.");
             this.getLogger().throwing("VoiceChatMain", "doInitDatabaseCommand", e);
             return;
         }
 
-        try{
-            if(tableExistsResultSet!=null){
-                tableExistsResultSet.close();
-            }
-            if(tableExistsStatement!=null){
-                tableExistsStatement.close();
-            }
-        }catch (Exception e){
+        try {
+            tableExistsResultSet.close();
+            tableExistsStatement.close();
+        } catch (Exception e) {
             sender.sendMessage(ChatColor.GOLD + "Warning: Error while closing statement or result set to get if table exists in database. Error: '" + e.getLocalizedMessage() + "', check console for stacktrace. " + ChatColor.BOLD + "Continuing anyways.");
             this.getLogger().throwing("VoiceChatMain", "doInitDatabaseCommand", e);
         }
 
-        if(tableExists){
+        if (tableExists) {
             sender.sendMessage(ChatColor.RED + "Table already exists in database. Please choose another name or delete the table.");
             return;
         }
 
         sender.sendMessage(ChatColor.GREEN + "Creating table '" + mysqlTable + "'");
 
-        Statement createTableStatement = null;
-        try{
+        Statement createTableStatement;
+        try {
             createTableStatement = connection.createStatement();
             createTableStatement.executeUpdate("CREATE TABLE " + mysqlTable + "( " + mysqlUuidColumn + " varchar(45), " + mysqlIdColumn + " varchar(20) )");
-        }catch (Exception e){
+        } catch (Exception e) {
             sender.sendMessage(ChatColor.RED + "Error while creating table '" + mysqlTable + "'. Error: '" + e.getLocalizedMessage() + "', does the user '" + mysqlUser + "' have the required permissions? Check console for stacktrace.");
             this.getLogger().throwing("VoiceChatMain", "doInitDatabaseCommand", e);
             return;
         }
 
-        try{
-            if(createTableStatement!=null){
-                createTableStatement.close();
-            }
-        }catch (Exception e){
+        try {
+            createTableStatement.close();
+        } catch (Exception e) {
             sender.sendMessage(ChatColor.GOLD + "Warning: Error while closing statement to create table '" + mysqlTable + "' in database. Error: '" + e.getLocalizedMessage() + "', check console for stacktrace. " + ChatColor.BOLD + "Continuing anyways.");
             this.getLogger().throwing("VoiceChatMain", "doInitDatabaseCommand", e);
         }
@@ -791,7 +775,7 @@ public class VoiceChatMain extends JavaPlugin {
         }
     }
 
-    private void initDefaultConfig(){
+    private void initDefaultConfig() {
         this.getConfig()
                 .options()
                 .header(
@@ -889,7 +873,7 @@ public class VoiceChatMain extends JavaPlugin {
                                 " Loads EVERY player registered via DiscordSRV! This might take a long time.\n" +
 
                                 ChatColor.GREEN +
-                                "/voicechat initDatabase "+ ChatColor.WHITE + "-" + ChatColor.GRAY + " Creates the userdata table.\n" +
+                                "/voicechat initDatabase " + ChatColor.WHITE + "-" + ChatColor.GRAY + " Creates the userdata table.\n" +
 
                                 ChatColor.GRAY +
                                 "\n------- " +
@@ -924,6 +908,7 @@ public class VoiceChatMain extends JavaPlugin {
 
     /**
      * Returns if the plugin is in config mode. Config mode means it only accepts configuration commands like database init or setup. If this boolean is true, don't interact with the plugin in any way except for configuration.
+     *
      * @return isInConfigMode
      */
     public boolean isInConfigMode() {

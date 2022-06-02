@@ -12,7 +12,7 @@ public class VoiceChatDatabaseInitSql {
     private final HikariDataSource ds;
     private Connection connection;
 
-    public VoiceChatDatabaseInitSql(String ip, String port, String database, String table, String dcIdColumn, String uuidColumn, String user, String pass, boolean usessl) {
+    public VoiceChatDatabaseInitSql(String ip, String port, String database, String user, String pass, boolean usessl) {
         HikariConfig config = new HikariConfig();
 
         config.setJdbcUrl("jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=" + usessl);

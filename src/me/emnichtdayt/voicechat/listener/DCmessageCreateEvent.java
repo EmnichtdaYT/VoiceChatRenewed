@@ -19,7 +19,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
   private String noCode;
   private String color;
 
-  private VoiceChatMain pl = VoiceChatMain.getInstance();
+  private final VoiceChatMain pl = VoiceChatMain.getInstance();
 
   public DCmessageCreateEvent(String voiceDisconnectMessage, String embedTitle, String connectedMessage, String codeInvalid, String noCode, String color) {
     this.voiceDisconnectMessage = voiceDisconnectMessage;
@@ -43,7 +43,9 @@ public class DCmessageCreateEvent implements MessageCreateListener {
     int code = 0;
     try {
       code = Integer.parseInt(event.getMessage().getContent());
-    } catch (NumberFormatException exc) {}
+    } catch (NumberFormatException exc) { //Gets checked later on
+
+    }
 
     if (String.valueOf(code).length() != 4) {
       EmbedBuilder noCodeBedBuild = new EmbedBuilder();
@@ -94,11 +96,7 @@ public class DCmessageCreateEvent implements MessageCreateListener {
       if (pl.getDcbot().isInWaitingChannel(targetVoice)) {
         pl.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.CONNECTED, false);
       } else {
-        if (target.isOnline()) {
-          pl.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.DISCONNECTED, false);
-        } else {
-          pl.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.DISCONNECTED, true);
-        }
+        pl.fireVoiceStateChange(targetVoice, VoiceState.UNLINKED, VoiceState.DISCONNECTED, !target.isOnline());
       }
     }
 

@@ -140,7 +140,7 @@ public class VoiceChatLogic {
         }
       } else { // Player not in channel
         List<Entity> nearby = target.getNearbyEntities(pl.getVoiceRangeX(), pl.getVoiceRangeY(), pl.getVoiceRangeZ());
-        if (!nearby.stream().anyMatch(ent -> ent instanceof Player)) { // Player has no one around him
+        if (nearby.stream().noneMatch(ent -> ent instanceof Player)) { // Player has no one around him
           return;
         }
 

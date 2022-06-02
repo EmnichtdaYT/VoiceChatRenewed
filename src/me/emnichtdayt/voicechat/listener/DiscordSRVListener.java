@@ -5,7 +5,7 @@ import github.scarsz.discordsrv.api.events.AccountLinkedEvent;
 import me.emnichtdayt.voicechat.VoiceChatMain;
 
 public class DiscordSRVListener {
-  private VoiceChatMain pl = VoiceChatMain.getInstance();
+  private final VoiceChatMain pl = VoiceChatMain.getInstance();
 
   @Subscribe
   public void accountsLinked(AccountLinkedEvent event) {

@@ -13,9 +13,9 @@ import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelMemberLe
 public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChannelMemberLeaveListener {
   protected String voiceDisconnectMessage;
 
-  private VoiceChatMain pl = VoiceChatMain.getInstance();
-  private String channelPrefix;
-  private String categoryId;
+  private final VoiceChatMain pl = VoiceChatMain.getInstance();
+  private final String channelPrefix;
+  private final String categoryId;
 
   public DCServerVoiceChannelMemberLeaveListener(String voiceDisconnectMessage, String channelPrefix, String categoryId) {
     this.voiceDisconnectMessage = voiceDisconnectMessage;

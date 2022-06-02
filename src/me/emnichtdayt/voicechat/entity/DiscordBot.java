@@ -12,11 +12,14 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.channel.ChannelCategory;
+import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannelBuilder;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.server.Server;
+
+import javax.swing.text.html.Option;
 
 public class DiscordBot {
   private int nextChannel = 0;
@@ -150,8 +153,7 @@ public class DiscordBot {
    * @return DCChannel channelVC
    */
   public DCChannel getChannelByName(String name) {
-    for (Iterator<? extends ServerVoiceChannel> channels = api.getServerVoiceChannelsByName(name).iterator(); channels.hasNext();) {
-      ServerVoiceChannel channel = channels.next();
+    for (ServerVoiceChannel channel : api.getServerVoiceChannelsByName(name)) {
       for (DCChannel channelVC : pl.getChannels()) {
         if (channelVC.getId() == channel.getId()) {
           return channelVC;
@@ -232,7 +234,9 @@ public class DiscordBot {
     } catch (Exception e) {
       try {
         server.kickUserFromVoiceChannel(api.getUserById(target.getDiscordID()).get());
-      } catch (Exception ex) {}
+      } catch (Exception ex) { //Same problem as last one
+
+      }
       VoiceChatMain pl = VoiceChatMain.getInstance();
       boolean getsKicked = pl.getVoiceChatRequired();
       if (getsKicked) {
@@ -247,9 +251,7 @@ public class DiscordBot {
     pl.getChannels().remove(dcChannel);
     Optional<ServerVoiceChannel> channel = api.getServerVoiceChannelById(dcChannel.getId());
 
-    if (channel.isPresent()) {
-      channel.get().delete();
-    }
+    channel.ifPresent(ServerChannel::delete);
   }
 
   /**
@@ -267,11 +269,7 @@ public class DiscordBot {
       .getScheduler()
       .scheduleSyncDelayedTask(
         VoiceChatMain.getInstance(),
-              () -> {
-                if (channel.isPresent()) {
-                  channel.get().delete();
-                }
-              },
+              () -> channel.ifPresent(ServerChannel::delete),
         20L
       );
   }
@@ -284,7 +282,12 @@ public class DiscordBot {
    * @return isInWaitingChannel
    */
   public boolean isInWaitingChannel(VoicePlayer player) {
-    return api.getServerVoiceChannelById(getWaitingChannelID()).get().getConnectedUserIds().contains(player.getDiscordID());
+    Optional<ServerVoiceChannel> waitingChannelOptional = api.getServerVoiceChannelById(getWaitingChannelID());
+    if(!waitingChannelOptional.isPresent()){
+      pl.getLogger().severe("Waiting channel id in config is wrong!");
+      return false;
+    }
+    return waitingChannelOptional.get().getConnectedUserIds().contains(player.getDiscordID());
   }
 
   /**
