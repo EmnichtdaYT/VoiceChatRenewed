@@ -9,10 +9,11 @@ public class VoiceChatTimer extends BukkitRunnable {
   private String voiceDisconnectMessage;
   private final VoiceChatMain pl;
 
-  protected VoiceChatTimer(String voiceDisconnectMessage, VoiceChatMain pl) {
+  protected VoiceChatTimer(String voiceDisconnectMessage, VoiceChatMain pl, String channelPrefix) {
     this.voiceDisconnectMessage = voiceDisconnectMessage;
     this.pl = pl;
-    l = new VoiceChatLogic(pl);
+
+    l = new VoiceChatLogic(pl, channelPrefix);
   }
 
   protected void rload(String voiceDisconnectMessage) {

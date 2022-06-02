@@ -34,6 +34,8 @@ public class DiscordBot {
   private final DCmessageCreateEvent messageListener;
   private final DCServerVoiceChannelMemberLeaveListener channelLeaveListener;
 
+  private final String channelPrefix;
+
   private final VoiceChatMain pl = VoiceChatMain.getInstance();
 
   public DiscordBot(
@@ -48,9 +50,12 @@ public class DiscordBot {
     String connectedMessage,
     String codeInvalid,
     String noCode,
-    String color
+    String color,
+    String channelPrefix
   ) {
     api = new DiscordApiBuilder().setToken(token).login().join();
+
+    this.channelPrefix = channelPrefix;
 
     this.setStatus(status);
     this.setStatusType(statusType);
@@ -62,10 +67,12 @@ public class DiscordBot {
       if (api.getChannelCategoryById(category).isPresent()) {
         this.category = api.getChannelCategoryById(category).get();
       }
+    }else{
+      pl.getLogger().severe("[VoiceChat] The Discord server id supplied in the config is incorrect!");
     }
 
     messageListener = new DCmessageCreateEvent(voiceDisconnectMessage, embedTitle, connectedMessage, codeInvalid, noCode, color);
-    channelLeaveListener = new DCServerVoiceChannelMemberLeaveListener(voiceDisconnectMessage);
+    channelLeaveListener = new DCServerVoiceChannelMemberLeaveListener(voiceDisconnectMessage, channelPrefix, category);
     api.addListener(messageListener);
     api.addListener(channelLeaveListener);
   }
@@ -157,7 +164,7 @@ public class DiscordBot {
   public DCChannel createNewUserVoiceChat() {
     ServerVoiceChannelBuilder nChan = new ServerVoiceChannelBuilder(getServer());
     nChan.setAuditLogReason("VoiceChat-customChannel");
-    nChan.setName("VoiceChat-" + nextChannel);
+    nChan.setName(channelPrefix + "-" + nextChannel);
     PermissionsBuilder nPerm = new PermissionsBuilder();
     nPerm.setDenied(PermissionType.READ_MESSAGES);
     nPerm.setDenied(PermissionType.CONNECT);
@@ -192,7 +199,7 @@ public class DiscordBot {
   public DCChannel createCustomChannel(String name) {
     ServerVoiceChannelBuilder nChan = new ServerVoiceChannelBuilder(getServer());
     nChan.setAuditLogReason("VoiceChat-customChannel");
-    nChan.setName("VoiceChat-" + name);
+    nChan.setName(channelPrefix + "-" + name);
     PermissionsBuilder nPerm = new PermissionsBuilder();
     nPerm.setDenied(PermissionType.READ_MESSAGES);
     nPerm.setDenied(PermissionType.CONNECT);
@@ -292,5 +299,14 @@ public class DiscordBot {
 
   private void setWaitingChannelID(String waitingChannelID) {
     this.waitingChannelID = waitingChannelID;
+  }
+
+  /**
+   * getChannelPrefix() returns the String in front of the name of the discord channels
+   *
+   * @return channelPrefix
+   */
+  public String getChannelPrefix() {
+    return channelPrefix;
   }
 }

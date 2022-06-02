@@ -33,6 +33,10 @@ public class DCmessageCreateEvent implements MessageCreateListener {
 
   @Override
   public void onMessageCreate(MessageCreateEvent event) {
+    if(pl.isInConfigMode()){
+      return;
+    }
+
     if (!event.isPrivateMessage() || event.getMessageAuthor().isBotUser() || event.getMessageAuthor().isYourself()) {
       return;
     }

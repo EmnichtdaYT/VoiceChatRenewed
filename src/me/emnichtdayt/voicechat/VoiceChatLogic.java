@@ -19,10 +19,12 @@ import org.bukkit.entity.Player;
 public class VoiceChatLogic {
   private final VoiceChatMain pl;
   DiscordBot dc;
+  private final String channelPrefix;
 
-  protected VoiceChatLogic(VoiceChatMain pl) {
+  protected VoiceChatLogic(VoiceChatMain pl, String channelPrefix) {
     this.pl = pl;
     this.dc = pl.getDcbot();
+    this.channelPrefix = channelPrefix;
   }
 
   protected void doLogic(Iterator<? extends Player> iterator) {
@@ -73,7 +75,7 @@ public class VoiceChatLogic {
         return;
       }
 
-      DCChannel regionChannel = dc.getChannelByName("VoiceChat-" + regionName);
+      DCChannel regionChannel = dc.getChannelByName(channelPrefix + "-" + regionName);
 
       if (regionChannel == null) {
         targetVoice.moveTo(dc.createCustomChannel(regionName));

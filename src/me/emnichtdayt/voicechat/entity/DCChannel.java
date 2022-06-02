@@ -50,7 +50,7 @@ public class DCChannel {
   }
 
   /**
-   * getUsers() - gets the users connected to the voicechat
+   * getUsers() - gets the users connected to the voice chat
    *
    * @return users
    */

@@ -33,6 +33,11 @@ public class VoiceChatMCEvents implements Listener {
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerLoginEvent(PlayerLoginEvent e) {
+
+    if(pl.isInConfigMode()){
+      return;
+    }
+
     Player player = e.getPlayer();
     long dcId = -1;
     dcId = pl.getSql().getID(player);
@@ -74,6 +79,11 @@ public class VoiceChatMCEvents implements Listener {
 
   @EventHandler
   public void onPlayerDisconnet(PlayerQuitEvent e) {
+
+    if(pl.isInConfigMode()){
+      return;
+    }
+
     if (!pl.getPlayers().containsKey(e.getPlayer())) {
       return;
     }

@@ -14,13 +14,22 @@ public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChann
   protected String voiceDisconnectMessage;
 
   private VoiceChatMain pl = VoiceChatMain.getInstance();
+  private String channelPrefix;
+  private String categoryId;
 
-  public DCServerVoiceChannelMemberLeaveListener(String voiceDisconnectMessage) {
+  public DCServerVoiceChannelMemberLeaveListener(String voiceDisconnectMessage, String channelPrefix, String categoryId) {
     this.voiceDisconnectMessage = voiceDisconnectMessage;
+    this.channelPrefix = channelPrefix;
+    this.categoryId = categoryId;
   }
 
   @Override
   public void onServerVoiceChannelMemberLeave(ServerVoiceChannelMemberLeaveEvent event) {
+
+    if(pl.isInConfigMode()){
+      return;
+    }
+
     Optional<ServerVoiceChannel> optionalNChannel = event.getNewChannel();
     VoicePlayer targetVoice = pl.getPlayerByID(event.getUser().getId());
     if (targetVoice == null) {
@@ -31,17 +40,14 @@ public class DCServerVoiceChannelMemberLeaveListener implements ServerVoiceChann
       return;
     }
 
-    if (
-      (optionalNChannel.isPresent() && optionalNChannel.get().getName().length() > 8 && !optionalNChannel.get().getName().substring(0, 9).equals("VoiceChat")) ||
-      !optionalNChannel.isPresent() ||
-      (optionalNChannel.isPresent() && optionalNChannel.get().getName().length() <= 8)
-    ) {
+    if (!optionalNChannel.isPresent() || !optionalNChannel.get().getName().startsWith(channelPrefix) || !optionalNChannel.get().getCategory().isPresent() || !(optionalNChannel.get().getCategory().get().getId() + "").equals(categoryId)) {
       if (!optionalNChannel.isPresent() || optionalNChannel.get().getId() != Long.parseLong(pl.getDcbot().getWaitingChannelID())) {
         Player target = targetVoice.getPlayer();
         if (pl.getVoiceChatRequired() && !target.hasPermission("VoiceChat.bypass")) {
           targetVoice.setState(VoiceState.DISCONNECTED);
           pl.fireVoiceStateChange(targetVoice, VoiceState.CONNECTED, VoiceState.DISCONNECTED, true);
           pl.kickList.add(target);
+
         } else {
           if (targetVoice.getCurrentChannel() != null) {
             DCChannel oldChannel = targetVoice.getCurrentChannel();

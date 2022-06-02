@@ -9,6 +9,11 @@ public class DiscordSRVListener {
 
   @Subscribe
   public void accountsLinked(AccountLinkedEvent event) {
+
+    if(pl.isInConfigMode()){
+      return;
+    }
+
     if (pl.getSql().isSet(event.getPlayer())) {
       pl.getSql().setID(event.getPlayer(), event.getUser().getIdLong());
     } else {

@@ -8,25 +8,53 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
+import java.util.logging.Logger;
+
+import me.emnichtdayt.voicechat.VoiceChatMain;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class VoiceChatSQL {
+  private String ip;
+  private String port;
+  private String user;
+  private String pass;
+  private boolean usessl;
+
   private final String database;
   private final String table;
 
   private final String uuidColumn;
   private final String dcIdColumn;
 
-  private final HikariDataSource ds;
+  private HikariDataSource ds = null;
 
-  public VoiceChatSQL(String ip, String port, String database, String table, String dcIdColumn, String uuidColumn, String user, String pass, boolean usessl) {
+  private final VoiceChatMain pl;
+
+  public VoiceChatSQL(String ip, String port, String database, String table, String dcIdColumn, String uuidColumn, String user, String pass, boolean usessl, VoiceChatMain pl) {
     this.database = database;
     this.table = table;
 
     this.dcIdColumn = dcIdColumn;
     this.uuidColumn = uuidColumn;
 
+    this.ip = ip;
+    this.port = port;
+    this.user = user;
+    this.pass = pass;
+    this.usessl = usessl;
+
+    this.pl = pl;
+
+
+  }
+
+  /**
+   * Inits the datasource, returns boolean wasSuccessful
+   * @return wasSuccessful
+   */
+  public boolean init(){
     HikariConfig config = new HikariConfig();
 
     config.setJdbcUrl("jdbc:mysql://" + ip + ":" + port + "/" + database + "?useSSL=" + usessl);
@@ -36,7 +64,47 @@ public class VoiceChatSQL {
     config.addDataSourceProperty("prepStmtCacheSize", "250");
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
-    ds = new HikariDataSource(config);
+    try {
+      ds = new HikariDataSource(config);
+    }catch (Exception e){
+      e.printStackTrace();
+      pl.getLogger().severe("[VoiceChat] ERROR! Couldn't connect to the database! Is the connection information in the config correct?");
+      return false;
+    }
+
+
+    boolean tableExists;
+    PreparedStatement tableExistsStatement = null;
+    ResultSet tableExistsResultSet = null;
+    try{
+      tableExistsStatement = getConnection().prepareStatement("SELECT EXISTS( SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA LIKE ? AND TABLE_TYPE LIKE 'BASE TABLE' AND TABLE_NAME = ? )");
+      tableExistsStatement.setString(1, database);
+      tableExistsStatement.setString(2, table);
+      tableExistsResultSet = tableExistsStatement.executeQuery();
+      tableExistsResultSet.next();
+      tableExists = tableExistsResultSet.getBoolean(1);
+    }catch(Exception e){
+      pl.getLogger().severe("Couldn't check if table exists. Does the mysql user have the required permissions?");
+      pl.getLogger().throwing("VoiceChatSQL", "init", e);
+      return false;
+    }
+
+    try{
+      if(tableExistsResultSet!=null){
+        tableExistsResultSet.close();
+      }
+      if(tableExistsStatement!=null){
+        tableExistsStatement.close();
+      }
+    }catch (Exception e){
+    }
+
+    if(!tableExists){
+      pl.getLogger().severe("The userdata table doesn't exist in the db! Try generating the table by typing /voicechat initDatabase");
+      return false;
+    }
+
+    return true;
   }
 
   public Connection getConnection() {
@@ -44,7 +112,7 @@ public class VoiceChatSQL {
       return ds.getConnection();
     } catch (SQLException e) {
       e.printStackTrace();
-      System.out.println("[VoiceChat] ERROR! Couldn't connect to the database!");
+      pl.getLogger().severe("[VoiceChat] ERROR! Couldn't connect to the database! Is the connection information in the config correct?");
       return null;
     }
   }
@@ -188,7 +256,7 @@ public class VoiceChatSQL {
         e.printStackTrace();
       }
       e1.printStackTrace();
-      System.out.println("[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
+      pl.getLogger().severe("[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
     }
   }
 
@@ -217,7 +285,7 @@ public class VoiceChatSQL {
         e.printStackTrace();
       }
       e1.printStackTrace();
-      System.out.println("[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
+      pl.getLogger().severe("[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
     }
   }
 
@@ -245,7 +313,7 @@ public class VoiceChatSQL {
         e.printStackTrace();
       }
       e1.printStackTrace();
-      System.out.println("[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
+      pl.getLogger().severe("[VoiceChat] [ERROR] Unable to connect to the Database. Check your config and the connection.");
     }
   }
 
@@ -300,7 +368,7 @@ public class VoiceChatSQL {
         e.printStackTrace();
       }
       e1.printStackTrace();
-      System.out.println("[VoiceChat] [ERROR] That query is invalid.");
+      pl.getLogger().severe("[VoiceChat] [ERROR] That query is invalid.");
     }
   }
 }
